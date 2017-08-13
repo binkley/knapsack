@@ -1,8 +1,12 @@
 package hm.binkley.knapsack
 
-import kotlin.collections.Map.Entry
+import kotlin.collections.MutableMap.MutableEntry
 
-class Knapsack : AbstractMap<String, Any>() {
-    override val entries: Set<Entry<String, Any>>
-        get() = emptySet()
+class Knapsack : AbstractMutableMap<String, Any>() {
+    private val delegate: MutableMap<String, Any> = linkedMapOf()
+
+    override fun put(key: String, value: Any): Any? = delegate.put(key, value)
+
+    override val entries: MutableSet<MutableEntry<String, Any>>
+        get() = delegate.entries
 }

@@ -23,4 +23,31 @@ internal class KnapsackTest {
 
     @Test
     fun shouldFetchDefaultValue() = knapsack.getOrDefault("foo", 3) `is` 3
+
+    @Test
+    fun shouldRememberAssignment() {
+        knapsack["foo"] = 3
+        knapsack["foo"] `is` 3
+    }
+
+    @Test
+    fun shouldRemoveThingsUnconditionally() {
+        knapsack["foo"] = 3
+        knapsack.remove("foo")
+        knapsack.containsKey("foo") `is` false
+    }
+
+    @Test
+    fun shouldRemoveTheRightThings() {
+        knapsack["foo"] = 3
+        knapsack.remove("foo", 3)
+        knapsack.containsKey("foo") `is` false
+    }
+
+    @Test
+    fun shouldNotRemoveTheWrongThings() {
+        knapsack["foo"] = 3
+        knapsack.remove("foo", 4)
+        knapsack["foo"] `is` 3
+    }
 }
