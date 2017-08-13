@@ -1,3 +1,8 @@
 package hm.binkley.knapsack
 
-class Knapsack
+import kotlin.collections.Map.Entry
+
+class Knapsack : AbstractMap<String, Any>() {
+    override val entries: Set<Entry<String, Any>>
+        get() = emptySet()
+}
