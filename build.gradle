@@ -1,0 +1,50 @@
+buildscript {
+    ext {
+        kotlin_version = '1.2-M1'
+        mockito_version = '2.8.47'
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2' }
+        maven { url 'https://plugins.gradle.org/m2' }
+    }
+
+    dependencies {
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin',
+                version: "$kotlin_version"
+    }
+}
+
+group = 'hm.binkley.labs'
+version = '0-SNAPSHOT'
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+configurations {
+    ktlint
+}
+
+dependencies {
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.8.0.201706111038-r'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.0'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect'
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-junit',
+            version: '2.0.0.0'
+    testCompile group: 'org.mockito', name: 'mockito-core',
+            version: "${mockito_version}"
+}
+
+task downloadDependencies(type: Exec) {
+    configurations.testRuntime.files
+    commandLine 'true'
+}
