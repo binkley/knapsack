@@ -13,9 +13,15 @@ For example, if the "foo" key has a value of `3`, and later has a value of
 redo the change to return the value to `4`, all without loss of the history
 of the value of "foo".  In this example the history would be:
 
-| "foo" | Sequence | Action |
-|:-----:|:--------:| ------ |
-| 3     | 0        | Do     |
-| 4     | 1        | Do     |
-| 3     | 2        | Undo   |
-| 4     | 3        | Redo   |
+| Sequence | Action | "foo" |
+|:--------:|:------:|:-----:|
+| 0        | Do     | 3     |
+| 1        | Do     | 4     |
+| 2        | Undo   | 3     |
+| 3        | Redo   | 4     |
+
+## Technology
+
+* [JGit](https://github.com/eclipse/jgit) - Git for Java
+* [Kotlin Exposed](https://github.com/JetBrains/Exposed) - JDBC for Kotlin
+* [SQLite](https://github.com/xerial/sqlite-jdbc) - Local, text-based database
