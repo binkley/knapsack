@@ -26,6 +26,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
+    maven { url 'https://dl.bintray.com/kotlin/exposed' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
@@ -38,6 +39,7 @@ dependencies {
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.0'
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8'
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect'
+    compile group: 'org.jetbrains.exposed', name: 'exposed', version: '0.8.5'
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit'
     testCompile group: 'org.hamcrest', name: 'hamcrest-junit',
             version: '2.0.0.0'
@@ -53,7 +55,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.90
+                minimum = 0.92
             }
         }
     }

@@ -3,7 +3,7 @@ package hm.binkley.knapsack
 import org.junit.Before
 import org.junit.Test
 
-internal class KnapsackTest {
+internal class KnapsackMapTest {
     private lateinit var knapsack: Knapsack
 
     @Before
