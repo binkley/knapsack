@@ -4,7 +4,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.sqlite.SQLiteDataSource
 import java.sql.Connection.TRANSACTION_SERIALIZABLE
@@ -19,7 +18,6 @@ class Knapsack : AbstractMutableMap<String, Any>() {
         get() = delegate.entries
 
     fun <T> execute(statement: Transaction.() -> T): T {
-        TransactionManager.manager.defaultIsolationLevel
         val dataSource = SQLiteDataSource()
         dataSource.url = "jdbc:sqlite::memory:"
         Database.connect(dataSource)
