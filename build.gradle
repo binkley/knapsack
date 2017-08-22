@@ -32,7 +32,18 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
+sourceSets {
+    integrationTest {
+        kotlin {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+    }
+}
+
 configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
     ktlint
 }
 
@@ -63,11 +74,18 @@ test {
     }
 }
 
+task integrationTest(type: Test) {
+    dependsOn test
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
 jacoco {
     toolVersion = '0.7.10-SNAPSHOT'
 }
 
 jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
     violationRules {
         rule {
             limit {
@@ -82,5 +100,7 @@ task downloadDependencies(type: Exec) {
     commandLine 'true'
 }
 
-jacocoTestCoverageVerification.dependsOn jacocoTestReport
-check.dependsOn jacocoTestCoverageVerification
+check {
+    dependsOn integrationTest
+    dependsOn jacocoTestCoverageVerification
+}
