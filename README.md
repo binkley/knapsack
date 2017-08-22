@@ -24,4 +24,5 @@ of the value of "foo".  In this example the history would be:
 
 * [JGit](https://github.com/eclipse/jgit) - Git for Java
 * [Kotlin Exposed](https://github.com/JetBrains/Exposed) - JDBC for Kotlin
-* [SQLite](https://github.com/xerial/sqlite-jdbc) - Local, text-based database
+* [HyperSQL](http://hsqldb.org/doc/guide/texttables-chapt.html) - Local,
+  text-based database
