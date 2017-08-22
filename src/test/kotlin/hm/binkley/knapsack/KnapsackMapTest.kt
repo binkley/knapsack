@@ -1,8 +1,8 @@
 package hm.binkley.knapsack
 
-import org.hamcrest.Matchers.notNullValue
+import com.natpryce.hamkrest.assertion.assert
+import com.natpryce.hamkrest.present
 import org.junit.After
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 
@@ -20,5 +20,7 @@ internal class KnapsackMapTest {
     }
 
     @Test
-    fun shouldDoNothing() = assertThat(knapsack, notNullValue())
+    fun shouldDoNothing() {
+        assert.that(knapsack, present())
+    }
 }

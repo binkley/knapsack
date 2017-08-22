@@ -38,7 +38,7 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect'
     runtime 'org.hsqldb:hsqldb:2.4.0'
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
-    testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testCompile 'com.natpryce:hamkrest:1.4.2.0'
     testCompile "org.mockito:mockito-core:$mockito_version"
 }
 
@@ -60,7 +60,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.90
+                minimum = 1.00
             }
         }
     }
