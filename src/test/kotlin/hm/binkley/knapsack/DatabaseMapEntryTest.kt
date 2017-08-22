@@ -9,9 +9,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.eq
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -55,11 +52,6 @@ class DatabaseMapEntryTest {
         `when`(results.getString(eq("value"))).thenReturn("3")
 
         assert.that(entry.value, equalTo("3"))
-
-        verify(select, times(1)).setString(1, "foo")
-        verify(select, times(1)).executeQuery()
-        verify(insert, never()).executeUpdate()
-        verify(delete, never()).executeUpdate()
     }
 
     @Test
@@ -67,31 +59,29 @@ class DatabaseMapEntryTest {
         `when`(results.next()).thenReturn(false)
 
         assert.that(entry.value, absent())
-
-        verify(select, times(1)).setString(1, "foo")
-        verify(select, times(1)).executeQuery()
-        verify(insert, never()).executeUpdate()
-        verify(delete, never()).executeUpdate()
     }
 
     @Test
-    fun shouldSetValue() {
-        entry.value = "3"
+    fun shouldSetValueFirstTime() {
+        val previous = entry.setValue("3")
 
-        verify(insert, times(1)).setString(1, "foo")
-        verify(insert, times(1)).setString(2, "3")
-        verify(insert, times(1)).executeUpdate()
-        verify(select, never()).executeUpdate()
-        verify(delete, never()).executeUpdate()
+        assert.that(previous, absent())
+    }
+
+    @Test
+    fun shouldSetValueSecondTime() {
+        `when`(results.next()).thenReturn(true, false)
+        `when`(results.getString(eq("value"))).thenReturn("3")
+
+        val previous = entry.setValue("4")
+
+        assert.that(previous, equalTo("3"))
     }
 
     @Test
     fun shouldSetNull() {
-        entry.value = null
+        entry.setValue(null)
 
-        verify(delete, times(1)).setString(1, "foo")
-        verify(delete, times(1)).executeUpdate()
-        verify(select, never()).executeUpdate()
-        verify(insert, never()).executeUpdate()
+        assert.that(entry.value, absent())
     }
 }
