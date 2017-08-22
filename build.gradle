@@ -3,6 +3,7 @@ buildscript {
         hamkrest_version = '1.4.2.0'
         hsqldb_version = '2.4.0'
         jgit_version = '4.8.0.201706111038-r'
+        kassava_version = '1.0.0'
         kotlin_version = '1.2-M2'
         mockito_version = '2.8.47'
     }
@@ -38,6 +39,7 @@ configurations {
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
+    compile "au.com.console:kassava:$kassava_version"
     compile "org.eclipse.jgit:org.eclipse.jgit:$jgit_version"
     runtime "org.hsqldb:hsqldb:$hsqldb_version"
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
@@ -63,7 +65,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 1.00
+                minimum = 0.85
             }
         }
     }
