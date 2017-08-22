@@ -11,8 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin',
-                version: "$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -34,15 +33,13 @@ configurations {
 }
 
 dependencies {
-    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.8.0.201706111038-r'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect'
-    runtime group: 'org.hsqldb', name: 'hsqldb', version: '2.4.0'
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-junit',
-            version: '2.0.0.0'
-    testCompile group: 'org.mockito', name: 'mockito-core',
-            version: "${mockito_version}"
+    compile 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201706111038-r'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
+    compile 'org.jetbrains.kotlin:kotlin-reflect'
+    runtime 'org.hsqldb:hsqldb:2.4.0'
+    testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
+    testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testCompile "org.mockito:mockito-core:$mockito_version"
 }
 
 clean {
