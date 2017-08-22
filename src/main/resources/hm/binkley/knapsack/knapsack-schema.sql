@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS knapsack (
+  key   VARCHAR(24) PRIMARY KEY,
+  value VARCHAR(24) NOT NULL
+);

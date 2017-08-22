@@ -5,10 +5,10 @@ import java.sql.PreparedStatement
 import java.util.Objects
 import kotlin.collections.MutableMap.MutableEntry
 
-class DatabaseMapEntry(
+class DatabaseEntry(
         override val key: String,
         private val select: PreparedStatement,
-        private val insert: PreparedStatement,
+        private val upsert: PreparedStatement,
         private val delete: PreparedStatement) : MutableEntry<String, String?> {
     override val value: String?
         get() {
@@ -27,15 +27,15 @@ class DatabaseMapEntry(
             delete.setString(1, key)
             delete.executeUpdate()
         } else {
-            insert.setString(1, key)
-            insert.setString(2, newValue)
-            insert.executeUpdate()
+            upsert.setString(1, key)
+            upsert.setString(2, newValue)
+            upsert.executeUpdate()
         }
         return previous
     }
 
     override fun equals(other: Any?)
-            = kotlinEquals(other, arrayOf(DatabaseMapEntry::key))
+            = kotlinEquals(other, arrayOf(DatabaseEntry::key))
 
     override fun hashCode() = Objects.hash(key)
 

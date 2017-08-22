@@ -3,7 +3,7 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
-import hm.binkley.knapsack.DatabaseMapEntry.Companion.VALUE_COLUMN
+import hm.binkley.knapsack.DatabaseEntry.Companion.VALUE_COLUMN
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,18 +15,18 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
-class DatabaseMapEntryTest {
+class DatabaseEntryTest {
     @Mock private lateinit var select: PreparedStatement
     @Mock private lateinit var results: ResultSet
-    @Mock private lateinit var insert: PreparedStatement
+    @Mock private lateinit var upsert: PreparedStatement
     @Mock private lateinit var delete: PreparedStatement
-    private lateinit var entry: DatabaseMapEntry
+    private lateinit var entry: DatabaseEntry
 
     @Before
     fun setUpDatabase() {
         `when`(select.executeQuery()).thenReturn(results)
 
-        entry = DatabaseMapEntry("foo", select, insert, delete)
+        entry = DatabaseEntry("foo", select, upsert, delete)
     }
 
     @Test
@@ -36,16 +36,16 @@ class DatabaseMapEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseMapEntry("foo", select, insert,
+        assert.that(entry, equalTo(DatabaseEntry("foo", select, upsert,
                 delete)))
-        assert.that(entry, equalTo(DatabaseMapEntry("foo", select, insert,
+        assert.that(entry, equalTo(DatabaseEntry("foo", select, upsert,
                 delete)))
     }
 
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseMapEntry("foo", select, insert,
+                equalTo(DatabaseEntry("foo", select, upsert,
                         delete).hashCode()))
     }
 
