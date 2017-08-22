@@ -3,6 +3,7 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import hm.binkley.knapsack.DatabaseMapEntry.Companion.VALUE_COLUMN
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,7 +23,7 @@ class DatabaseMapEntryTest {
     private lateinit var entry: DatabaseMapEntry
 
     @Before
-    fun setUpDatase() {
+    fun setUpDatabase() {
         `when`(select.executeQuery()).thenReturn(results)
 
         entry = DatabaseMapEntry("foo", select, insert, delete)
@@ -37,6 +38,8 @@ class DatabaseMapEntryTest {
     fun shouldEquals() {
         assert.that(entry, equalTo(DatabaseMapEntry("foo", select, insert,
                 delete)))
+        assert.that(entry, equalTo(DatabaseMapEntry("foo", select, insert,
+                delete)))
     }
 
     @Test
@@ -49,7 +52,7 @@ class DatabaseMapEntryTest {
     @Test
     fun shouldGetValue() {
         `when`(results.next()).thenReturn(true, false)
-        `when`(results.getString(eq("value"))).thenReturn("3")
+        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("3")
 
         assert.that(entry.value, equalTo("3"))
     }
@@ -61,27 +64,43 @@ class DatabaseMapEntryTest {
         assert.that(entry.value, absent())
     }
 
+    @Test(expected = IllegalStateException::class)
+    fun shouldGetAnExceptionWhenMultipleValuesMatchKey() {
+        `when`(results.next()).thenReturn(true, true)
+
+        entry.value
+    }
+
     @Test
     fun shouldSetValueFirstTime() {
+        `when`(results.next()).thenReturn(false, true, false)
+        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("3")
+
         val previous = entry.setValue("3")
 
         assert.that(previous, absent())
+        assert.that(entry.value, equalTo("3"))
     }
 
     @Test
     fun shouldSetValueSecondTime() {
-        `when`(results.next()).thenReturn(true, false)
-        `when`(results.getString(eq("value"))).thenReturn("3")
+        `when`(results.next()).thenReturn(true, false, true, false)
+        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("2", "3")
 
-        val previous = entry.setValue("4")
+        val previous = entry.setValue("3")
 
-        assert.that(previous, equalTo("3"))
+        assert.that(previous, equalTo("2"))
+        assert.that(entry.value, equalTo("3"))
     }
 
     @Test
     fun shouldSetNull() {
-        entry.setValue(null)
+        `when`(results.next()).thenReturn(true, false, false)
+        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("3")
 
+        val previous = entry.setValue(null)
+
+        assert.that(previous, equalTo("3"))
         assert.that(entry.value, absent())
     }
 }
