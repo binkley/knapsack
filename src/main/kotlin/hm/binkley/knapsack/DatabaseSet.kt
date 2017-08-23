@@ -1,0 +1,38 @@
+package hm.binkley.knapsack
+
+import java.sql.PreparedStatement
+import java.util.Objects
+import kotlin.collections.MutableMap.MutableEntry
+
+typealias Entry = MutableEntry<String, String?>
+
+class DatabaseSet(
+        private val countAll: PreparedStatement,
+        private val selectAll: PreparedStatement,
+        private val selectOne: PreparedStatement,
+        private val upsertOne: PreparedStatement,
+        private val deleteOne: PreparedStatement)
+    : AbstractMutableSet<Entry>() {
+    override fun add(element: Entry): Boolean {
+        // TODO: transaction
+        val newValue = element.value
+        val previousValue
+                = DatabaseEntry(element.key, selectOne, upsertOne, deleteOne).
+                setValue(newValue)
+        return !Objects.equals(previousValue, newValue)
+    }
+
+    override fun iterator()
+            = DatabaseSetIterator(selectOne, upsertOne,
+            deleteOne,
+            selectAll.executeQuery())
+
+    override val size: Int
+        get() {
+            val results = countAll.executeQuery()
+            if (!results.next()) throw IllegalStateException()
+            val size = results.getInt("size")
+            if (results.next()) throw IllegalStateException()
+            return size
+        }
+}

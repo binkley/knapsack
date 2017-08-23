@@ -16,17 +16,17 @@ import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseEntryTest {
-    @Mock private lateinit var select: PreparedStatement
+    @Mock private lateinit var selectOne: PreparedStatement
     @Mock private lateinit var results: ResultSet
-    @Mock private lateinit var upsert: PreparedStatement
-    @Mock private lateinit var delete: PreparedStatement
+    @Mock private lateinit var upsertOne: PreparedStatement
+    @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var entry: DatabaseEntry
 
     @Before
     fun setUpDatabase() {
-        `when`(select.executeQuery()).thenReturn(results)
+        `when`(selectOne.executeQuery()).thenReturn(results)
 
-        entry = DatabaseEntry("foo", select, upsert, delete)
+        entry = DatabaseEntry("foo", selectOne, upsertOne, deleteOne)
     }
 
     @Test
@@ -36,17 +36,15 @@ class DatabaseEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseEntry("foo", select, upsert,
-                delete)))
-        assert.that(entry, equalTo(DatabaseEntry("foo", select, upsert,
-                delete)))
+        assert.that(entry, equalTo(DatabaseEntry("foo", selectOne, upsertOne,
+                deleteOne)))
     }
 
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseEntry("foo", select, upsert,
-                        delete).hashCode()))
+                equalTo(DatabaseEntry("foo", selectOne, upsertOne,
+                        deleteOne).hashCode()))
     }
 
     @Test

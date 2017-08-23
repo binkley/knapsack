@@ -7,13 +7,14 @@ import kotlin.collections.MutableMap.MutableEntry
 
 class DatabaseEntry(
         override val key: String,
-        private val select: PreparedStatement,
-        private val upsert: PreparedStatement,
-        private val delete: PreparedStatement) : MutableEntry<String, String?> {
+        private val selectOne: PreparedStatement,
+        private val upsertOne: PreparedStatement,
+        private val deleteOne: PreparedStatement)
+    : MutableEntry<String, String?> {
     override val value: String?
         get() {
-            select.setString(1, key)
-            val results = select.executeQuery()
+            selectOne.setString(1, key)
+            val results = selectOne.executeQuery()
             if (!results.next()) return null
             val value = results.getString(VALUE_COLUMN)
             if (results.next()) throw IllegalStateException()
@@ -24,12 +25,12 @@ class DatabaseEntry(
         // TODO: Transaction so get/set does not mutate in between
         val previous = value
         if (null == newValue) {
-            delete.setString(1, key)
-            delete.executeUpdate()
+            deleteOne.setString(1, key)
+            deleteOne.executeUpdate()
         } else {
-            upsert.setString(1, key)
-            upsert.setString(2, newValue)
-            upsert.executeUpdate()
+            upsertOne.setString(1, key)
+            upsertOne.setString(2, newValue)
+            upsertOne.executeUpdate()
         }
         return previous
     }
