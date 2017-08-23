@@ -33,7 +33,7 @@ repositories {
 }
 
 sourceSets {
-    integrationTest {
+    applicationTest {
         kotlin {
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
@@ -42,8 +42,8 @@ sourceSets {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
+    applicationTestCompile.extendsFrom testCompile
+    applicationTestRuntime.extendsFrom testRuntime
     ktlint
 }
 
@@ -74,10 +74,10 @@ test {
     }
 }
 
-task integrationTest(type: Test) {
+task applicationTest(type: Test) {
     dependsOn test
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
+    testClassesDirs = sourceSets.applicationTest.output.classesDirs
+    classpath = sourceSets.applicationTest.runtimeClasspath
 }
 
 jacoco {
@@ -101,6 +101,6 @@ task downloadDependencies(type: Exec) {
 }
 
 check {
-    dependsOn integrationTest
+    dependsOn applicationTest
     dependsOn jacocoTestCoverageVerification
 }
