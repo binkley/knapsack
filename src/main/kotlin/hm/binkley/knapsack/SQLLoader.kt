@@ -1,37 +1,57 @@
 package hm.binkley.knapsack
 
-class SQLLoader {
-    fun schema()
+import java.sql.Connection
+
+class SQLLoader(private val connection: Connection) {
+    fun loadSchema() {
+        connection.createStatement().use {
+            it.executeUpdate(schema())
+        }
+    }
+
+    fun reset() {
+        connection.createStatement().use {
+            it.executeUpdate(deleteAll())
+        }
+    }
+
+    fun prepareCountAll() = connection.prepareStatement(countAll())
+    fun prepareSelectAll() = connection.prepareStatement(selectAll())
+    fun prepareSelectOne() = connection.prepareStatement(selectOne())
+    fun prepareUpsertOne() = connection.prepareStatement(upsertOne())
+    fun prepareDeleteOne() = connection.prepareStatement(deleteOne())
+
+    private fun schema()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-schema.sql").
             readText()
 
-    fun countAll()
+    private fun countAll()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-count-all.sql").
             readText()
 
-    fun selectAll()
+    private fun selectAll()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-select-all.sql").
             readText()
 
-    fun selectOne()
+    private fun selectOne()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-select-one.sql").
             readText()
 
-    fun upsertOne()
+    private fun upsertOne()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-upsert-one.sql").
             readText()
 
-    fun deleteOne()
+    private fun deleteOne()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-delete-one.sql").
             readText()
 
-    fun deleteAll()
+    private fun deleteAll()
             = javaClass.
             getResource("/hm/binkley/knapsack/knapsack-delete-all.sql").
             readText()

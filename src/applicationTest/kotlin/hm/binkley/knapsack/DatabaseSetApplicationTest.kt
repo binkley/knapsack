@@ -2,37 +2,24 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
-import org.junit.After
-import org.junit.Before
+import org.junit.ClassRule
+import org.junit.Rule
 import org.junit.Test
-import java.sql.Connection
-import java.sql.DriverManager
 import kotlin.collections.MutableMap.MutableEntry
 import kotlin.test.fail
 
-class DatabaseSetIntegrationTest {
-    private val sql = SQLLoader()
-    private lateinit var database: Connection
-
-    @Before
-    fun setUpDatabase() {
-        database = DriverManager.getConnection("jdbc:hsqldb:mem:knapsack")
-        database.createStatement().executeUpdate(sql.schema())
-    }
-
-    @After
-    fun tearDownDatabase() {
-        database.createStatement().executeUpdate(sql.deleteAll())
-        database.close()
-    }
+class DatabaseSetApplicationTest {
+    @Rule
+    @JvmField
+    val reset = KNAPSACK.reset()
 
     @Test
     fun shouldWorkEndToEnd() {
-        val countAll = database.prepareStatement(sql.countAll())
-        val selectAll = database.prepareStatement(sql.selectAll())
-        val selectOne = database.prepareStatement(sql.selectOne())
-        val upsertOne = database.prepareStatement(sql.upsertOne())
-        val deleteOne = database.prepareStatement(sql.deleteOne())
+        val countAll = KNAPSACK.loader.prepareCountAll()
+        val selectAll = KNAPSACK.loader.prepareSelectAll()
+        val selectOne = KNAPSACK.loader.prepareSelectOne()
+        val upsertOne = KNAPSACK.loader.prepareUpsertOne()
+        val deleteOne = KNAPSACK.loader.prepareDeleteOne()
 
         val set = DatabaseSet(countAll, selectAll, selectOne, upsertOne,
                 deleteOne)
@@ -65,6 +52,10 @@ class DatabaseSetIntegrationTest {
     }
 
     companion object {
+        @ClassRule
+        @JvmField
+        val KNAPSACK = KnapsackDatabase()
+
         private fun entryOf(key: String, value: String)
                 : MutableEntry<String, String?> {
             return object : MutableEntry<String, String?> {
