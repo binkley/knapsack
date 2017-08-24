@@ -35,9 +35,7 @@ class DatabaseEntry(
         return previous
     }
 
-    override fun equals(other: Any?): Boolean {
-        return kotlinEquals(other, properties)
-    }
+    override fun equals(other: Any?): Boolean = kotlinEquals(other, properties)
 
     override fun hashCode() = Objects.hash(key)
 
