@@ -15,11 +15,11 @@ class DatabaseSetApplicationTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val countAll = KNAPSACK.loader.prepareCountAll()
-        val selectAll = KNAPSACK.loader.prepareSelectAll()
-        val selectOne = KNAPSACK.loader.prepareSelectOne()
-        val upsertOne = KNAPSACK.loader.prepareUpsertOne()
-        val deleteOne = KNAPSACK.loader.prepareDeleteOne()
+        val countAll = KNAPSACK.loader.prepareCountAll
+        val selectAll = KNAPSACK.loader.prepareSelectAll
+        val selectOne = KNAPSACK.loader.prepareSelectOne
+        val upsertOne = KNAPSACK.loader.prepareUpsertOne
+        val deleteOne = KNAPSACK.loader.prepareDeleteOne
 
         val set = DatabaseSet(countAll, selectAll, selectOne, upsertOne,
                 deleteOne)

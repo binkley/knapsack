@@ -14,9 +14,9 @@ class DatabaseEntryApplicationTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val selectOne = KNAPSACK.loader.prepareSelectOne()
-        val upsertOne = KNAPSACK.loader.prepareUpsertOne()
-        val deleteOne = KNAPSACK.loader.prepareDeleteOne()
+        val selectOne = KNAPSACK.loader.prepareSelectOne
+        val upsertOne = KNAPSACK.loader.prepareUpsertOne
+        val deleteOne = KNAPSACK.loader.prepareDeleteOne
 
         val entry = DatabaseEntry("foo", selectOne, upsertOne, deleteOne)
 
