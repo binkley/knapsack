@@ -20,8 +20,9 @@ class DatabaseSet(
     }
 
     override fun iterator()
-            = DatabaseEntryIterator(selectOne, upsertOne, deleteOne,
-            selectAll.executeQuery())
+            = DatabaseEntryIterator(selectAll.executeQuery(), selectOne,
+            upsertOne,
+            deleteOne)
 
     override val size: Int
         get() {

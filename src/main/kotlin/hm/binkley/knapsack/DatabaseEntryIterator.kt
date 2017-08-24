@@ -4,10 +4,10 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 class DatabaseEntryIterator(
+        private val allResults: ResultSet,
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
-        private val deleteOne: PreparedStatement,
-        private val allResults: ResultSet)
+        private val deleteOne: PreparedStatement)
     : MutableIterator<Entry> {
     override fun hasNext() = allResults.next()
 

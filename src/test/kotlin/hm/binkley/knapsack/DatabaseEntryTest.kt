@@ -40,6 +40,12 @@ class DatabaseEntryTest {
                 deleteOne)))
     }
 
+    @Suppress("ReplaceCallWithComparison")
+    @Test
+    fun shouldNotEquals() {
+        assert.that(entry.equals(this), equalTo(false))
+    }
+
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
