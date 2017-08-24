@@ -3,7 +3,7 @@ package hm.binkley.knapsack
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-class DatabaseSetIterator(
+class DatabaseEntryIterator(
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
         private val deleteOne: PreparedStatement,
