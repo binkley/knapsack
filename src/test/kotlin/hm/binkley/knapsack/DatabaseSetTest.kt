@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -42,6 +43,20 @@ class DatabaseSetTest {
         assert.that(set.size, equalTo(0))
     }
 
+    @Test(expected = IllegalStateException::class)
+    fun shouldFailIfSizeSqlHasNoResults() {
+        `when`(countResult.next()).thenReturn(false)
+
+        set.size
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldFailIfSizeSqlHasTooManyResults() {
+        `when`(countResult.next()).thenReturn(true, true, false)
+
+        set.size
+    }
+
     @Test
     fun shouldStartEmptyIterated() {
         `when`(allResults.next()).thenReturn(false)
@@ -64,6 +79,29 @@ class DatabaseSetTest {
         assert.that(set.hashCode(),
                 equalTo(DatabaseSet(countAll, selectAll, selectOne, upsertOne,
                         deleteOne).hashCode()))
+    }
+
+    @Test
+    fun shouldFindEntry() {
+        `when`(allResults.next()).thenReturn(true, false)
+        `when`(allResults.getString(eq("key"))).thenReturn("foo")
+
+        assert.that(set.contains(
+                DatabaseEntry("foo", selectOne, upsertOne, deleteOne)),
+                equalTo(true))
+    }
+
+    @Test
+    fun shouldRemoveEntry() {
+        `when`(allResults.next()).thenReturn(true, false)
+        `when`(allResults.getString(eq("key"))).thenReturn("foo")
+
+        assert.that(set.remove(
+                DatabaseEntry("foo", selectOne, upsertOne, deleteOne)),
+                equalTo(true))
+
+        verify(deleteOne).setString(1, "foo")
+        verify(deleteOne).executeUpdate()
     }
 
     @Test

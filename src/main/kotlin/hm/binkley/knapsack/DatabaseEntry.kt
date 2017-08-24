@@ -35,12 +35,14 @@ class DatabaseEntry(
         return previous
     }
 
-    override fun equals(other: Any?)
-            = kotlinEquals(other, arrayOf(DatabaseEntry::key))
+    override fun equals(other: Any?): Boolean {
+        return kotlinEquals(other, properties)
+    }
 
     override fun hashCode() = Objects.hash(key)
 
     companion object {
         const val VALUE_COLUMN = "value"
+        val properties = arrayOf(DatabaseEntry::key)
     }
 }

@@ -7,12 +7,12 @@ class DatabaseEntryIterator(
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
         private val deleteOne: PreparedStatement,
-        private val results: ResultSet)
+        private val allResults: ResultSet)
     : MutableIterator<Entry> {
-    override fun hasNext() = results.next()
+    override fun hasNext() = allResults.next()
 
     override fun next(): Entry {
-        if (results.isBeforeFirst || results.isAfterLast)
+        if (allResults.isBeforeFirst || allResults.isAfterLast)
             throw NoSuchElementException()
         return newDatabaseEntry()
     }
@@ -23,6 +23,6 @@ class DatabaseEntryIterator(
     }
 
     private fun newDatabaseEntry()
-            = DatabaseEntry(results.getString("key"),
+            = DatabaseEntry(allResults.getString("key"),
             selectOne, upsertOne, deleteOne)
 }
