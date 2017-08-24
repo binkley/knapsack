@@ -2,9 +2,6 @@ package hm.binkley.knapsack
 
 import java.sql.PreparedStatement
 import java.util.Objects
-import kotlin.collections.MutableMap.MutableEntry
-
-typealias Entry = MutableEntry<String, String?>
 
 class DatabaseSet(
         private val countAll: PreparedStatement,
