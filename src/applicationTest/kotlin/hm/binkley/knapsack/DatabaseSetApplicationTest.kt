@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
-import kotlin.collections.MutableMap.MutableEntry
+import java.util.AbstractMap.SimpleEntry
 import kotlin.test.fail
 
 class DatabaseSetApplicationTest {
@@ -25,13 +25,13 @@ class DatabaseSetApplicationTest {
                 selectOne, upsertOne, deleteOne)
 
         assert.that(set.isEmpty(), equalTo(true))
-        assert.that(set.add(entryOf("foo", "3")), equalTo(true))
-        assert.that(set.add(entryOf("foo", "3")), equalTo(false))
-        assert.that(set.add(entryOf("foo", "7")), equalTo(true))
+        assert.that(set.add(SimpleEntry("foo", "3")), equalTo(true))
+        assert.that(set.add(SimpleEntry("foo", "3")), equalTo(false))
+        assert.that(set.add(SimpleEntry("foo", "7")), equalTo(true))
         assert.that(set.size, equalTo(1))
-        assert.that(set.add(entryOf("bar", "3")), equalTo(true))
-        assert.that(set.add(entryOf("bar", "3")), equalTo(false))
-        assert.that(set.add(entryOf("bar", "15")), equalTo(true))
+        assert.that(set.add(SimpleEntry("bar", "3")), equalTo(true))
+        assert.that(set.add(SimpleEntry("bar", "3")), equalTo(false))
+        assert.that(set.add(SimpleEntry("bar", "15")), equalTo(true))
         assert.that(set.size, equalTo(2))
 
         set.iterator().use { sit ->
@@ -56,20 +56,5 @@ class DatabaseSetApplicationTest {
         @ClassRule
         @JvmField
         val KNAPSACK = KnapsackDatabase()
-
-        private fun entryOf(key: String, value: String)
-                : MutableEntry<String, String?> {
-            return object : MutableEntry<String, String?> {
-                override val value: String?
-                    get() = value
-
-                override fun setValue(newValue: String?): String? {
-                    throw UnsupportedOperationException()
-                }
-
-                override val key: String
-                    get() = key
-            }
-        }
     }
 }
