@@ -16,7 +16,7 @@ class DatabaseEntry(
             selectOne.setString(1, key)
             selectOne.executeQuery().use { results ->
                 if (!results.next()) return null
-                val value = results.getString(VALUE_COLUMN)
+                val value = results.getString("value")
                 if (results.next()) throw IllegalStateException()
                 return value
             }
@@ -41,7 +41,6 @@ class DatabaseEntry(
     override fun hashCode() = Objects.hash(key)
 
     companion object {
-        const val VALUE_COLUMN = "value"
         val properties = arrayOf(DatabaseEntry::key)
     }
 }

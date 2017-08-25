@@ -2,7 +2,6 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
-import hm.binkley.knapsack.DatabaseEntry.Companion.VALUE_COLUMN
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -118,7 +117,7 @@ class DatabaseSetTest {
     @Test
     fun shouldMutate() {
         `when`(oneResult.next()).thenReturn(false, true, false)
-        `when`(oneResult.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(oneResult.getString(eq("value"))).thenReturn("3")
 
         val changed = set.add(
                 DatabaseEntry("foo", selectOne, upsertOne, deleteOne))

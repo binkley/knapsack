@@ -3,7 +3,6 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
-import hm.binkley.knapsack.DatabaseEntry.Companion.VALUE_COLUMN
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,7 +64,7 @@ class DatabaseEntryTest {
     @Test
     fun shouldGetValue() {
         `when`(selectResults.next()).thenReturn(true, false)
-        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(selectResults.getString(eq("value"))).thenReturn("3")
 
         assert.that(entry.value, equalTo("3"))
     }
@@ -87,7 +86,7 @@ class DatabaseEntryTest {
     @Test
     fun shouldSetValueFirstTime() {
         `when`(selectResults.next()).thenReturn(false, true, false)
-        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(selectResults.getString(eq("value"))).thenReturn("3")
 
         val previous = entry.setValue("3")
 
@@ -98,7 +97,7 @@ class DatabaseEntryTest {
     @Test
     fun shouldSetValueSecondTime() {
         `when`(selectResults.next()).thenReturn(true, false, true, false)
-        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("2",
+        `when`(selectResults.getString(eq("value"))).thenReturn("2",
                 "3")
 
         val previous = entry.setValue("3")
@@ -110,7 +109,7 @@ class DatabaseEntryTest {
     @Test
     fun shouldSetNull() {
         `when`(selectResults.next()).thenReturn(true, false, false)
-        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(selectResults.getString(eq("value"))).thenReturn("3")
 
         val previous = entry.setValue(null)
 
