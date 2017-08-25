@@ -15,7 +15,7 @@ class DatabaseSet(private val loader: SQLLoader)
 
     override val size: Int
         get() {
-            val countAll = loader.prepareCountAll
+            val countAll = loader.countAll
             countAll.executeQuery().use { results ->
                 if (!results.next()) throw IllegalStateException()
                 val size = results.getInt("size")

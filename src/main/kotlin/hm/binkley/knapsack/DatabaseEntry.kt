@@ -8,7 +8,7 @@ class DatabaseEntry(override val key: String, private val loader: SQLLoader)
     : MutableEntry<String, String?> {
     override val value: String?
         get() {
-            val selectOne = loader.prepareSelectOne
+            val selectOne = loader.selectOne
             selectOne.setString(1, key)
             selectOne.executeQuery().use { results ->
                 if (!results.next()) return null
@@ -22,11 +22,11 @@ class DatabaseEntry(override val key: String, private val loader: SQLLoader)
         return loader.transaction {
             val previous = value
             if (null == newValue) {
-                val deleteOne = loader.prepareDeleteOne
+                val deleteOne = loader.deleteOne
                 deleteOne.setString(1, key)
                 deleteOne.executeUpdate()
             } else {
-                val upsertOne = loader.prepareUpsertOne
+                val upsertOne = loader.upsertOne
                 upsertOne.setString(1, key)
                 upsertOne.setString(2, newValue)
                 upsertOne.executeUpdate()

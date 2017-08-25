@@ -2,7 +2,7 @@ package hm.binkley.knapsack
 
 class DatabaseEntryIterator(private val loader: SQLLoader)
     : MutableIterator<Entry>, AutoCloseable {
-    private val allResults = loader.prepareSelectAll.executeQuery()
+    private val allResults = loader.selectAll.executeQuery()
 
     override fun hasNext() = allResults.next()
 

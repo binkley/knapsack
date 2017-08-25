@@ -5,19 +5,19 @@ import java.sql.PreparedStatement
 import java.sql.SQLException
 
 class SQLLoader(private val database: Connection) {
-    val prepareCountAll: PreparedStatement by lazy {
+    val countAll: PreparedStatement by lazy {
         database.prepareStatement(readSql("count-all"))
     }
-    val prepareSelectAll: PreparedStatement by lazy {
+    val selectAll: PreparedStatement by lazy {
         database.prepareStatement(readSql("select-all"))
     }
-    val prepareSelectOne: PreparedStatement by lazy {
+    val selectOne: PreparedStatement by lazy {
         database.prepareStatement(readSql("select-one"))
     }
-    val prepareUpsertOne: PreparedStatement by lazy {
+    val upsertOne: PreparedStatement by lazy {
         database.prepareStatement(readSql("upsert-one"))
     }
-    val prepareDeleteOne: PreparedStatement by lazy {
+    val deleteOne: PreparedStatement by lazy {
         database.prepareStatement(readSql("delete-one"))
     }
 

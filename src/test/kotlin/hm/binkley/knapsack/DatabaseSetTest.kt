@@ -34,10 +34,10 @@ class DatabaseSetTest {
     fun setUpDatabase() {
         loader = spy(SQLLoader(database))
 
-        doReturn(selectOne).`when`(loader).prepareSelectOne
-        doReturn(deleteOne).`when`(loader).prepareDeleteOne
-        doReturn(countAll).`when`(loader).prepareCountAll
-        doReturn(selectAll).`when`(loader).prepareSelectAll
+        doReturn(selectOne).`when`(loader).selectOne
+        doReturn(deleteOne).`when`(loader).deleteOne
+        doReturn(countAll).`when`(loader).countAll
+        doReturn(selectAll).`when`(loader).selectAll
 
         `when`(countAll.executeQuery()).thenReturn(countResult)
         `when`(selectAll.executeQuery()).thenReturn(allResults)

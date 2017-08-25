@@ -21,7 +21,7 @@ class DatabaseEntryIteratorTest {
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectAll).`when`(loader).prepareSelectAll
+        doReturn(selectAll).`when`(loader).selectAll
 
         `when`(selectAll.executeQuery()).thenReturn(allResults)
 

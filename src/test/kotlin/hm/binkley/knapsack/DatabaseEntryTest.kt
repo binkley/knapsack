@@ -39,9 +39,9 @@ class DatabaseEntryTest {
     fun setUpDatabase() {
         loader = spy(SQLLoader(database))
 
-        doReturn(selectOne).`when`(loader).prepareSelectOne
-        doReturn(upsertOne).`when`(loader).prepareUpsertOne
-        doReturn(deleteOne).`when`(loader).prepareDeleteOne
+        doReturn(selectOne).`when`(loader).selectOne
+        doReturn(upsertOne).`when`(loader).upsertOne
+        doReturn(deleteOne).`when`(loader).deleteOne
 
         `when`(selectOne.executeQuery()).thenReturn(selectResults)
 
