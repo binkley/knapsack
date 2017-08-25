@@ -2,6 +2,7 @@ package hm.binkley.knapsack
 
 import org.junit.rules.ExternalResource
 import java.sql.Connection
+import java.sql.Connection.TRANSACTION_SERIALIZABLE
 import java.sql.DriverManager
 
 class KnapsackDatabase : ExternalResource() {
@@ -20,8 +21,8 @@ class KnapsackDatabase : ExternalResource() {
     }
 
     override fun before() {
-        _database = DriverManager.getConnection(
-                "jdbc:hsqldb:mem:knapsack")
+        _database = DriverManager.getConnection("jdbc:hsqldb:mem:knapsack")
+        _database.transactionIsolation = TRANSACTION_SERIALIZABLE
         _loader = SQLLoader(_database)
         _loader.loadSchema()
     }
