@@ -6,23 +6,16 @@ import java.util.Objects
 class DatabaseSet(
         private val loader: SQLLoader,
         private val countAll: PreparedStatement,
-        private val selectAll: PreparedStatement,
-        private val selectOne: PreparedStatement,
-        private val upsertOne: PreparedStatement,
-        private val deleteOne: PreparedStatement)
+        private val selectAll: PreparedStatement)
     : AbstractMutableSet<Entry>() {
     override fun add(element: Entry): Boolean {
         val newValue = element.value
-        val previousValue
-                = DatabaseEntry(element.key, loader, selectOne, upsertOne,
-                deleteOne).
+        val previousValue = DatabaseEntry(element.key, loader).
                 setValue(newValue)
         return !Objects.equals(previousValue, newValue)
     }
 
-    override fun iterator()
-            = DatabaseEntryIterator(loader, selectAll, selectOne, upsertOne,
-            deleteOne)
+    override fun iterator() = DatabaseEntryIterator(loader, selectAll)
 
     override val size: Int
         get() {

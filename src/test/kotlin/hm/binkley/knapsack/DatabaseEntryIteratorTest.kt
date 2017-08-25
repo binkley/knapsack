@@ -16,17 +16,13 @@ class DatabaseEntryIteratorTest {
     @Mock private lateinit var loader: SQLLoader
     @Mock private lateinit var selectAll: PreparedStatement
     @Mock private lateinit var allResults: ResultSet
-    @Mock private lateinit var selectOne: PreparedStatement
-    @Mock private lateinit var upsertOne: PreparedStatement
-    @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var iter: DatabaseEntryIterator
 
     @Before
     fun setUpDatabase() {
         `when`(selectAll.executeQuery()).thenReturn(allResults)
 
-        iter = DatabaseEntryIterator(loader, selectAll, selectOne, upsertOne,
-                deleteOne)
+        iter = DatabaseEntryIterator(loader, selectAll)
     }
 
     @Test

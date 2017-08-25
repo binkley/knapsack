@@ -11,7 +11,9 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
+import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.eq
+import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
@@ -35,11 +37,15 @@ class DatabaseEntryTest {
 
     @Before
     fun setUpDatabase() {
-        loader = SQLLoader(database)
+        loader = spy(SQLLoader(database))
+
+        doReturn(selectOne).`when`(loader).prepareSelectOne
+        doReturn(upsertOne).`when`(loader).prepareUpsertOne
+        doReturn(deleteOne).`when`(loader).prepareDeleteOne
 
         `when`(selectOne.executeQuery()).thenReturn(selectResults)
 
-        entry = DatabaseEntry("foo", loader, selectOne, upsertOne, deleteOne)
+        entry = DatabaseEntry("foo", loader)
     }
 
     @Test
@@ -49,8 +55,8 @@ class DatabaseEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseEntry("foo", loader, selectOne,
-                upsertOne, deleteOne)))
+        assert.that(entry, equalTo(DatabaseEntry("foo", loader
+        )))
     }
 
     @Suppress("ReplaceCallWithComparison")
@@ -62,8 +68,8 @@ class DatabaseEntryTest {
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseEntry("foo", loader, selectOne, upsertOne,
-                        deleteOne).hashCode()))
+                equalTo(DatabaseEntry("foo", loader
+                ).hashCode()))
     }
 
     @Test

@@ -4,10 +4,7 @@ import java.sql.PreparedStatement
 
 class DatabaseEntryIterator(
         private val loader: SQLLoader,
-        selectAll: PreparedStatement,
-        private val selectOne: PreparedStatement,
-        private val upsertOne: PreparedStatement,
-        private val deleteOne: PreparedStatement)
+        selectAll: PreparedStatement)
     : MutableIterator<Entry>, AutoCloseable {
     private val allResults = selectAll.executeQuery()
 
@@ -25,10 +22,7 @@ class DatabaseEntryIterator(
     }
 
     private fun newDatabaseEntry()
-            = DatabaseEntry(allResults.getString("key"),
-            loader, selectOne, upsertOne, deleteOne)
+            = DatabaseEntry(allResults.getString("key"), loader)
 
-    override fun close() {
-        allResults.close()
-    }
+    override fun close() = allResults.close()
 }
