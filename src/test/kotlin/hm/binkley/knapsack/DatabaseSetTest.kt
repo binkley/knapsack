@@ -6,12 +6,13 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
+import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
+import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -20,7 +21,8 @@ import java.sql.ResultSet
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseSetTest {
     @Mock private lateinit var database: Connection
-    private lateinit var loader: SQLLoader
+    @Spy
+    @InjectMocks private lateinit var loader: SQLLoader
     @Mock private lateinit var countAll: PreparedStatement
     @Mock private lateinit var countResult: ResultSet
     @Mock private lateinit var selectAll: PreparedStatement
@@ -32,8 +34,6 @@ class DatabaseSetTest {
 
     @Before
     fun setUpDatabase() {
-        loader = spy(SQLLoader(database))
-
         doReturn(selectOne).`when`(loader).selectOne
         doReturn(deleteOne).`when`(loader).deleteOne
         doReturn(countAll).`when`(loader).countAll

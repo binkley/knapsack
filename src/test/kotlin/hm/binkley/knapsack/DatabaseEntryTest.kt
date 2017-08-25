@@ -8,13 +8,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
+import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.eq
-import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
+import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -28,7 +29,8 @@ class DatabaseEntryTest {
     val thrown = ExpectedException.none()!!
 
     @Mock private lateinit var database: Connection
-    private lateinit var loader: SQLLoader
+    @Spy
+    @InjectMocks private lateinit var loader: SQLLoader
     @Mock private lateinit var selectOne: PreparedStatement
     @Mock private lateinit var selectResults: ResultSet
     @Mock private lateinit var upsertOne: PreparedStatement
@@ -37,8 +39,6 @@ class DatabaseEntryTest {
 
     @Before
     fun setUpDatabase() {
-        loader = spy(SQLLoader(database))
-
         doReturn(selectOne).`when`(loader).selectOne
         doReturn(upsertOne).`when`(loader).upsertOne
         doReturn(deleteOne).`when`(loader).deleteOne
