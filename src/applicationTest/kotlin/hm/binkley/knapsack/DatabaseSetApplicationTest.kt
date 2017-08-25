@@ -15,10 +15,7 @@ class DatabaseSetApplicationTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val countAll = KNAPSACK.loader.prepareCountAll
-        val selectAll = KNAPSACK.loader.prepareSelectAll
-
-        val set = DatabaseSet(KNAPSACK.loader, countAll, selectAll)
+        val set = DatabaseSet(KNAPSACK.loader)
 
         assert.that(set.isEmpty(), equalTo(true))
         assert.that(set.add(SimpleEntry("foo", "3")), equalTo(true))

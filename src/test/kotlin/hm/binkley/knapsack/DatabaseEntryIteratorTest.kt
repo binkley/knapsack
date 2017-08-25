@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
+import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.PreparedStatement
@@ -20,9 +21,11 @@ class DatabaseEntryIteratorTest {
 
     @Before
     fun setUpDatabase() {
+        doReturn(selectAll).`when`(loader).prepareSelectAll
+
         `when`(selectAll.executeQuery()).thenReturn(allResults)
 
-        iter = DatabaseEntryIterator(loader, selectAll)
+        iter = DatabaseEntryIterator(loader)
     }
 
     @Test

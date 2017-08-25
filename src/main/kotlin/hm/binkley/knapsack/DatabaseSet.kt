@@ -1,12 +1,8 @@
 package hm.binkley.knapsack
 
-import java.sql.PreparedStatement
 import java.util.Objects
 
-class DatabaseSet(
-        private val loader: SQLLoader,
-        private val countAll: PreparedStatement,
-        private val selectAll: PreparedStatement)
+class DatabaseSet(private val loader: SQLLoader)
     : AbstractMutableSet<Entry>() {
     override fun add(element: Entry): Boolean {
         val newValue = element.value
@@ -15,10 +11,11 @@ class DatabaseSet(
         return !Objects.equals(previousValue, newValue)
     }
 
-    override fun iterator() = DatabaseEntryIterator(loader, selectAll)
+    override fun iterator() = DatabaseEntryIterator(loader)
 
     override val size: Int
         get() {
+            val countAll = loader.prepareCountAll
             countAll.executeQuery().use { results ->
                 if (!results.next()) throw IllegalStateException()
                 val size = results.getInt("size")

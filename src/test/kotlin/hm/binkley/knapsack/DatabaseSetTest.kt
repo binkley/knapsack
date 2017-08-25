@@ -36,12 +36,14 @@ class DatabaseSetTest {
 
         doReturn(selectOne).`when`(loader).prepareSelectOne
         doReturn(deleteOne).`when`(loader).prepareDeleteOne
+        doReturn(countAll).`when`(loader).prepareCountAll
+        doReturn(selectAll).`when`(loader).prepareSelectAll
 
         `when`(countAll.executeQuery()).thenReturn(countResult)
         `when`(selectAll.executeQuery()).thenReturn(allResults)
         `when`(selectOne.executeQuery()).thenReturn(oneResult)
 
-        set = DatabaseSet(loader, countAll, selectAll)
+        set = DatabaseSet(loader)
     }
 
     @Test
@@ -89,13 +91,13 @@ class DatabaseSetTest {
         `when`(countResult.getInt(eq("size"))).thenReturn(0)
 
         assert.that(set,
-                equalTo(DatabaseSet(loader, countAll, selectAll)))
+                equalTo(DatabaseSet(loader)))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
         assert.that(set.hashCode(),
-                equalTo(DatabaseSet(loader, countAll, selectAll).hashCode()))
+                equalTo(DatabaseSet(loader).hashCode()))
     }
 
     @Test
