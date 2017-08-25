@@ -1,11 +1,10 @@
 package hm.binkley.knapsack
 
-import java.sql.Connection
 import java.sql.PreparedStatement
 import java.util.Objects
 
 class DatabaseSet(
-        private val database: Connection,
+        private val loader: SQLLoader,
         private val countAll: PreparedStatement,
         private val selectAll: PreparedStatement,
         private val selectOne: PreparedStatement,
@@ -15,14 +14,14 @@ class DatabaseSet(
     override fun add(element: Entry): Boolean {
         val newValue = element.value
         val previousValue
-                = DatabaseEntry(element.key, database, selectOne, upsertOne,
+                = DatabaseEntry(element.key, loader, selectOne, upsertOne,
                 deleteOne).
                 setValue(newValue)
         return !Objects.equals(previousValue, newValue)
     }
 
     override fun iterator()
-            = DatabaseEntryIterator(database, selectAll, selectOne, upsertOne,
+            = DatabaseEntryIterator(loader, selectAll, selectOne, upsertOne,
             deleteOne)
 
     override val size: Int

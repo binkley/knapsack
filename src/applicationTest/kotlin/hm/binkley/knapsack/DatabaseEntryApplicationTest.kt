@@ -18,7 +18,7 @@ class DatabaseEntryApplicationTest {
         val upsertOne = KNAPSACK.loader.prepareUpsertOne
         val deleteOne = KNAPSACK.loader.prepareDeleteOne
 
-        val entry = DatabaseEntry("foo", KNAPSACK.database, selectOne,
+        val entry = DatabaseEntry("foo", KNAPSACK.loader, selectOne,
                 upsertOne, deleteOne)
 
         assert.that(entry.value, absent())

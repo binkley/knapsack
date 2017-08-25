@@ -26,6 +26,7 @@ class DatabaseEntryTest {
     val thrown = ExpectedException.none()!!
 
     @Mock private lateinit var database: Connection
+    private lateinit var loader: SQLLoader
     @Mock private lateinit var selectOne: PreparedStatement
     @Mock private lateinit var selectResults: ResultSet
     @Mock private lateinit var upsertOne: PreparedStatement
@@ -34,9 +35,11 @@ class DatabaseEntryTest {
 
     @Before
     fun setUpDatabase() {
+        loader = SQLLoader(database)
+
         `when`(selectOne.executeQuery()).thenReturn(selectResults)
 
-        entry = DatabaseEntry("foo", database, selectOne, upsertOne, deleteOne)
+        entry = DatabaseEntry("foo", loader, selectOne, upsertOne, deleteOne)
     }
 
     @Test
@@ -46,7 +49,7 @@ class DatabaseEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseEntry("foo", database, selectOne,
+        assert.that(entry, equalTo(DatabaseEntry("foo", loader, selectOne,
                 upsertOne, deleteOne)))
     }
 
@@ -59,7 +62,7 @@ class DatabaseEntryTest {
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseEntry("foo", database, selectOne, upsertOne,
+                equalTo(DatabaseEntry("foo", loader, selectOne, upsertOne,
                         deleteOne).hashCode()))
     }
 

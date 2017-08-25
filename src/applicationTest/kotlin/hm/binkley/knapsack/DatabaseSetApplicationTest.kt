@@ -21,7 +21,7 @@ class DatabaseSetApplicationTest {
         val upsertOne = KNAPSACK.loader.prepareUpsertOne
         val deleteOne = KNAPSACK.loader.prepareDeleteOne
 
-        val set = DatabaseSet(KNAPSACK.database, countAll, selectAll,
+        val set = DatabaseSet(KNAPSACK.loader, countAll, selectAll,
                 selectOne, upsertOne, deleteOne)
 
         assert.that(set.isEmpty(), equalTo(true))

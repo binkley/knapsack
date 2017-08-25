@@ -1,10 +1,9 @@
 package hm.binkley.knapsack
 
-import java.sql.Connection
 import java.sql.PreparedStatement
 
 class DatabaseEntryIterator(
-        private val database: Connection,
+        private val loader: SQLLoader,
         selectAll: PreparedStatement,
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
@@ -27,7 +26,7 @@ class DatabaseEntryIterator(
 
     private fun newDatabaseEntry()
             = DatabaseEntry(allResults.getString("key"),
-            database, selectOne, upsertOne, deleteOne)
+            loader, selectOne, upsertOne, deleteOne)
 
     override fun close() {
         allResults.close()

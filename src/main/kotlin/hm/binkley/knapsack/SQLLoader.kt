@@ -2,33 +2,48 @@ package hm.binkley.knapsack
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.SQLException
 
-class SQLLoader(private val connection: Connection) {
+class SQLLoader(private val database: Connection) {
     val prepareCountAll: PreparedStatement by lazy {
-        connection.prepareStatement(readSql("count-all"))
+        database.prepareStatement(readSql("count-all"))
     }
     val prepareSelectAll: PreparedStatement by lazy {
-        connection.prepareStatement(readSql("select-all"))
+        database.prepareStatement(readSql("select-all"))
     }
     val prepareSelectOne: PreparedStatement by lazy {
-        connection.prepareStatement(readSql("select-one"))
+        database.prepareStatement(readSql("select-one"))
     }
     val prepareUpsertOne: PreparedStatement by lazy {
-        connection.prepareStatement(readSql("upsert-one"))
+        database.prepareStatement(readSql("upsert-one"))
     }
     val prepareDeleteOne: PreparedStatement by lazy {
-        connection.prepareStatement(readSql("delete-one"))
+        database.prepareStatement(readSql("delete-one"))
     }
 
     fun loadSchema() {
-        connection.createStatement().use {
+        database.createStatement().use {
             it.executeUpdate(readSql("schema"))
         }
     }
 
     fun reset() {
-        connection.createStatement().use {
+        database.createStatement().use {
             it.executeUpdate(readSql("delete-all"))
+        }
+    }
+
+    fun <T> transaction(block: () -> T): T {
+        database.autoCommit = false
+        try {
+            val value = block()
+            database.commit()
+            return value
+        } catch (e: SQLException) {
+            database.rollback()
+            throw e
+        } finally {
+            database.autoCommit = true
         }
     }
 

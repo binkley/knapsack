@@ -1,15 +1,13 @@
 package hm.binkley.knapsack
 
 import au.com.console.kassava.kotlinEquals
-import java.sql.Connection
 import java.sql.PreparedStatement
-import java.sql.SQLException
 import java.util.Objects
 import kotlin.collections.MutableMap.MutableEntry
 
 class DatabaseEntry(
         override val key: String,
-        private val database: Connection,
+        private val loader: SQLLoader,
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
         private val deleteOne: PreparedStatement)
@@ -26,7 +24,7 @@ class DatabaseEntry(
         }
 
     override fun setValue(newValue: String?): String? {
-        return transaction {
+        return loader.transaction {
             val previous = value
             if (null == newValue) {
                 deleteOne.setString(1, key)
@@ -46,19 +44,5 @@ class DatabaseEntry(
 
     companion object {
         val properties = arrayOf(DatabaseEntry::key)
-    }
-
-    private fun <T> transaction(block: () -> T): T {
-        database.autoCommit = false
-        try {
-            val value = block()
-            database.commit()
-            return value
-        } catch (e: SQLException) {
-            database.rollback()
-            throw e
-        } finally {
-            database.autoCommit = true
-        }
     }
 }
