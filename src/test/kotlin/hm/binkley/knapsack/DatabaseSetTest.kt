@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.PreparedStatement
@@ -33,6 +34,16 @@ class DatabaseSetTest {
         `when`(selectOne.executeQuery()).thenReturn(oneResult)
 
         set = DatabaseSet(countAll, selectAll, selectOne, upsertOne, deleteOne)
+    }
+
+    @Test
+    fun shouldClose() {
+        `when`(countResult.next()).thenReturn(true, false)
+        `when`(countResult.getInt(eq("size"))).thenReturn(0)
+
+        set.size
+
+        verify(countResult, atLeastOnce()).close()
     }
 
     @Test

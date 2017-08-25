@@ -1,14 +1,15 @@
 package hm.binkley.knapsack
 
 import java.sql.PreparedStatement
-import java.sql.ResultSet
 
 class DatabaseEntryIterator(
-        private val allResults: ResultSet,
+        selectAll: PreparedStatement,
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
         private val deleteOne: PreparedStatement)
-    : MutableIterator<Entry> {
+    : MutableIterator<Entry>, AutoCloseable {
+    private val allResults = selectAll.executeQuery()
+
     override fun hasNext() = allResults.next()
 
     override fun next(): Entry {
@@ -25,4 +26,8 @@ class DatabaseEntryIterator(
     private fun newDatabaseEntry()
             = DatabaseEntry(allResults.getString("key"),
             selectOne, upsertOne, deleteOne)
+
+    override fun close() {
+        allResults.close()
+    }
 }

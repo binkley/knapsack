@@ -34,16 +34,17 @@ class DatabaseSetApplicationTest {
         assert.that(set.add(entryOf("bar", "15")), equalTo(true))
         assert.that(set.size, equalTo(2))
 
-        val sit = set.iterator()
-        while (sit.hasNext()) {
-            val e = sit.next()
-            when (e.key) {
-                "foo" -> {
-                    assert.that(e.value, equalTo("7"))
-                    sit.remove()
+        set.iterator().use { sit ->
+            while (sit.hasNext()) {
+                val e = sit.next()
+                when (e.key) {
+                    "foo" -> {
+                        assert.that(e.value, equalTo("7"))
+                        sit.remove()
+                    }
+                    "bar" -> assert.that(e.value, equalTo("15"))
+                    else -> fail()
                 }
-                "bar" -> assert.that(e.value, equalTo("15"))
-                else -> fail()
             }
         }
 

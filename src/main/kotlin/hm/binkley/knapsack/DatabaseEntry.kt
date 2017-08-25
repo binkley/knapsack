@@ -14,11 +14,12 @@ class DatabaseEntry(
     override val value: String?
         get() {
             selectOne.setString(1, key)
-            val results = selectOne.executeQuery()
-            if (!results.next()) return null
-            val value = results.getString(VALUE_COLUMN)
-            if (results.next()) throw IllegalStateException()
-            return value
+            selectOne.executeQuery().use { results ->
+                if (!results.next()) return null
+                val value = results.getString(VALUE_COLUMN)
+                if (results.next()) throw IllegalStateException()
+                return value
+            }
         }
 
     override fun setValue(newValue: String?): String? {

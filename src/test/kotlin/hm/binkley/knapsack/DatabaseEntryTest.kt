@@ -9,7 +9,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.eq
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -17,14 +19,14 @@ import java.sql.ResultSet
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseEntryTest {
     @Mock private lateinit var selectOne: PreparedStatement
-    @Mock private lateinit var results: ResultSet
+    @Mock private lateinit var selectResults: ResultSet
     @Mock private lateinit var upsertOne: PreparedStatement
     @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var entry: DatabaseEntry
 
     @Before
     fun setUpDatabase() {
-        `when`(selectOne.executeQuery()).thenReturn(results)
+        `when`(selectOne.executeQuery()).thenReturn(selectResults)
 
         entry = DatabaseEntry("foo", selectOne, upsertOne, deleteOne)
     }
@@ -54,31 +56,38 @@ class DatabaseEntryTest {
     }
 
     @Test
+    fun shouldClose() {
+        entry.value
+
+        verify(selectResults, atLeastOnce()).close()
+    }
+
+    @Test
     fun shouldGetValue() {
-        `when`(results.next()).thenReturn(true, false)
-        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(selectResults.next()).thenReturn(true, false)
+        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("3")
 
         assert.that(entry.value, equalTo("3"))
     }
 
     @Test
     fun shouldGetNull() {
-        `when`(results.next()).thenReturn(false)
+        `when`(selectResults.next()).thenReturn(false)
 
         assert.that(entry.value, absent())
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldGetAnExceptionWhenMultipleValuesMatchKey() {
-        `when`(results.next()).thenReturn(true, true)
+        `when`(selectResults.next()).thenReturn(true, true)
 
         entry.value
     }
 
     @Test
     fun shouldSetValueFirstTime() {
-        `when`(results.next()).thenReturn(false, true, false)
-        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(selectResults.next()).thenReturn(false, true, false)
+        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("3")
 
         val previous = entry.setValue("3")
 
@@ -88,8 +97,9 @@ class DatabaseEntryTest {
 
     @Test
     fun shouldSetValueSecondTime() {
-        `when`(results.next()).thenReturn(true, false, true, false)
-        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("2", "3")
+        `when`(selectResults.next()).thenReturn(true, false, true, false)
+        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("2",
+                "3")
 
         val previous = entry.setValue("3")
 
@@ -99,8 +109,8 @@ class DatabaseEntryTest {
 
     @Test
     fun shouldSetNull() {
-        `when`(results.next()).thenReturn(true, false, false)
-        `when`(results.getString(eq(VALUE_COLUMN))).thenReturn("3")
+        `when`(selectResults.next()).thenReturn(true, false, false)
+        `when`(selectResults.getString(eq(VALUE_COLUMN))).thenReturn("3")
 
         val previous = entry.setValue(null)
 
