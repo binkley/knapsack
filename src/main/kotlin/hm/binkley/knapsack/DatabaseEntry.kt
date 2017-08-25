@@ -26,8 +26,7 @@ class DatabaseEntry(
         }
 
     override fun setValue(newValue: String?): String? {
-        database.autoCommit = false
-        try {
+        return transaction {
             val previous = value
             if (null == newValue) {
                 deleteOne.setString(1, key)
@@ -37,13 +36,7 @@ class DatabaseEntry(
                 upsertOne.setString(2, newValue)
                 upsertOne.executeUpdate()
             }
-            database.commit()
-            return previous
-        } catch (e: SQLException) {
-            database.rollback()
-            throw e
-        } finally {
-            database.autoCommit = true
+            previous
         }
     }
 
@@ -53,5 +46,19 @@ class DatabaseEntry(
 
     companion object {
         val properties = arrayOf(DatabaseEntry::key)
+    }
+
+    private fun <T> transaction(block: () -> T): T {
+        database.autoCommit = false
+        try {
+            val value = block()
+            database.commit()
+            return value
+        } catch (e: SQLException) {
+            database.rollback()
+            throw e
+        } finally {
+            database.autoCommit = true
+        }
     }
 }
