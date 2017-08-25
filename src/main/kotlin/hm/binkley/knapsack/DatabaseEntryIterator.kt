@@ -1,8 +1,10 @@
 package hm.binkley.knapsack
 
+import java.sql.Connection
 import java.sql.PreparedStatement
 
 class DatabaseEntryIterator(
+        private val database: Connection,
         selectAll: PreparedStatement,
         private val selectOne: PreparedStatement,
         private val upsertOne: PreparedStatement,
@@ -25,7 +27,7 @@ class DatabaseEntryIterator(
 
     private fun newDatabaseEntry()
             = DatabaseEntry(allResults.getString("key"),
-            selectOne, upsertOne, deleteOne)
+            database, selectOne, upsertOne, deleteOne)
 
     override fun close() {
         allResults.close()

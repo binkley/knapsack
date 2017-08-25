@@ -21,8 +21,8 @@ class DatabaseSetApplicationTest {
         val upsertOne = KNAPSACK.loader.prepareUpsertOne
         val deleteOne = KNAPSACK.loader.prepareDeleteOne
 
-        val set = DatabaseSet(countAll, selectAll, selectOne, upsertOne,
-                deleteOne)
+        val set = DatabaseSet(KNAPSACK.database, countAll, selectAll,
+                selectOne, upsertOne, deleteOne)
 
         assert.that(set.isEmpty(), equalTo(true))
         assert.that(set.add(entryOf("foo", "3")), equalTo(true))
@@ -49,7 +49,7 @@ class DatabaseSetApplicationTest {
         }
 
         assert.that(set.size, equalTo(1))
-        assert.that(set.map(Entry::key).first(), equalTo("bar"))
+        assert.that(set.map { it.key }.first(), equalTo("bar"))
     }
 
     companion object {
@@ -61,9 +61,7 @@ class DatabaseSetApplicationTest {
                 : MutableEntry<String, String?> {
             return object : MutableEntry<String, String?> {
                 override val value: String?
-                    get() {
-                        return value
-                    }
+                    get() = value
 
                 override fun setValue(newValue: String?): String? {
                     throw UnsupportedOperationException()

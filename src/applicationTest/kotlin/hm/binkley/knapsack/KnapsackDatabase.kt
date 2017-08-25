@@ -5,9 +5,11 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 class KnapsackDatabase : ExternalResource() {
-    private lateinit var connection: Connection
+    private lateinit var _database: Connection
     private lateinit var _loader: SQLLoader
 
+    val database
+        get() = _database
     val loader
         get() = _loader
 
@@ -18,13 +20,13 @@ class KnapsackDatabase : ExternalResource() {
     }
 
     override fun before() {
-        connection = DriverManager.getConnection(
+        _database = DriverManager.getConnection(
                 "jdbc:hsqldb:mem:knapsack")
-        _loader = SQLLoader(connection)
+        _loader = SQLLoader(_database)
         _loader.loadSchema()
     }
 
     override fun after() {
-        connection.close()
+        _database.close()
     }
 }

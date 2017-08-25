@@ -8,11 +8,13 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseEntryIteratorTest {
+    @Mock private lateinit var database: Connection
     @Mock private lateinit var selectAll: PreparedStatement
     @Mock private lateinit var allResults: ResultSet
     @Mock private lateinit var selectOne: PreparedStatement
@@ -24,7 +26,8 @@ class DatabaseEntryIteratorTest {
     fun setUpDatabase() {
         `when`(selectAll.executeQuery()).thenReturn(allResults)
 
-        iter = DatabaseEntryIterator(selectAll, selectOne, upsertOne, deleteOne)
+        iter = DatabaseEntryIterator(database, selectAll, selectOne, upsertOne,
+                deleteOne)
     }
 
     @Test

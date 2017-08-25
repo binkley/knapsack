@@ -11,11 +11,13 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseSetTest {
+    @Mock private lateinit var database: Connection
     @Mock private lateinit var countAll: PreparedStatement
     @Mock private lateinit var countResult: ResultSet
     @Mock private lateinit var selectAll: PreparedStatement
@@ -32,7 +34,8 @@ class DatabaseSetTest {
         `when`(selectAll.executeQuery()).thenReturn(allResults)
         `when`(selectOne.executeQuery()).thenReturn(oneResult)
 
-        set = DatabaseSet(countAll, selectAll, selectOne, upsertOne, deleteOne)
+        set = DatabaseSet(database, countAll, selectAll, selectOne, upsertOne,
+                deleteOne)
     }
 
     @Test
@@ -80,15 +83,15 @@ class DatabaseSetTest {
         `when`(countResult.getInt(eq("size"))).thenReturn(0)
 
         assert.that(set,
-                equalTo(DatabaseSet(countAll, selectAll, selectOne, upsertOne,
-                        deleteOne)))
+                equalTo(DatabaseSet(database, countAll, selectAll, selectOne,
+                        upsertOne, deleteOne)))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
         assert.that(set.hashCode(),
-                equalTo(DatabaseSet(countAll, selectAll, selectOne, upsertOne,
-                        deleteOne).hashCode()))
+                equalTo(DatabaseSet(database, countAll, selectAll, selectOne,
+                        upsertOne, deleteOne).hashCode()))
     }
 
     @Test
@@ -97,7 +100,8 @@ class DatabaseSetTest {
         `when`(allResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.contains(
-                DatabaseEntry("foo", selectOne, upsertOne, deleteOne)),
+                DatabaseEntry("foo", database, selectOne, upsertOne,
+                        deleteOne)),
                 equalTo(true))
     }
 
@@ -107,7 +111,8 @@ class DatabaseSetTest {
         `when`(allResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.remove(
-                DatabaseEntry("foo", selectOne, upsertOne, deleteOne)),
+                DatabaseEntry("foo", database, selectOne, upsertOne,
+                        deleteOne)),
                 equalTo(true))
 
         verify(deleteOne).setString(1, "foo")
@@ -120,7 +125,8 @@ class DatabaseSetTest {
         `when`(oneResult.getString(eq("value"))).thenReturn("3")
 
         val changed = set.add(
-                DatabaseEntry("foo", selectOne, upsertOne, deleteOne))
+                DatabaseEntry("foo", database, selectOne, upsertOne,
+                        deleteOne))
 
         assert.that(changed, equalTo(true))
     }

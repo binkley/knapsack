@@ -4,7 +4,9 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -12,11 +14,18 @@ import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.eq
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
+import java.sql.SQLException
 
 @RunWith(MockitoJUnitRunner::class)
 class DatabaseEntryTest {
+    @Rule
+    @JvmField
+    val thrown = ExpectedException.none()!!
+
+    @Mock private lateinit var database: Connection
     @Mock private lateinit var selectOne: PreparedStatement
     @Mock private lateinit var selectResults: ResultSet
     @Mock private lateinit var upsertOne: PreparedStatement
@@ -27,7 +36,7 @@ class DatabaseEntryTest {
     fun setUpDatabase() {
         `when`(selectOne.executeQuery()).thenReturn(selectResults)
 
-        entry = DatabaseEntry("foo", selectOne, upsertOne, deleteOne)
+        entry = DatabaseEntry("foo", database, selectOne, upsertOne, deleteOne)
     }
 
     @Test
@@ -37,8 +46,8 @@ class DatabaseEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseEntry("foo", selectOne, upsertOne,
-                deleteOne)))
+        assert.that(entry, equalTo(DatabaseEntry("foo", database, selectOne,
+                upsertOne, deleteOne)))
     }
 
     @Suppress("ReplaceCallWithComparison")
@@ -50,7 +59,7 @@ class DatabaseEntryTest {
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseEntry("foo", selectOne, upsertOne,
+                equalTo(DatabaseEntry("foo", database, selectOne, upsertOne,
                         deleteOne).hashCode()))
     }
 
@@ -115,5 +124,25 @@ class DatabaseEntryTest {
 
         assert.that(previous, equalTo("3"))
         assert.that(entry.value, absent())
+    }
+
+    @Test
+    fun shouldCommit() {
+        `when`(selectResults.next()).thenReturn(false)
+
+        entry.setValue(null)
+
+        verify(database).commit()
+    }
+
+    @Test
+    fun shouldRollback() {
+        `when`(selectResults.next()).thenThrow(SQLException::class.java)
+
+        thrown.expect(SQLException::class.java)
+
+        entry.setValue(null)
+
+        verify(database).rollback()
     }
 }
