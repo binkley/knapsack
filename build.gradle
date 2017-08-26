@@ -78,6 +78,10 @@ task applicationTest(type: Test) {
     dependsOn test
     testClassesDirs = sourceSets.applicationTest.output.classesDirs
     classpath = sourceSets.applicationTest.runtimeClasspath
+
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
 jacoco {
