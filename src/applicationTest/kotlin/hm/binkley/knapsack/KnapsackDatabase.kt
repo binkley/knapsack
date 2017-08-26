@@ -9,8 +9,6 @@ class KnapsackDatabase : ExternalResource() {
     private lateinit var _database: Connection
     private lateinit var _loader: SQLLoader
 
-    val database
-        get() = _database
     val loader
         get() = _loader
 
@@ -28,6 +26,6 @@ class KnapsackDatabase : ExternalResource() {
     }
 
     override fun after() {
-        _database.close()
+        _loader.close()
     }
 }

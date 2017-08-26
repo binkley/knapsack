@@ -18,7 +18,6 @@ class DatabaseEntryApplicationTest {
 
         assert.that(entry.value, absent())
         assert.that(entry.setValue("3"), absent())
-        assert.that(KNAPSACK.database.autoCommit, equalTo(true))
         assert.that(entry.setValue("4"), equalTo("3"))
         assert.that(entry.value, equalTo("4"))
     }
