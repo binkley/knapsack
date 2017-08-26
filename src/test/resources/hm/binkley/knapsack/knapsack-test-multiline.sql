@@ -1,0 +1,6 @@
+LINE
+ONE;
+
+LINE
+TWO
+;

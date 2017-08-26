@@ -8,30 +8,31 @@ class SQLLoader(private val database: Connection) : AutoCloseable {
     override fun close() = database.close()
 
     val countAll: PreparedStatement by lazy {
-        database.prepareStatement(readSql("count-all"))
+        database.prepareStatement(SQLReader("count-all").oneLine())
     }
     val selectAll: PreparedStatement by lazy {
-        database.prepareStatement(readSql("select-all"))
+        database.prepareStatement(SQLReader("select-all").oneLine())
     }
     val selectOne: PreparedStatement by lazy {
-        database.prepareStatement(readSql("select-one"))
+        database.prepareStatement(SQLReader("select-one").oneLine())
     }
     val upsertOne: PreparedStatement by lazy {
-        database.prepareStatement(readSql("upsert-one"))
+        database.prepareStatement(SQLReader("upsert-one").oneLine())
     }
     val deleteOne: PreparedStatement by lazy {
-        database.prepareStatement(readSql("delete-one"))
+        database.prepareStatement(SQLReader("delete-one").oneLine())
     }
 
     fun loadSchema() {
-        database.createStatement().use {
-            it.executeUpdate(readSql("schema"))
+        database.createStatement().use { statement ->
+            SQLReader("schema").lines().
+                    forEach { statement.executeUpdate(it) }
         }
     }
 
     fun reset() {
         database.createStatement().use {
-            it.executeUpdate(readSql("delete-all"))
+            it.executeUpdate(SQLReader("delete-all").oneLine())
         }
     }
 
@@ -47,11 +48,5 @@ class SQLLoader(private val database: Connection) : AutoCloseable {
         } finally {
             database.autoCommit = true
         }
-    }
-
-    private fun readSql(purpose: String): String {
-        return javaClass.
-                getResource("/hm/binkley/knapsack/knapsack-$purpose.sql").
-                readText()
     }
 }
