@@ -17,21 +17,20 @@ class SQLReader(private val purpose: String) {
     }
 
     private fun catenateSql(rawLines: List<String>): List<String> {
-        val lines = ArrayList<String>(rawLines.size)
+        val lines = ArrayList<String>()
         val buffer = StringBuilder()
-        for (rawLine in rawLines.map { it.trim() }) {
-            if (rawLine.isEmpty()) {
-                continue
-            }
-            if (COMMENTS.matcher(rawLine).find()) {
-                continue
-            }
+        for (rawLine in rawLines.
+                map { it.trim() }.
+                filter { it.isNotEmpty() }.
+                filter { !COMMENTS.matcher(it).find() }) {
             val matcher = TERMINATING_SEMICOLON.matcher(rawLine)
             if (!matcher.find()) {
-                buffer.append(' ').append(rawLine)
+                buffer += ' '
+                buffer += rawLine
                 continue
             }
-            buffer.append(' ').append(rawLine.substring(0, matcher.start()))
+            buffer += ' '
+            buffer += rawLine.substring(0, matcher.start())
             lines.add(buffer.toString())
             buffer.setLength(0)
         }
@@ -53,4 +52,8 @@ class SQLReader(private val purpose: String) {
         private val TERMINATING_SEMICOLON = Pattern.compile("; *$")
         private val COMMENTS = Pattern.compile("^--")
     }
+}
+
+private infix operator fun <T> StringBuilder.plusAssign(text: T) {
+    append(text)
 }
