@@ -4,7 +4,9 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.SQLException
 
-class SQLLoader(private val database: Connection) {
+class SQLLoader(private val database: Connection) : AutoCloseable {
+    override fun close() = database.close()
+
     val countAll: PreparedStatement by lazy {
         database.prepareStatement(readSql("count-all"))
     }
