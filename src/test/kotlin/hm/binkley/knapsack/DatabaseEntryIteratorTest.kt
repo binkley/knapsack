@@ -13,7 +13,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
-class DatabaseEntryIteratorTest {
+internal class DatabaseEntryIteratorTest {
     @Mock private lateinit var loader: SQLLoader
     @Mock private lateinit var selectAll: PreparedStatement
     @Mock private lateinit var allResults: ResultSet

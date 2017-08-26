@@ -14,7 +14,7 @@ import java.sql.SQLException
 import kotlin.test.fail
 
 @RunWith(MockitoJUnitRunner::class)
-class SQLLoaderTest {
+internal class SQLLoaderTest {
     @Mock private lateinit var database: Connection
     @InjectMocks private lateinit var loader: SQLLoader
 
