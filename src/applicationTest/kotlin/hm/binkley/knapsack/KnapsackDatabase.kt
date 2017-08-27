@@ -3,7 +3,7 @@ package hm.binkley.knapsack
 import org.junit.rules.ExternalResource
 import java.sql.Connection
 import java.sql.Connection.TRANSACTION_SERIALIZABLE
-import java.sql.DriverManager
+import java.sql.DriverManager.getConnection
 
 class KnapsackDatabase : ExternalResource() {
     private lateinit var _database: Connection
@@ -19,7 +19,8 @@ class KnapsackDatabase : ExternalResource() {
     }
 
     override fun before() {
-        _database = DriverManager.getConnection("jdbc:hsqldb:mem:knapsack")
+        val knapsackDir = System.getProperty("java.io.tmpdir")
+        _database = getConnection("jdbc:hsqldb:file:$knapsackDir/knapsack/db")
         _database.transactionIsolation = TRANSACTION_SERIALIZABLE
         _loader = SQLLoader(_database)
         _loader.loadSchema()
