@@ -47,6 +47,6 @@ internal class DatabaseMapApplicationTest {
     companion object {
         @ClassRule
         @JvmField
-        val KNAPSACK = KnapsackDatabase()
+        val KNAPSACK = KnapsackDatabaseTestRule()
     }
 }

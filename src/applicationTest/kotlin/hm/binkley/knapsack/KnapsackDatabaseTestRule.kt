@@ -5,7 +5,7 @@ import java.sql.Connection
 import java.sql.Connection.TRANSACTION_SERIALIZABLE
 import java.sql.DriverManager.getConnection
 
-class KnapsackDatabase : ExternalResource() {
+class KnapsackDatabaseTestRule : ExternalResource() {
     private lateinit var _database: Connection
     private lateinit var _loader: SQLLoader
 

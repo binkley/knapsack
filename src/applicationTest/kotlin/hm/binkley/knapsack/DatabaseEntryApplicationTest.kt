@@ -25,6 +25,6 @@ internal class DatabaseEntryApplicationTest {
     companion object {
         @ClassRule
         @JvmField
-        val KNAPSACK = KnapsackDatabase()
+        val KNAPSACK = KnapsackDatabaseTestRule()
     }
 }
