@@ -9,13 +9,12 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.sql.Connection
 import java.sql.SQLException
 import kotlin.test.fail
 
 @RunWith(MockitoJUnitRunner::class)
 internal class SQLLoaderTest {
-    @Mock private lateinit var database: Connection
+    @Mock private lateinit var database: Database
     @InjectMocks private lateinit var loader: SQLLoader
 
     @Test

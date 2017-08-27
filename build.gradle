@@ -90,14 +90,27 @@ jacoco {
 
 jacocoTestReport {
     executionData(test, applicationTest)
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    excludes: ['hm/binkley/knapsack/Database.class',
+                               'hm/binkley/knapsack/Database$*.class',
+                               'hm/binkley/knapsack/DatabaseEntry$*.class'])
+        })
+    }
 }
 
 jacocoTestCoverageVerification {
     dependsOn jacocoTestReport
     violationRules {
         rule {
+            element = 'CLASS'
+            excludes = ['hm.binkley.knapsack.Database',
+                        'hm.binkley.knapsack.Database.*',
+                        'hm.binkley.knapsack.DatabaseEntry.*']
             limit {
-                minimum = 0.93
+                minimum = 0.88
             }
         }
     }

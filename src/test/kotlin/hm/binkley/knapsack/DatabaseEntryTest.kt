@@ -17,7 +17,6 @@ import org.mockito.Mockito.eq
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -28,7 +27,7 @@ internal class DatabaseEntryTest {
     @JvmField
     val thrown = ExpectedException.none()!!
 
-    @Mock private lateinit var database: Connection
+    @Mock private lateinit var database: Database
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
     @Mock private lateinit var selectOne: PreparedStatement

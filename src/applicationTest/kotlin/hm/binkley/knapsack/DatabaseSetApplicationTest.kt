@@ -48,6 +48,6 @@ internal class DatabaseSetApplicationTest {
     companion object {
         @ClassRule
         @JvmField
-        val KNAPSACK = KnapsackDatabaseTestRule()
+        val KNAPSACK = DatabaseTestRule()
     }
 }

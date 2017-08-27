@@ -1,10 +1,9 @@
 package hm.binkley.knapsack
 
-import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.SQLException
 
-class SQLLoader(private val database: Connection) : AutoCloseable {
+class SQLLoader(private val database: Database) : AutoCloseable {
     override fun close() = database.close()
 
     val countAll: PreparedStatement by lazy {

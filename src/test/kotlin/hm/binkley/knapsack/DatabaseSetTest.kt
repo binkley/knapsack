@@ -14,13 +14,12 @@ import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
 internal class DatabaseSetTest {
-    @Mock private lateinit var database: Connection
+    @Mock private lateinit var database: Database
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
     @Mock private lateinit var countAll: PreparedStatement
