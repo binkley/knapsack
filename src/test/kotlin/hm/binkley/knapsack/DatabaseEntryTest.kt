@@ -54,8 +54,7 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseEntry("foo", loader
-        )))
+        assert.that(entry, equalTo(DatabaseEntry("foo", loader)))
     }
 
     @Suppress("ReplaceCallWithComparison")
@@ -67,8 +66,7 @@ internal class DatabaseEntryTest {
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseEntry("foo", loader
-                ).hashCode()))
+                equalTo(DatabaseEntry("foo", loader).hashCode()))
     }
 
     @Test
