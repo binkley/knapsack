@@ -6,10 +6,9 @@ import java.sql.DriverManager.getConnection
 
 class Database(private val database: Connection) : Connection by database {
     companion object {
-        fun main(): Database = database(
-                "${System.getProperty("user.home")}/.knapsack")
+        fun main(knapsackDir: String) = database(knapsackDir)
 
-        fun test(): Database = database(
+        fun test(): Database = main(
                 "${System.getProperty("java.io.tmpdir")}/knapsack")
 
         private fun database(knapsackDir: String): Database {

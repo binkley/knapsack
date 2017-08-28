@@ -107,8 +107,7 @@ jacocoTestCoverageVerification {
         rule {
             element = 'CLASS'
             excludes = ['hm.binkley.knapsack.Database',
-                        'hm.binkley.knapsack.Database.*',
-                        'hm.binkley.knapsack.DatabaseEntry.*',
+                        'hm.binkley.knapsack.DatabaseEntry.Companion.properties.1',
                         'hm.binkley.knapsack.DatabaseMap']
             limit {
                 minimum = 0.90
@@ -119,13 +118,6 @@ jacocoTestCoverageVerification {
             includes = ['hm.binkley.knapsack.DatabaseMap']
             limit {
                 minimum = 0.88
-            }
-        }
-        rule {
-            element = 'CLASS'
-            includes = ['hm.binkley.knapsack.Database.Companion']
-            limit {
-                minimum = 0.70
             }
         }
         rule {
