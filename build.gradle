@@ -125,7 +125,7 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
             includes = ['hm.binkley.knapsack.Database.Companion']
             limit {
-                minimum = 0.78
+                minimum = 0.70
             }
         }
         rule {
