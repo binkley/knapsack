@@ -2,63 +2,44 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
 
 internal class SQLReaderTest {
-    @Rule
-    @JvmField
-    public val thrown = ExpectedException.none()
-
     @Test
     fun shouldSkipComments() {
         val reader = SQLReader("test-comments")
 
-        assert.that(reader.lines().size, equalTo(2))
+        assert.that(reader.lines(), equalTo(listOf("LINE ONE", "LINE TWO")))
     }
 
     @Test
     fun shouldSkipBlankLines() {
         val reader = SQLReader("test-blank-lines")
 
-        assert.that(reader.lines().size, equalTo(2))
+        assert.that(reader.lines(), equalTo(listOf("LINE ONE", "LINE TWO")))
     }
 
     @Test
     fun shouldTrimWhitespace() {
         val reader = SQLReader("test-whitespace")
 
-        assert.that(reader.lines().size, equalTo(2))
+        assert.that(reader.lines(), equalTo(listOf("LINE ONE", "LINE TWO")))
     }
 
     @Test
     fun shouldCatenate() {
         val reader = SQLReader("test-multiline")
 
-        assert.that(reader.lines().size, equalTo(2))
+        assert.that(reader.lines(), equalTo(listOf("LINE ONE", "LINE TWO")))
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun shouldComplainAtUnterminated() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage("test-unterminated")
-        thrown.expectMessage("LINE TWO")
-
-        val reader = SQLReader("test-unterminated")
-
-        reader.lines()
+        SQLReader("test-unterminated").lines()
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun shouldComplainAtMultiline() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage("test-single-line")
-        thrown.expectMessage("LINE ONE")
-        thrown.expectMessage("LINE TWO")
-
-        val reader = SQLReader("test-single-line")
-
-        reader.oneLine()
+        SQLReader("test-single-line").oneLine()
     }
 }

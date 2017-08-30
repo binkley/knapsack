@@ -6,32 +6,25 @@ import java.util.regex.Pattern
 class SQLReader(private val purpose: String) {
     fun lines() = catenateSql(rawLines())
 
-    fun oneLine() = oneLineOnly(lines())
-
-    private fun oneLineOnly(lines: List<String>): String {
-        if (1 != lines.size) {
-            throw IllegalArgumentException(
-                    "Must have exactly one line in '$purpose':\n$lines")
-        }
-        return lines[0]
-    }
+    fun oneLine() = lines().single()
 
     private fun catenateSql(rawLines: List<String>): List<String> {
         val lines = ArrayList<String>()
         val buffer = StringBuilder()
         for (rawLine in rawLines.
                 map { it.trim() }.
-                filter { it.isNotEmpty() }.
-                filter { !COMMENTS.matcher(it).find() }) {
-            val matcher = TERMINATING_SEMICOLON.matcher(rawLine)
+                filter { !it.isEmpty() }.
+                filter { !it.isComment() }) {
+            buffer += ' '
+
+            val matcher = rawLine.matchEnd()
             if (!matcher.find()) {
-                buffer += ' '
                 buffer += rawLine
                 continue
             }
-            buffer += ' '
+
             buffer += rawLine.substring(0, matcher.start())
-            lines.add(buffer.toString())
+            lines.add(buffer.trim().toString())
             buffer.setLength(0)
         }
 
@@ -49,11 +42,14 @@ class SQLReader(private val purpose: String) {
             lines()
 
     companion object {
-        private val TERMINATING_SEMICOLON = Pattern.compile("; *$")
+        private val TERMINATING_SEMICOLON = Pattern.compile("\\s*;\\s*$")
         private val COMMENTS = Pattern.compile("^--")
-    }
-}
 
-private infix operator fun <T> StringBuilder.plusAssign(text: T) {
-    append(text)
+        private fun String.isComment() = COMMENTS.matcher(this).find()
+        private fun String.matchEnd() = TERMINATING_SEMICOLON.matcher(this)
+
+        private infix operator fun <T> StringBuilder.plusAssign(text: T) {
+            append(text)
+        }
+    }
 }
