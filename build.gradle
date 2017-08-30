@@ -76,6 +76,7 @@ test {
 
 task applicationTest(type: Test) {
     dependsOn test
+
     testClassesDirs = sourceSets.applicationTest.output.classesDirs
     classpath = sourceSets.applicationTest.runtimeClasspath
 
@@ -89,20 +90,14 @@ jacoco {
 }
 
 jacocoTestReport {
-    executionData(test, applicationTest)
+    dependsOn applicationTest
 
-    if (false) afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    excludes: ['hm/binkley/knapsack/Database.class',
-                               'hm/binkley/knapsack/Database$*.class',
-                               'hm/binkley/knapsack/DatabaseEntry$*.class'])
-        })
-    }
+    executionData(test, applicationTest)
 }
 
 jacocoTestCoverageVerification {
     dependsOn jacocoTestReport
+
     violationRules {
         rule {
             element = 'CLASS'
@@ -131,7 +126,7 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
             includes = ['hm.binkley.knapsack.Database']
             limit {
-                minimum = 0.13
+                minimum = 0.15
             }
         }
     }
@@ -144,6 +139,5 @@ task downloadDependencies(type: Exec) {
 }
 
 check {
-    dependsOn applicationTest
     dependsOn jacocoTestCoverageVerification
 }

@@ -4,7 +4,8 @@ import java.sql.Connection
 import java.sql.Connection.TRANSACTION_SERIALIZABLE
 import java.sql.DriverManager.getConnection
 
-class Database(private val database: Connection) : Connection by database {
+class Database(val knapsackDir: String, private val database: Connection)
+    : Connection by database {
     companion object {
         fun main(knapsackDir: String) = database(knapsackDir)
 
@@ -14,7 +15,7 @@ class Database(private val database: Connection) : Connection by database {
         private fun database(knapsackDir: String): Database {
             val connection = getConnection("jdbc:hsqldb:file:$knapsackDir")
             connection.transactionIsolation = TRANSACTION_SERIALIZABLE
-            return Database(connection)
+            return Database(knapsackDir, connection)
         }
     }
 }
