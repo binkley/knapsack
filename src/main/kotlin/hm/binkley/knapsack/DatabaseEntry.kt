@@ -40,6 +40,6 @@ class DatabaseEntry(override val key: String, private val loader: SQLLoader)
     override fun hashCode() = Objects.hash(key)
 
     companion object {
-        val properties = arrayOf(DatabaseEntry::key)
+        private val properties = arrayOf(DatabaseEntry::key)
     }
 }
