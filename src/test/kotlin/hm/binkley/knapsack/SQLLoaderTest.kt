@@ -68,6 +68,16 @@ internal class SQLLoaderTest {
     }
 
     @Test
+    fun shouldDeleteOne() {
+        loader.deleteOne("foo")
+
+        val inOrder = inOrder(statement)
+        inOrder.verify(statement).setString(1, "foo")
+        inOrder.verify(statement).executeUpdate()
+        verify(statement, never()).close()
+    }
+
+    @Test
     fun shouldCommit() {
         loader.transaction { }
 

@@ -10,6 +10,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
+import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 import org.mockito.Spy
@@ -26,12 +27,10 @@ internal class DatabaseSetTest {
     @Mock private lateinit var countAllResults: ResultSet
     @Mock private lateinit var selectAll: PreparedStatement
     @Mock private lateinit var selectAllResults: ResultSet
-    @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var set: DatabaseSet
 
     @Before
     fun setUpDatabase() {
-        doReturn(deleteOne).`when`(loader).deleteOne
         doReturn(countAll).`when`(loader).countAll
         doReturn(selectAll).`when`(loader).selectAll
 
@@ -106,6 +105,7 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldRemoveEntry() {
+        doNothing().`when`(loader).deleteOne("foo")
         doReturn("3").`when`(loader).selectOne("foo")
         `when`(selectAllResults.next()).thenReturn(true, false)
         `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
@@ -113,12 +113,12 @@ internal class DatabaseSetTest {
         assert.that(set.remove(DatabaseEntry("foo", loader)),
                 equalTo(true))
 
-        verify(deleteOne).setString(1, "foo")
-        verify(deleteOne).executeUpdate()
+        verify(loader).deleteOne("foo")
     }
 
     @Test
     fun shouldMutate() {
+        doNothing().`when`(loader).deleteOne("foo")
         doReturn(null, "3").`when`(loader).selectOne("foo")
 
         val changed = set.add(DatabaseEntry("foo", loader))

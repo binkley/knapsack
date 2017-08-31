@@ -13,9 +13,7 @@ class DatabaseEntry(override val key: String, private val loader: SQLLoader)
         return loader.transaction {
             val previous = value
             if (null == newValue) {
-                val deleteOne = loader.deleteOne
-                deleteOne.setString(1, key)
-                deleteOne.executeUpdate()
+                loader.deleteOne(key)
             } else {
                 val upsertOne = loader.upsertOne
                 upsertOne.setString(1, key)

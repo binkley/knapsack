@@ -10,8 +10,9 @@ import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
@@ -28,13 +29,11 @@ internal class DatabaseEntryTest {
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
     @Mock private lateinit var upsertOne: PreparedStatement
-    @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var entry: DatabaseEntry
 
     @Before
     fun setUpDatabase() {
         doReturn(upsertOne).`when`(loader).upsertOne
-        doReturn(deleteOne).`when`(loader).deleteOne
         doReturn("3").`when`(loader).selectOne("foo")
 
         entry = DatabaseEntry("foo", loader)
@@ -99,15 +98,20 @@ internal class DatabaseEntryTest {
     @Test
     fun shouldSetNull() {
         doReturn("3", null).`when`(loader).selectOne("foo")
+        doNothing().`when`(loader).deleteOne("foo")
 
         val previous = entry.setValue(null)
 
         assert.that(previous, equalTo("3"))
         assert.that(entry.value, absent())
+
+        verify(loader).deleteOne("foo")
     }
 
     @Test
     fun shouldCommit() {
+        doNothing().`when`(loader).deleteOne("foo")
+
         entry.setValue(null)
 
         verify(database).commit()
@@ -116,7 +120,7 @@ internal class DatabaseEntryTest {
     @Test
     fun shouldRollback() {
         thrown.expect(SQLException::class.java)
-        `when`(deleteOne.executeUpdate()).thenThrow(SQLException::class.java)
+        doThrow(SQLException::class.java).`when`(loader).deleteOne("foo")
 
         entry.setValue(null)
 
