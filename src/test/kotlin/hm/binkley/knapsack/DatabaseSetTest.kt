@@ -23,71 +23,67 @@ internal class DatabaseSetTest {
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
     @Mock private lateinit var countAll: PreparedStatement
-    @Mock private lateinit var countResult: ResultSet
+    @Mock private lateinit var countAllResults: ResultSet
     @Mock private lateinit var selectAll: PreparedStatement
-    @Mock private lateinit var allResults: ResultSet
-    @Mock private lateinit var selectOne: PreparedStatement
-    @Mock private lateinit var oneResult: ResultSet
+    @Mock private lateinit var selectAllResults: ResultSet
     @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var set: DatabaseSet
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectOne).`when`(loader).selectOne
         doReturn(deleteOne).`when`(loader).deleteOne
         doReturn(countAll).`when`(loader).countAll
         doReturn(selectAll).`when`(loader).selectAll
 
-        `when`(countAll.executeQuery()).thenReturn(countResult)
-        `when`(selectAll.executeQuery()).thenReturn(allResults)
-        `when`(selectOne.executeQuery()).thenReturn(oneResult)
+        `when`(countAll.executeQuery()).thenReturn(countAllResults)
+        `when`(selectAll.executeQuery()).thenReturn(selectAllResults)
 
         set = DatabaseSet(loader)
     }
 
     @Test
     fun shouldClose() {
-        `when`(countResult.next()).thenReturn(true, false)
-        `when`(countResult.getInt(eq("size"))).thenReturn(0)
+        `when`(countAllResults.next()).thenReturn(true, false)
+        `when`(countAllResults.getInt(eq("size"))).thenReturn(0)
 
         set.size
 
-        verify(countResult, atLeastOnce()).close()
+        verify(countAllResults, atLeastOnce()).close()
     }
 
     @Test
     fun shouldStartEmptySized() {
-        `when`(countResult.next()).thenReturn(true, false)
-        `when`(countResult.getInt(eq("size"))).thenReturn(0)
+        `when`(countAllResults.next()).thenReturn(true, false)
+        `when`(countAllResults.getInt(eq("size"))).thenReturn(0)
 
         assert.that(set.size, equalTo(0))
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldFailIfSizeSqlHasNoResults() {
-        `when`(countResult.next()).thenReturn(false)
+        `when`(countAllResults.next()).thenReturn(false)
 
         set.size
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldFailIfSizeSqlHasTooManyResults() {
-        `when`(countResult.next()).thenReturn(true, true, false)
+        `when`(countAllResults.next()).thenReturn(true, true, false)
 
         set.size
     }
 
     @Test
     fun shouldStartEmptyIterated() {
-        `when`(allResults.next()).thenReturn(false)
+        `when`(selectAllResults.next()).thenReturn(false)
 
         assert.that(set.iterator().hasNext(), equalTo(false))
     }
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        `when`(countResult.next()).thenReturn(true, false, true, false)
-        `when`(countResult.getInt(eq("size"))).thenReturn(0)
+        `when`(countAllResults.next()).thenReturn(true, false, true, false)
+        `when`(countAllResults.getInt(eq("size"))).thenReturn(0)
 
         assert.that(set,
                 equalTo(DatabaseSet(loader)))
@@ -101,8 +97,8 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldFindEntry() {
-        `when`(allResults.next()).thenReturn(true, false)
-        `when`(allResults.getString(eq("key"))).thenReturn("foo")
+        `when`(selectAllResults.next()).thenReturn(true, false)
+        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.contains(DatabaseEntry("foo", loader)),
                 equalTo(true))
@@ -110,8 +106,9 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldRemoveEntry() {
-        `when`(allResults.next()).thenReturn(true, false)
-        `when`(allResults.getString(eq("key"))).thenReturn("foo")
+        doReturn("3").`when`(loader).selectOne("foo")
+        `when`(selectAllResults.next()).thenReturn(true, false)
+        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.remove(DatabaseEntry("foo", loader)),
                 equalTo(true))
@@ -122,8 +119,7 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldMutate() {
-        `when`(oneResult.next()).thenReturn(false, true, false)
-        `when`(oneResult.getString(eq("value"))).thenReturn("3")
+        doReturn(null, "3").`when`(loader).selectOne("foo")
 
         val changed = set.add(DatabaseEntry("foo", loader))
 

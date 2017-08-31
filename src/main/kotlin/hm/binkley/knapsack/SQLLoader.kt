@@ -12,7 +12,7 @@ class SQLLoader(private val database: Database) : AutoCloseable {
     val selectAll: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("select-all").oneLine())
     }
-    val selectOne: PreparedStatement by lazy {
+    private val selectOne: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("select-one").oneLine())
     }
     val upsertOne: PreparedStatement by lazy {
@@ -20,6 +20,16 @@ class SQLLoader(private val database: Database) : AutoCloseable {
     }
     val deleteOne: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("delete-one").oneLine())
+    }
+
+    fun selectOne(key: String): String? {
+        selectOne.setString(1, key)
+        selectOne.executeQuery().use { results ->
+            if (!results.next()) return null
+            val value = results.getString("value")
+            if (results.next()) throw IllegalStateException()
+            return value
+        }
     }
 
     fun loadSchema() {

@@ -13,6 +13,9 @@ class DatabaseEntryIterator(private val loader: SQLLoader)
     }
 
     override fun remove() {
+        if (allResults.isBeforeFirst || allResults.isAfterLast)
+            throw IllegalStateException()
+        // TODO: Detect remove() twice in a row without next() between
         newDatabaseEntry().setValue(null)
         next() // Skip this element
     }

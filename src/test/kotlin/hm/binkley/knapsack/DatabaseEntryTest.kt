@@ -11,14 +11,11 @@ import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.eq
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.PreparedStatement
-import java.sql.ResultSet
 import java.sql.SQLException
 
 @RunWith(MockitoJUnitRunner::class)
@@ -30,19 +27,15 @@ internal class DatabaseEntryTest {
     @Mock private lateinit var database: Database
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
-    @Mock private lateinit var selectOne: PreparedStatement
-    @Mock private lateinit var selectResults: ResultSet
     @Mock private lateinit var upsertOne: PreparedStatement
     @Mock private lateinit var deleteOne: PreparedStatement
     private lateinit var entry: DatabaseEntry
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectOne).`when`(loader).selectOne
         doReturn(upsertOne).`when`(loader).upsertOne
         doReturn(deleteOne).`when`(loader).deleteOne
-
-        `when`(selectOne.executeQuery()).thenReturn(selectResults)
+        doReturn("3").`when`(loader).selectOne("foo")
 
         entry = DatabaseEntry("foo", loader)
     }
@@ -70,38 +63,22 @@ internal class DatabaseEntryTest {
     }
 
     @Test
-    fun shouldClose() {
+    fun shouldGetValue() {
         entry.value
 
-        verify(selectResults, atLeastOnce()).close()
-    }
-
-    @Test
-    fun shouldGetValue() {
-        `when`(selectResults.next()).thenReturn(true, false)
-        `when`(selectResults.getString(eq("value"))).thenReturn("3")
-
-        assert.that(entry.value, equalTo("3"))
+        verify(loader).selectOne("foo")
     }
 
     @Test
     fun shouldGetNull() {
-        `when`(selectResults.next()).thenReturn(false)
+        doReturn(null).`when`(loader).selectOne("foo")
 
         assert.that(entry.value, absent())
     }
 
-    @Test(expected = IllegalStateException::class)
-    fun shouldGetAnExceptionWhenMultipleValuesMatchKey() {
-        `when`(selectResults.next()).thenReturn(true, true)
-
-        entry.value
-    }
-
     @Test
     fun shouldSetValueFirstTime() {
-        `when`(selectResults.next()).thenReturn(false, true, false)
-        `when`(selectResults.getString(eq("value"))).thenReturn("3")
+        doReturn(null, "3").`when`(loader).selectOne("foo")
 
         val previous = entry.setValue("3")
 
@@ -111,9 +88,7 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldSetValueSecondTime() {
-        `when`(selectResults.next()).thenReturn(true, false, true, false)
-        `when`(selectResults.getString(eq("value"))).thenReturn("2",
-                "3")
+        doReturn("2", "3").`when`(loader).selectOne("foo")
 
         val previous = entry.setValue("3")
 
@@ -123,8 +98,7 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldSetNull() {
-        `when`(selectResults.next()).thenReturn(true, false, false)
-        `when`(selectResults.getString(eq("value"))).thenReturn("3")
+        doReturn("3", null).`when`(loader).selectOne("foo")
 
         val previous = entry.setValue(null)
 
@@ -134,8 +108,6 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldCommit() {
-        `when`(selectResults.next()).thenReturn(false)
-
         entry.setValue(null)
 
         verify(database).commit()
@@ -143,9 +115,8 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldRollback() {
-        `when`(selectResults.next()).thenThrow(SQLException::class.java)
-
         thrown.expect(SQLException::class.java)
+        `when`(deleteOne.executeUpdate()).thenThrow(SQLException::class.java)
 
         entry.setValue(null)
 

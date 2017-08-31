@@ -7,16 +7,7 @@ import kotlin.collections.MutableMap.MutableEntry
 class DatabaseEntry(override val key: String, private val loader: SQLLoader)
     : MutableEntry<String, String?> {
     override val value: String?
-        get() {
-            val selectOne = loader.selectOne
-            selectOne.setString(1, key)
-            selectOne.executeQuery().use { results ->
-                if (!results.next()) return null
-                val value = results.getString("value")
-                if (results.next()) throw IllegalStateException()
-                return value
-            }
-        }
+        get() = loader.selectOne(key)
 
     override fun setValue(newValue: String?): String? {
         return loader.transaction {
