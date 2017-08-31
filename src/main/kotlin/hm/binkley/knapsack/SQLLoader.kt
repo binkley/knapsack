@@ -16,7 +16,7 @@ class SQLLoader(private val database: Database) : AutoCloseable {
     private val selectOne: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("select-one").oneLine())
     }
-    val upsertOne: PreparedStatement by lazy {
+    private val upsertOne: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("upsert-one").oneLine())
     }
     private val deleteOne: PreparedStatement by lazy {
@@ -42,6 +42,12 @@ class SQLLoader(private val database: Database) : AutoCloseable {
             if (results.next()) throw IllegalStateException()
             return value
         }
+    }
+
+    fun upsertOne(key: String, newValue: String) {
+        upsertOne.setString(1, key)
+        upsertOne.setString(2, newValue)
+        upsertOne.executeUpdate()
     }
 
     fun deleteOne(key: String) {

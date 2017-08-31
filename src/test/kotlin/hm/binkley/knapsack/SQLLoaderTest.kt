@@ -96,6 +96,17 @@ internal class SQLLoaderTest {
     }
 
     @Test
+    fun shouldUpsertOne() {
+        loader.upsertOne("foo", "3")
+
+        val inOrder = inOrder(statement)
+        inOrder.verify(statement).setString(1, "foo")
+        inOrder.verify(statement).setString(2, "3")
+        inOrder.verify(statement).executeUpdate()
+        verify(statement, never()).close()
+    }
+
+    @Test
     fun shouldDeleteOne() {
         loader.deleteOne("foo")
 

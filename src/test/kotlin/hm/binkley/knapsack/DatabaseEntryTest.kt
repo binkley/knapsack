@@ -8,15 +8,16 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.doThrow
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import java.sql.PreparedStatement
 import java.sql.SQLException
 
 @RunWith(MockitoJUnitRunner::class)
@@ -28,12 +29,10 @@ internal class DatabaseEntryTest {
     @Mock private lateinit var database: Database
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
-    @Mock private lateinit var upsertOne: PreparedStatement
     private lateinit var entry: DatabaseEntry
 
     @Before
     fun setUpDatabase() {
-        doReturn(upsertOne).`when`(loader).upsertOne
         doReturn("3").`when`(loader).selectOne("foo")
 
         entry = DatabaseEntry("foo", loader)
@@ -77,22 +76,30 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldSetValueFirstTime() {
+        doNothing().`when`(loader).upsertOne("foo", "3")
         doReturn(null, "3").`when`(loader).selectOne("foo")
 
         val previous = entry.setValue("3")
 
         assert.that(previous, absent())
         assert.that(entry.value, equalTo("3"))
+
+        verify(loader, never()).deleteOne(anyString())
+        verify(loader).upsertOne("foo", "3")
     }
 
     @Test
     fun shouldSetValueSecondTime() {
+        doNothing().`when`(loader).upsertOne("foo", "3")
         doReturn("2", "3").`when`(loader).selectOne("foo")
 
         val previous = entry.setValue("3")
 
         assert.that(previous, equalTo("2"))
         assert.that(entry.value, equalTo("3"))
+
+        verify(loader, never()).deleteOne(anyString())
+        verify(loader).upsertOne("foo", "3")
     }
 
     @Test
@@ -106,6 +113,7 @@ internal class DatabaseEntryTest {
         assert.that(entry.value, absent())
 
         verify(loader).deleteOne("foo")
+        verify(loader, never()).upsertOne(anyString(), anyString())
     }
 
     @Test
