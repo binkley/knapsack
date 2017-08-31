@@ -15,7 +15,7 @@ internal class DatabaseSetApplicationTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val set = DatabaseSet(KNAPSACK.loader)
+        val set = DatabaseSet(KNAPSACK.database)
 
         assert.that(set.isEmpty(), equalTo(true))
         assert.that(set.add(SimpleEntry("foo", "3")), equalTo(true))

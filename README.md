@@ -29,4 +29,4 @@ of the value of "foo".  In this example the history would be:
 
 ## TODO
 
-* Test `SQLLoader` for commit/rollback, not the database entry
+* Test `Database` for commit/rollback, not the connection entry

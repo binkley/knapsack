@@ -16,21 +16,22 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
+import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import kotlin.test.fail
 
 @RunWith(MockitoJUnitRunner::class)
-internal class SQLLoaderTest {
-    @Mock private lateinit var database: Database
+internal class DatabaseTest {
+    @Mock private lateinit var connection: Connection
     @Mock private lateinit var statement: PreparedStatement
     @Mock private lateinit var results: ResultSet
-    @InjectMocks private lateinit var loader: SQLLoader
+    @InjectMocks private lateinit var database: Database
 
     @Before
     fun setUp() {
-        `when`(database.prepareStatement(anyString())).thenReturn(statement)
+        `when`(connection.prepareStatement(anyString())).thenReturn(statement)
         `when`(statement.executeQuery()).thenReturn(results)
     }
 
@@ -39,7 +40,7 @@ internal class SQLLoaderTest {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
-        assert.that(loader.countAll(), equalTo(3))
+        assert.that(database.countAll(), equalTo(3))
 
         val inOrder = inOrder(statement, results)
         inOrder.verify(statement).executeQuery()
@@ -51,7 +52,7 @@ internal class SQLLoaderTest {
     fun shouldThrowWhenCountAllHasNone() {
         `when`(results.next()).thenReturn(false)
 
-        loader.countAll()
+        database.countAll()
     }
 
     @Test(expected = IllegalStateException::class)
@@ -59,7 +60,7 @@ internal class SQLLoaderTest {
         `when`(results.next()).thenReturn(true, true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
-        loader.countAll()
+        database.countAll()
     }
 
     @Test
@@ -67,7 +68,7 @@ internal class SQLLoaderTest {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getString(eq("value"))).thenReturn("3")
 
-        val value = loader.selectOne("foo")
+        val value = database.selectOne("foo")
 
         assert.that(value, equalTo("3"))
 
@@ -82,7 +83,7 @@ internal class SQLLoaderTest {
     fun shouldReturnNullWhenSelectOneHasNone() {
         `when`(results.next()).thenReturn(false)
 
-        val value = loader.selectOne("foo")
+        val value = database.selectOne("foo")
 
         assert.that(value, absent())
     }
@@ -92,12 +93,12 @@ internal class SQLLoaderTest {
         `when`(results.next()).thenReturn(true, true, false)
         `when`(results.getString(eq("value"))).thenReturn("3")
 
-        loader.selectOne("foo")
+        database.selectOne("foo")
     }
 
     @Test
     fun shouldUpsertOne() {
-        loader.upsertOne("foo", "3")
+        database.upsertOne("foo", "3")
 
         val inOrder = inOrder(statement)
         inOrder.verify(statement).setString(1, "foo")
@@ -108,7 +109,7 @@ internal class SQLLoaderTest {
 
     @Test
     fun shouldDeleteOne() {
-        loader.deleteOne("foo")
+        database.deleteOne("foo")
 
         val inOrder = inOrder(statement)
         inOrder.verify(statement).setString(1, "foo")
@@ -118,32 +119,32 @@ internal class SQLLoaderTest {
 
     @Test
     fun shouldCommit() {
-        loader.transaction { }
+        database.transaction { }
 
-        val inOrder = inOrder(database)
-        inOrder.verify(database, times(1)).autoCommit = false
-        inOrder.verify(database, times(1)).commit()
-        inOrder.verify(database, times(1)).autoCommit = true
-        verify(database, never()).rollback()
+        val inOrder = inOrder(connection)
+        inOrder.verify(connection, times(1)).autoCommit = false
+        inOrder.verify(connection, times(1)).commit()
+        inOrder.verify(connection, times(1)).autoCommit = true
+        verify(connection, never()).rollback()
     }
 
     @Suppress("UNREACHABLE_CODE")
     @Test
     fun shouldRollback() = try {
-        loader.transaction { throw SQLException() }
+        database.transaction { throw SQLException() }
         fail("Did not throw")
     } catch (e: SQLException) {
-        val inOrder = inOrder(database)
-        inOrder.verify(database, times(1)).autoCommit = false
-        inOrder.verify(database, times(1)).rollback()
-        inOrder.verify(database, times(1)).autoCommit = true
-        verify(database, never()).commit()
+        val inOrder = inOrder(connection)
+        inOrder.verify(connection, times(1)).autoCommit = false
+        inOrder.verify(connection, times(1)).rollback()
+        inOrder.verify(connection, times(1)).autoCommit = true
+        verify(connection, never()).commit()
     }
 
     @Test
     fun shouldClose() {
-        loader.close()
+        connection.close()
 
-        verify(database, times(1)).close()
+        verify(connection, times(1)).close()
     }
 }

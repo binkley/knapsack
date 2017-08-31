@@ -1,8 +1,8 @@
 package hm.binkley.knapsack
 
-class DatabaseEntryIterator(private val loader: SQLLoader)
+class DatabaseEntryIterator(private val database: Database)
     : MutableIterator<Entry>, AutoCloseable {
-    private val results = loader.selectAll()
+    private val results = database.selectAll()
 
     override fun hasNext() = results.next()
 
@@ -21,7 +21,7 @@ class DatabaseEntryIterator(private val loader: SQLLoader)
     }
 
     private fun newDatabaseEntry()
-            = DatabaseEntry(results.getString("key"), loader)
+            = DatabaseEntry(results.getString("key"), database)
 
     override fun close() = results.close()
 }

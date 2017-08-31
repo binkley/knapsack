@@ -1,26 +1,28 @@
 package hm.binkley.knapsack
 
-import hm.binkley.knapsack.Database.Companion.test
 import org.junit.rules.ExternalResource
+import java.sql.DriverManager.getConnection
 
 class DatabaseTestRule : ExternalResource() {
-    private lateinit var _loader: SQLLoader
+    private lateinit var _database: Database
 
-    val loader
-        get() = _loader
+    val database
+        get() = _database
 
     override fun before() {
-        _loader = SQLLoader(test())
-        _loader.loadSchema()
+        _database = Database(
+                getConnection("jdbc:hsqldb:file:${System.getProperty(
+                        "java.io.tmpdir")}"))
+        _database.loadSchema()
     }
 
     override fun after() {
-        _loader.close()
+        _database.close()
     }
 
     fun reset() = object : ExternalResource() {
         override fun after() {
-            _loader.reset()
+            _database.reset()
         }
     }
 }

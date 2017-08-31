@@ -2,6 +2,7 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,8 +20,12 @@ internal class KnapsackApplicationTest {
     @Before
     fun setUp() {
         knapsackDir = tmpdir.newFolder()
-        val database = Database.main(knapsackDir.absolutePath)
-        knapsack = Knapsack(database)
+        knapsack = Knapsack(knapsackDir.toPath())
+    }
+
+    @After
+    fun tearDown() {
+        knapsack.close()
     }
 
     @Test

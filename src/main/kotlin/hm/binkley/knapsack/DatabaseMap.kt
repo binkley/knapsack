@@ -1,9 +1,9 @@
 package hm.binkley.knapsack
 
-class DatabaseMap(private val loader: SQLLoader)
+class DatabaseMap(private val database: Database)
     : AbstractMutableMap<String, String?>() {
-    override val entries: MutableSet<Entry> = DatabaseSet(loader)
+    override val entries: MutableSet<Entry> = DatabaseSet(database)
 
     override fun put(key: String, value: String?)
-            = DatabaseEntry(key, loader).setValue(value)
+            = DatabaseEntry(key, database).setValue(value)
 }

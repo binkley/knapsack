@@ -13,15 +13,15 @@ import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
 internal class DatabaseEntryIteratorTest {
-    @Mock private lateinit var loader: SQLLoader
+    @Mock private lateinit var database: Database
     @Mock private lateinit var selectAllResults: ResultSet
     private lateinit var iter: DatabaseEntryIterator
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectAllResults).`when`(loader).selectAll()
+        doReturn(selectAllResults).`when`(database).selectAll()
 
-        iter = DatabaseEntryIterator(loader)
+        iter = DatabaseEntryIterator(database)
     }
 
     @Test
