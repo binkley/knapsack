@@ -1,6 +1,7 @@
 package hm.binkley.knapsack
 
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import java.sql.SQLException
 
 class SQLLoader(private val database: Database) : AutoCloseable {
@@ -9,7 +10,7 @@ class SQLLoader(private val database: Database) : AutoCloseable {
     private val countAll: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("count-all").oneLine())
     }
-    val selectAll: PreparedStatement by lazy {
+    private val selectAll: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("select-all").oneLine())
     }
     private val selectOne: PreparedStatement by lazy {
@@ -30,6 +31,8 @@ class SQLLoader(private val database: Database) : AutoCloseable {
             return count
         }
     }
+
+    fun selectAll(): ResultSet = selectAll.executeQuery()
 
     fun selectOne(key: String): String? {
         selectOne.setString(1, key)

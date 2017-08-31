@@ -14,7 +14,6 @@ import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
@@ -22,15 +21,12 @@ internal class DatabaseSetTest {
     @Mock private lateinit var database: Database
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
-    @Mock private lateinit var selectAll: PreparedStatement
     @Mock private lateinit var selectAllResults: ResultSet
     private lateinit var set: DatabaseSet
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectAll).`when`(loader).selectAll
-
-        `when`(selectAll.executeQuery()).thenReturn(selectAllResults)
+        doReturn(selectAllResults).`when`(loader).selectAll()
 
         set = DatabaseSet(loader)
     }
