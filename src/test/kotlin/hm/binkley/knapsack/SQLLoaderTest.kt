@@ -35,6 +35,34 @@ internal class SQLLoaderTest {
     }
 
     @Test
+    fun shouldCountAll() {
+        `when`(results.next()).thenReturn(true, false)
+        `when`(results.getInt(eq("size"))).thenReturn(3)
+
+        assert.that(loader.countAll(), equalTo(3))
+
+        val inOrder = inOrder(statement, results)
+        inOrder.verify(statement).executeQuery()
+        inOrder.verify(results).close()
+        verify(statement, never()).close()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowWhenCountAllHasNone() {
+        `when`(results.next()).thenReturn(false)
+
+        loader.countAll()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowWhenCountAllHasMultiple() {
+        `when`(results.next()).thenReturn(true, true, false)
+        `when`(results.getInt(eq("size"))).thenReturn(3)
+
+        loader.countAll()
+    }
+
+    @Test
     fun shouldSelectOne() {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getString(eq("value"))).thenReturn("3")

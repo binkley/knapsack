@@ -6,7 +6,7 @@ import java.sql.SQLException
 class SQLLoader(private val database: Database) : AutoCloseable {
     override fun close() = database.close()
 
-    val countAll: PreparedStatement by lazy {
+    private val countAll: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("count-all").oneLine())
     }
     val selectAll: PreparedStatement by lazy {
@@ -20,6 +20,15 @@ class SQLLoader(private val database: Database) : AutoCloseable {
     }
     private val deleteOne: PreparedStatement by lazy {
         database.prepareStatement(SQLReader("delete-one").oneLine())
+    }
+
+    fun countAll(): Int {
+        countAll.executeQuery().use { results ->
+            if (!results.next()) throw IllegalStateException()
+            val count = results.getInt("size")
+            if (results.next()) throw IllegalStateException()
+            return count
+        }
     }
 
     fun selectOne(key: String): String? {

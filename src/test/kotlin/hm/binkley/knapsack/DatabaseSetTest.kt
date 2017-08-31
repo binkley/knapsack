@@ -9,7 +9,6 @@ import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
@@ -23,53 +22,24 @@ internal class DatabaseSetTest {
     @Mock private lateinit var database: Database
     @Spy
     @InjectMocks private lateinit var loader: SQLLoader
-    @Mock private lateinit var countAll: PreparedStatement
-    @Mock private lateinit var countAllResults: ResultSet
     @Mock private lateinit var selectAll: PreparedStatement
     @Mock private lateinit var selectAllResults: ResultSet
     private lateinit var set: DatabaseSet
 
     @Before
     fun setUpDatabase() {
-        doReturn(countAll).`when`(loader).countAll
         doReturn(selectAll).`when`(loader).selectAll
 
-        `when`(countAll.executeQuery()).thenReturn(countAllResults)
         `when`(selectAll.executeQuery()).thenReturn(selectAllResults)
 
         set = DatabaseSet(loader)
     }
 
     @Test
-    fun shouldClose() {
-        `when`(countAllResults.next()).thenReturn(true, false)
-        `when`(countAllResults.getInt(eq("size"))).thenReturn(0)
-
-        set.size
-
-        verify(countAllResults, atLeastOnce()).close()
-    }
-
-    @Test
     fun shouldStartEmptySized() {
-        `when`(countAllResults.next()).thenReturn(true, false)
-        `when`(countAllResults.getInt(eq("size"))).thenReturn(0)
+        doReturn(0).`when`(loader).countAll()
 
         assert.that(set.size, equalTo(0))
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun shouldFailIfSizeSqlHasNoResults() {
-        `when`(countAllResults.next()).thenReturn(false)
-
-        set.size
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun shouldFailIfSizeSqlHasTooManyResults() {
-        `when`(countAllResults.next()).thenReturn(true, true, false)
-
-        set.size
     }
 
     @Test
@@ -81,17 +51,14 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        `when`(countAllResults.next()).thenReturn(true, false, true, false)
-        `when`(countAllResults.getInt(eq("size"))).thenReturn(0)
+        doReturn(0, 0).`when`(loader).countAll()
 
-        assert.that(set,
-                equalTo(DatabaseSet(loader)))
+        assert.that(set, equalTo(DatabaseSet(loader)))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
-        assert.that(set.hashCode(),
-                equalTo(DatabaseSet(loader).hashCode()))
+        assert.that(set.hashCode(), equalTo(DatabaseSet(loader).hashCode()))
     }
 
     @Test

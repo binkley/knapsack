@@ -14,13 +14,5 @@ class DatabaseSet(private val loader: SQLLoader)
     override fun iterator() = DatabaseEntryIterator(loader)
 
     override val size: Int
-        get() {
-            val countAll = loader.countAll
-            countAll.executeQuery().use { results ->
-                if (!results.next()) throw IllegalStateException()
-                val size = results.getInt("size")
-                if (results.next()) throw IllegalStateException()
-                return size
-            }
-        }
+        get() = loader.countAll()
 }
