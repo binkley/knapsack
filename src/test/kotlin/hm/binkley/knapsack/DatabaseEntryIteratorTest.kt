@@ -32,16 +32,30 @@ internal class DatabaseEntryIteratorTest {
     }
 
     @Test(expected = NoSuchElementException::class)
-    fun shouldCarpIfBeforeStart() {
+    fun shouldThrowIfNextBeforeStart() {
         `when`(selectAllResults.isBeforeFirst).thenReturn(true)
 
         iter.next()
     }
 
     @Test(expected = NoSuchElementException::class)
-    fun shouldCarpIfAfterEnd() {
+    fun shouldThrowIfNextAfterEnd() {
         `when`(selectAllResults.isAfterLast).thenReturn(true)
 
         iter.next()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowIfRemoveBeforeStart() {
+        `when`(selectAllResults.isBeforeFirst).thenReturn(true)
+
+        iter.remove()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowIfRemoveAfterEnd() {
+        `when`(selectAllResults.isAfterLast).thenReturn(true)
+
+        iter.remove()
     }
 }
