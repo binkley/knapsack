@@ -3,6 +3,7 @@ package hm.binkley.knapsack
 class DatabaseEntryIterator(private val database: Database)
     : MutableIterator<Entry>, AutoCloseable {
     private val results = database.selectAll()
+    private var lastRemoveIndex = 0
 
     override fun hasNext() = results.next()
 
@@ -15,9 +16,13 @@ class DatabaseEntryIterator(private val database: Database)
     override fun remove() {
         if (results.isBeforeFirst || results.isAfterLast)
             throw IllegalStateException()
-        // TODO: Detect remove() twice in a row without next() between
+
+        val row = results.row
+        if (row == lastRemoveIndex)
+            throw IllegalStateException()
+        lastRemoveIndex = row
+
         newDatabaseEntry().setValue(null)
-        next() // Skip this element
     }
 
     private fun newDatabaseEntry()

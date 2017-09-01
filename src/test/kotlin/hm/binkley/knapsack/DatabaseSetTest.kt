@@ -72,6 +72,7 @@ internal class DatabaseSetTest {
         doNothing().`when`(database).deleteOne("foo")
         doReturn("3").`when`(database).selectOne("foo")
         `when`(selectAllResults.next()).thenReturn(true, false)
+        `when`(selectAllResults.row).thenReturn(1)
         `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.remove(DatabaseEntry("foo", database)),

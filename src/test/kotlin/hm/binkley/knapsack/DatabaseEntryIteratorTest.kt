@@ -3,6 +3,7 @@ package hm.binkley.knapsack
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
@@ -45,6 +46,24 @@ internal class DatabaseEntryIteratorTest {
         iter.next()
     }
 
+    @Test
+    fun shouldRemove() {
+        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
+        `when`(selectAllResults.row).thenReturn(1)
+
+        iter.remove()
+    }
+
+    @Test
+    fun shouldRemoveTwiceIfNextBetween() {
+        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
+        `when`(selectAllResults.row).thenReturn(1, 2)
+
+        iter.remove()
+        iter.next()
+        iter.remove()
+    }
+
     @Test(expected = IllegalStateException::class)
     fun shouldThrowIfRemoveBeforeStart() {
         `when`(selectAllResults.isBeforeFirst).thenReturn(true)
@@ -56,6 +75,15 @@ internal class DatabaseEntryIteratorTest {
     fun shouldThrowIfRemoveAfterEnd() {
         `when`(selectAllResults.isAfterLast).thenReturn(true)
 
+        iter.remove()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowIfRemoveTwiceOnSameRow() {
+        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
+        `when`(selectAllResults.row).thenReturn(1, 1)
+
+        iter.remove()
         iter.remove()
     }
 }
