@@ -1,6 +1,7 @@
 package hm.binkley.knapsack
 
 import org.junit.rules.ExternalResource
+import java.nio.file.Files.createTempDirectory
 import java.sql.DriverManager.getConnection
 
 class DatabaseTestRule : ExternalResource() {
@@ -11,7 +12,7 @@ class DatabaseTestRule : ExternalResource() {
 
     override fun before() {
         _database = Database(getConnection(
-                "jdbc:hsqldb:file:${System.getProperty("java.io.tmpdir")}"))
+                "jdbc:hsqldb:file:${createTempDirectory("knapsack")}"))
         _database.loadSchema()
     }
 
