@@ -4,18 +4,21 @@ import au.com.console.kassava.kotlinEquals
 import java.util.Objects
 import kotlin.collections.MutableMap.MutableEntry
 
-class DatabaseEntry(override val key: String, private val database: Database)
+class DatabaseEntry(
+        val layer: Int,
+        override val key: String,
+        private val database: Database)
     : MutableEntry<String, String?> {
     override val value: String?
-        get() = database.selectOne(0, key)
+        get() = database.selectOne(layer, key)
 
     override fun setValue(newValue: String?): String? {
         return database.transaction {
             val previous = value
             if (null == newValue) {
-                database.deleteOne(0, key)
+                database.deleteOne(layer, key)
             } else {
-                database.upsertOne(0, key, newValue)
+                database.upsertOne(layer, key, newValue)
             }
             previous
         }

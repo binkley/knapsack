@@ -5,5 +5,5 @@ class DatabaseMap(private val database: Database)
     override val entries: MutableSet<Entry> = DatabaseSet(database)
 
     override fun put(key: String, value: String?)
-            = DatabaseEntry(key, database).setValue(value)
+            = DatabaseEntry(0, key, database).setValue(value)
 }

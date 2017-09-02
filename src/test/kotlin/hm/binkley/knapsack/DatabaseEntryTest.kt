@@ -37,7 +37,12 @@ internal class DatabaseEntryTest {
     fun setUpDatabase() {
         doReturn("3").`when`(database).selectOne(0, "foo")
 
-        entry = DatabaseEntry("foo", database)
+        entry = newDatabaseEntry(0, "foo")
+    }
+
+    @Test
+    fun shouldGetLayer_forJaCoCo() {
+        assert.that(entry.layer, equalTo(0))
     }
 
     @Test
@@ -47,7 +52,7 @@ internal class DatabaseEntryTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(DatabaseEntry("foo", database)))
+        assert.that(entry, equalTo(newDatabaseEntry(0, "foo")))
     }
 
     @Suppress("ReplaceCallWithComparison")
@@ -59,7 +64,7 @@ internal class DatabaseEntryTest {
     @Test
     fun shouldHashCode() {
         assert.that(entry.hashCode(),
-                equalTo(DatabaseEntry("foo", database).hashCode()))
+                equalTo(newDatabaseEntry(0, "foo").hashCode()))
     }
 
     @Test
@@ -136,4 +141,7 @@ internal class DatabaseEntryTest {
 
         verify(connection).rollback()
     }
+
+    private fun newDatabaseEntry(layer: Int, key: String)
+            = DatabaseEntry(layer, key, database)
 }

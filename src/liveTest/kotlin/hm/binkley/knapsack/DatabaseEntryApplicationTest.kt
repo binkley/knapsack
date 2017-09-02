@@ -14,7 +14,7 @@ internal class DatabaseEntryApplicationTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val entry = DatabaseEntry("foo", KNAPSACK.database)
+        val entry = DatabaseEntry(0, "foo", KNAPSACK.database)
 
         assert.that(entry.value, absent())
         assert.that(entry.setValue("3"), absent())

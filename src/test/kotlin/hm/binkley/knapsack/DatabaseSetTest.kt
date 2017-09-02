@@ -63,8 +63,7 @@ internal class DatabaseSetTest {
         `when`(selectAllResults.next()).thenReturn(true, false)
         `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
 
-        assert.that(set.contains(DatabaseEntry("foo", database)),
-                equalTo(true))
+        assert.that(set.contains(newDatabaseEntry("foo")), equalTo(true))
     }
 
     @Test
@@ -75,8 +74,7 @@ internal class DatabaseSetTest {
         `when`(selectAllResults.row).thenReturn(1)
         `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
 
-        assert.that(set.remove(DatabaseEntry("foo", database)),
-                equalTo(true))
+        assert.that(set.remove(newDatabaseEntry("foo")), equalTo(true))
 
         verify(database).deleteOne(0, "foo")
     }
@@ -86,8 +84,11 @@ internal class DatabaseSetTest {
         doNothing().`when`(database).deleteOne(0, "foo")
         doReturn(null, "3").`when`(database).selectOne(0, "foo")
 
-        val changed = set.add(DatabaseEntry("foo", database))
+        val changed = set.add(newDatabaseEntry("foo"))
 
         assert.that(changed, equalTo(true))
     }
+
+    private fun newDatabaseEntry(key: String)
+            = DatabaseEntry(0, key, database)
 }

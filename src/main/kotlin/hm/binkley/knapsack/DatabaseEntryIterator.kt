@@ -26,7 +26,7 @@ class DatabaseEntryIterator(private val database: Database)
     }
 
     private fun newDatabaseEntry()
-            = DatabaseEntry(results.getString("key"), database)
+            = DatabaseEntry(0, results.getString("key"), database)
 
     override fun close() = results.close()
 }
