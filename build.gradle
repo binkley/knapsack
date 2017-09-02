@@ -81,6 +81,8 @@ tasks.withType(Test) {
 }
 
 task liveTest(type: Test) {
+    group = 'Verification'
+    description = 'Runs the live tests.'
     dependsOn test
 
     testClassesDirs = sourceSets.liveTest.output.classesDirs
@@ -145,7 +147,9 @@ jacocoTestCoverageVerification {
     executionData(test, liveTest)
 }
 
-task downloadDependencies(type: Exec) {
+task dependencyDownload(type: Exec) {
+    group = 'Help'
+    description = 'Downloads the dependencies.'
     configurations.liveTestRuntime.files
     commandLine 'true'
 }
