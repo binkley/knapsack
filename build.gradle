@@ -68,7 +68,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-test {
+tasks.withType(Test) {
     testLogging {
         exceptionFormat = 'full'
     }
@@ -79,10 +79,6 @@ task liveTest(type: Test) {
 
     testClassesDirs = sourceSets.liveTest.output.classesDirs
     classpath = sourceSets.liveTest.runtimeClasspath
-
-    testLogging {
-        exceptionFormat = 'full'
-    }
 }
 
 jacoco {
