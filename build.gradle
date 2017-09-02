@@ -33,7 +33,7 @@ repositories {
 }
 
 sourceSets {
-    applicationTest {
+    liveTest {
         kotlin {
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
@@ -42,8 +42,8 @@ sourceSets {
 }
 
 configurations {
-    applicationTestCompile.extendsFrom testCompile
-    applicationTestRuntime.extendsFrom testRuntime
+    liveTestCompile.extendsFrom testCompile
+    liveTestRuntime.extendsFrom testRuntime
     ktlint
 }
 
@@ -74,11 +74,11 @@ test {
     }
 }
 
-task applicationTest(type: Test) {
+task liveTest(type: Test) {
     dependsOn test
 
-    testClassesDirs = sourceSets.applicationTest.output.classesDirs
-    classpath = sourceSets.applicationTest.runtimeClasspath
+    testClassesDirs = sourceSets.liveTest.output.classesDirs
+    classpath = sourceSets.liveTest.runtimeClasspath
 
     testLogging {
         exceptionFormat = 'full'
@@ -90,9 +90,9 @@ jacoco {
 }
 
 jacocoTestReport {
-    dependsOn applicationTest
+    dependsOn liveTest
 
-    executionData(test, applicationTest)
+    executionData(test, liveTest)
 }
 
 jacocoTestCoverageVerification {
@@ -140,7 +140,7 @@ jacocoTestCoverageVerification {
             }
         }
     }
-    executionData(test, applicationTest)
+    executionData(test, liveTest)
 }
 
 task downloadDependencies(type: Exec) {
