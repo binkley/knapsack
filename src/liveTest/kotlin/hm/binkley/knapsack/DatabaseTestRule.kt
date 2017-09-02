@@ -10,9 +10,8 @@ class DatabaseTestRule : ExternalResource() {
         get() = _database
 
     override fun before() {
-        _database = Database(
-                getConnection("jdbc:hsqldb:file:${System.getProperty(
-                        "java.io.tmpdir")}"))
+        _database = Database(getConnection(
+                "jdbc:hsqldb:file:${System.getProperty("java.io.tmpdir")}"))
         _database.loadSchema()
     }
 
