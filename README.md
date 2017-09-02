@@ -22,10 +22,9 @@ of the value of "foo".  In this example the history would be:
 
 ## Technology
 
-* [JGit](https://github.com/eclipse/jgit) - Git for Java
-* [Kotlin Exposed](https://github.com/JetBrains/Exposed) - JDBC for Kotlin
 * [HyperSQL](http://hsqldb.org/doc/guide/texttables-chapt.html) - Local,
   text-based database
+* [JGit](https://github.com/eclipse/jgit) - Git for Java
 
 ## TODO
 
