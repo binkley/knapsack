@@ -142,7 +142,7 @@ jacocoTestCoverageVerification {
 }
 
 task downloadDependencies(type: Exec) {
-    configurations.testRuntime.files
+    configurations.liveTestRuntime.files
     commandLine 'true'
 }
 
