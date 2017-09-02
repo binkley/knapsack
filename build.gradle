@@ -64,6 +64,8 @@ clean {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
+        apiVersion = '1.2'
+        javaParameters = true
         jvmTarget = '1.8'
     }
 }
