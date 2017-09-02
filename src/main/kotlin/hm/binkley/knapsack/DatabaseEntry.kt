@@ -26,9 +26,10 @@ class DatabaseEntry(
 
     override fun equals(other: Any?): Boolean = kotlinEquals(other, properties)
 
-    override fun hashCode() = Objects.hash(key)
+    override fun hashCode() = Objects.hash(layer, key)
 
     companion object {
-        private val properties = arrayOf(DatabaseEntry::key)
+        private val properties
+                = arrayOf(DatabaseEntry::layer, DatabaseEntry::key)
     }
 }
