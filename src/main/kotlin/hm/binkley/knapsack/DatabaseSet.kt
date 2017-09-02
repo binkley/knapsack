@@ -2,11 +2,11 @@ package hm.binkley.knapsack
 
 import java.util.Objects
 
-class DatabaseSet(private val database: Database)
+class DatabaseSet(val layer: Int, private val database: Database)
     : AbstractMutableSet<Entry>() {
     override fun add(element: Entry): Boolean {
         val newValue = element.value
-        val previousValue = DatabaseEntry(0, element.key, database).
+        val previousValue = DatabaseEntry(layer, element.key, database).
                 setValue(newValue)
         return !Objects.equals(previousValue, newValue)
     }
@@ -14,5 +14,5 @@ class DatabaseSet(private val database: Database)
     override fun iterator() = DatabaseEntryIterator(database)
 
     override val size: Int
-        get() = database.countAll(0)
+        get() = database.countAll(layer)
 }

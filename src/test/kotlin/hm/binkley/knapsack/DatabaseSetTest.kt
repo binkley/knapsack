@@ -29,7 +29,7 @@ internal class DatabaseSetTest {
     fun setUpDatabase() {
         doReturn(selectAllResults).`when`(database).selectAll(0)
 
-        set = DatabaseSet(database)
+        set = newDatabaseSet()
     }
 
     @Test
@@ -50,12 +50,12 @@ internal class DatabaseSetTest {
     fun shouldEqualsWhenEmpty() {
         doReturn(0, 0).`when`(database).countAll(0)
 
-        assert.that(set, equalTo(DatabaseSet(database)))
+        assert.that(set, equalTo(newDatabaseSet()))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
-        assert.that(set.hashCode(), equalTo(DatabaseSet(database).hashCode()))
+        assert.that(set.hashCode(), equalTo(newDatabaseSet().hashCode()))
     }
 
     @Test
@@ -90,5 +90,8 @@ internal class DatabaseSetTest {
     }
 
     private fun newDatabaseEntry(key: String)
-            = DatabaseEntry(0, key, database)
+            = DatabaseEntry(set.layer, key, database)
+
+    private fun newDatabaseSet()
+            = DatabaseSet(0, database)
 }
