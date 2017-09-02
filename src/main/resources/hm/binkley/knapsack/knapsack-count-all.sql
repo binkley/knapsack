@@ -1,2 +1,3 @@
 SELECT COUNT(*) AS size
-FROM knapsack;
+FROM knapsack
+WHERE layer = ?;

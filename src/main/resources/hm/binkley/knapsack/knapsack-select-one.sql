@@ -1,3 +1,3 @@
 SELECT value
 FROM knapsack
-WHERE key = ?;
+WHERE LAYER = ? AND key = ?;

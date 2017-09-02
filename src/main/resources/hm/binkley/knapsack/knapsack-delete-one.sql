@@ -1,2 +1,2 @@
 DELETE FROM knapsack
-WHERE key = ?;
+WHERE layer = ? AND key = ?;

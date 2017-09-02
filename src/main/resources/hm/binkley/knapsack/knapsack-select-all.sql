@@ -1,4 +1,5 @@
 SELECT
   key,
   value
-FROM knapsack;
+FROM knapsack
+WHERE layer = ?;

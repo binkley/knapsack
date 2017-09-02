@@ -43,6 +43,7 @@ internal class DatabaseTest {
         assert.that(database.countAll(), equalTo(3))
 
         val inOrder = inOrder(statement, results)
+        inOrder.verify(statement).setInt(1, 0)
         inOrder.verify(statement).executeQuery()
         inOrder.verify(results).close()
         verify(statement, never()).close()
@@ -72,8 +73,10 @@ internal class DatabaseTest {
 
         assert.that(value, equalTo("3"))
 
+        // TODO: How to verify setting params are order free?
         val inOrder = inOrder(statement, results)
-        inOrder.verify(statement).setString(1, "foo")
+        inOrder.verify(statement).setInt(1, 0)
+        inOrder.verify(statement).setString(2, "foo")
         inOrder.verify(statement).executeQuery()
         inOrder.verify(results).close()
         verify(statement, never()).close()
@@ -100,9 +103,11 @@ internal class DatabaseTest {
     fun shouldUpsertOne() {
         database.upsertOne("foo", "3")
 
+        // TODO: How to verify setting params are order free?
         val inOrder = inOrder(statement)
-        inOrder.verify(statement).setString(1, "foo")
-        inOrder.verify(statement).setString(2, "3")
+        inOrder.verify(statement).setInt(1, 0)
+        inOrder.verify(statement).setString(2, "foo")
+        inOrder.verify(statement).setString(3, "3")
         inOrder.verify(statement).executeUpdate()
         verify(statement, never()).close()
     }
@@ -111,8 +116,10 @@ internal class DatabaseTest {
     fun shouldDeleteOne() {
         database.deleteOne("foo")
 
+        // TODO: How to verify setting params are order free?
         val inOrder = inOrder(statement)
-        inOrder.verify(statement).setString(1, "foo")
+        inOrder.verify(statement).setInt(1, 0)
+        inOrder.verify(statement).setString(2, "foo")
         inOrder.verify(statement).executeUpdate()
         verify(statement, never()).close()
     }

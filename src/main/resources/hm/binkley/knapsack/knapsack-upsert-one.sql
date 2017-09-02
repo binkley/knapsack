@@ -1,7 +1,7 @@
 MERGE INTO knapsack AS a
-USING (VALUES ?, ?) b (key, value)
-ON a.key = b.key
+USING (VALUES ?, ?, ?) b (layer, key, value)
+ON a.layer = b.layer AND a.key = b.key
 WHEN MATCHED THEN
 UPDATE SET a.value = b.value
 WHEN NOT MATCHED THEN
-INSERT (key, value) VALUES (b.key, b.value);
+INSERT (layer, key, value) VALUES (b.layer, b.key, b.value);
