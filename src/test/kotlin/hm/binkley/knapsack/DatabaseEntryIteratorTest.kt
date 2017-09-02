@@ -20,7 +20,7 @@ internal class DatabaseEntryIteratorTest {
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectAllResults).`when`(database).selectAll()
+        doReturn(selectAllResults).`when`(database).selectAll(0)
 
         iter = DatabaseEntryIterator(database)
     }

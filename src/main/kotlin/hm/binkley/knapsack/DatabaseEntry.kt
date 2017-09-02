@@ -7,15 +7,15 @@ import kotlin.collections.MutableMap.MutableEntry
 class DatabaseEntry(override val key: String, private val database: Database)
     : MutableEntry<String, String?> {
     override val value: String?
-        get() = database.selectOne(key)
+        get() = database.selectOne(0, key)
 
     override fun setValue(newValue: String?): String? {
         return database.transaction {
             val previous = value
             if (null == newValue) {
-                database.deleteOne(key)
+                database.deleteOne(0, key)
             } else {
-                database.upsertOne(key, newValue)
+                database.upsertOne(0, key, newValue)
             }
             previous
         }

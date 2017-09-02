@@ -9,6 +9,7 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.doNothing
@@ -34,7 +35,7 @@ internal class DatabaseEntryTest {
 
     @Before
     fun setUpDatabase() {
-        doReturn("3").`when`(database).selectOne("foo")
+        doReturn("3").`when`(database).selectOne(0, "foo")
 
         entry = DatabaseEntry("foo", database)
     }
@@ -65,61 +66,61 @@ internal class DatabaseEntryTest {
     fun shouldGetValue() {
         entry.value
 
-        verify(database).selectOne("foo")
+        verify(database).selectOne(0, "foo")
     }
 
     @Test
     fun shouldGetNull() {
-        doReturn(null).`when`(database).selectOne("foo")
+        doReturn(null).`when`(database).selectOne(0, "foo")
 
         assert.that(entry.value, absent())
     }
 
     @Test
     fun shouldSetValueFirstTime() {
-        doNothing().`when`(database).upsertOne("foo", "3")
-        doReturn(null, "3").`when`(database).selectOne("foo")
+        doNothing().`when`(database).upsertOne(0, "foo", "3")
+        doReturn(null, "3").`when`(database).selectOne(0, "foo")
 
         val previous = entry.setValue("3")
 
         assert.that(previous, absent())
         assert.that(entry.value, equalTo("3"))
 
-        verify(database, never()).deleteOne(anyString())
-        verify(database).upsertOne("foo", "3")
+        verify(database, never()).deleteOne(eq(0), anyString())
+        verify(database).upsertOne(0, "foo", "3")
     }
 
     @Test
     fun shouldSetValueSecondTime() {
-        doNothing().`when`(database).upsertOne("foo", "3")
-        doReturn("2", "3").`when`(database).selectOne("foo")
+        doNothing().`when`(database).upsertOne(0, "foo", "3")
+        doReturn("2", "3").`when`(database).selectOne(0, "foo")
 
         val previous = entry.setValue("3")
 
         assert.that(previous, equalTo("2"))
         assert.that(entry.value, equalTo("3"))
 
-        verify(database, never()).deleteOne(anyString())
-        verify(database).upsertOne("foo", "3")
+        verify(database, never()).deleteOne(eq(0), anyString())
+        verify(database).upsertOne(0, "foo", "3")
     }
 
     @Test
     fun shouldSetNull() {
-        doReturn("3", null).`when`(database).selectOne("foo")
-        doNothing().`when`(database).deleteOne("foo")
+        doReturn("3", null).`when`(database).selectOne(0, "foo")
+        doNothing().`when`(database).deleteOne(0, "foo")
 
         val previous = entry.setValue(null)
 
         assert.that(previous, equalTo("3"))
         assert.that(entry.value, absent())
 
-        verify(database).deleteOne("foo")
-        verify(database, never()).upsertOne(anyString(), anyString())
+        verify(database).deleteOne(0, "foo")
+        verify(database, never()).upsertOne(eq(0), anyString(), anyString())
     }
 
     @Test
     fun shouldCommit() {
-        doNothing().`when`(database).deleteOne("foo")
+        doNothing().`when`(database).deleteOne(0, "foo")
 
         entry.setValue(null)
 
@@ -129,7 +130,7 @@ internal class DatabaseEntryTest {
     @Test
     fun shouldRollback() {
         thrown.expect(SQLException::class.java)
-        doThrow(SQLException::class.java).`when`(database).deleteOne("foo")
+        doThrow(SQLException::class.java).`when`(database).deleteOne(0, "foo")
 
         entry.setValue(null)
 

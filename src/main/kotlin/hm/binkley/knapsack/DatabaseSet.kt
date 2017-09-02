@@ -14,5 +14,5 @@ class DatabaseSet(private val database: Database)
     override fun iterator() = DatabaseEntryIterator(database)
 
     override val size: Int
-        get() = database.countAll()
+        get() = database.countAll(0)
 }

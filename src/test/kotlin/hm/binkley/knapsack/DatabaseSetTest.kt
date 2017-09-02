@@ -27,14 +27,14 @@ internal class DatabaseSetTest {
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectAllResults).`when`(database).selectAll()
+        doReturn(selectAllResults).`when`(database).selectAll(0)
 
         set = DatabaseSet(database)
     }
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countAll()
+        doReturn(0).`when`(database).countAll(0)
 
         assert.that(set.size, equalTo(0))
     }
@@ -48,7 +48,7 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countAll()
+        doReturn(0, 0).`when`(database).countAll(0)
 
         assert.that(set, equalTo(DatabaseSet(database)))
     }
@@ -69,8 +69,8 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldRemoveEntry() {
-        doNothing().`when`(database).deleteOne("foo")
-        doReturn("3").`when`(database).selectOne("foo")
+        doNothing().`when`(database).deleteOne(0, "foo")
+        doReturn("3").`when`(database).selectOne(0, "foo")
         `when`(selectAllResults.next()).thenReturn(true, false)
         `when`(selectAllResults.row).thenReturn(1)
         `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
@@ -78,13 +78,13 @@ internal class DatabaseSetTest {
         assert.that(set.remove(DatabaseEntry("foo", database)),
                 equalTo(true))
 
-        verify(database).deleteOne("foo")
+        verify(database).deleteOne(0, "foo")
     }
 
     @Test
     fun shouldMutate() {
-        doNothing().`when`(database).deleteOne("foo")
-        doReturn(null, "3").`when`(database).selectOne("foo")
+        doNothing().`when`(database).deleteOne(0, "foo")
+        doReturn(null, "3").`when`(database).selectOne(0, "foo")
 
         val changed = set.add(DatabaseEntry("foo", database))
 

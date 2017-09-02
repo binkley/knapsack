@@ -24,8 +24,8 @@ class Database(private val connection: Connection) : AutoCloseable {
         connection.prepareStatement(SQLReader("delete-one").oneLine())
     }
 
-    fun countAll(): Int {
-        countAll.setInt(1, 0)
+    fun countAll(layer: Int): Int {
+        countAll.setInt(1, layer)
         countAll.executeQuery().use { results ->
             if (!results.next()) throw IllegalStateException()
             val count = results.getInt("size")
@@ -34,13 +34,13 @@ class Database(private val connection: Connection) : AutoCloseable {
         }
     }
 
-    fun selectAll(): ResultSet {
-        selectAll.setInt(1, 0)
+    fun selectAll(layer: Int): ResultSet {
+        selectAll.setInt(1, layer)
         return selectAll.executeQuery()
     }
 
-    fun selectOne(key: String): String? {
-        selectOne.setInt(1, 0)
+    fun selectOne(layer: Int, key: String): String? {
+        selectOne.setInt(1, layer)
         selectOne.setString(2, key)
         selectOne.executeQuery().use { results ->
             if (!results.next()) return null
@@ -50,15 +50,15 @@ class Database(private val connection: Connection) : AutoCloseable {
         }
     }
 
-    fun upsertOne(key: String, newValue: String) {
-        upsertOne.setInt(1, 0)
+    fun upsertOne(layer: Int, key: String, newValue: String) {
+        upsertOne.setInt(1, layer)
         upsertOne.setString(2, key)
         upsertOne.setString(3, newValue)
         upsertOne.executeUpdate()
     }
 
-    fun deleteOne(key: String) {
-        deleteOne.setInt(1, 0)
+    fun deleteOne(layer: Int, key: String) {
+        deleteOne.setInt(1, layer)
         deleteOne.setString(2, key)
         deleteOne.executeUpdate()
     }

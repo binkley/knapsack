@@ -40,7 +40,7 @@ internal class DatabaseTest {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
-        assert.that(database.countAll(), equalTo(3))
+        assert.that(database.countAll(0), equalTo(3))
 
         val inOrder = inOrder(statement, results)
         inOrder.verify(statement).setInt(1, 0)
@@ -53,7 +53,7 @@ internal class DatabaseTest {
     fun shouldThrowWhenCountAllHasNone() {
         `when`(results.next()).thenReturn(false)
 
-        database.countAll()
+        database.countAll(0)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -61,7 +61,7 @@ internal class DatabaseTest {
         `when`(results.next()).thenReturn(true, true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
-        database.countAll()
+        database.countAll(0)
     }
 
     @Test
@@ -69,7 +69,7 @@ internal class DatabaseTest {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getString(eq("value"))).thenReturn("3")
 
-        val value = database.selectOne("foo")
+        val value = database.selectOne(0, "foo")
 
         assert.that(value, equalTo("3"))
 
@@ -86,7 +86,7 @@ internal class DatabaseTest {
     fun shouldReturnNullWhenSelectOneHasNone() {
         `when`(results.next()).thenReturn(false)
 
-        val value = database.selectOne("foo")
+        val value = database.selectOne(0, "foo")
 
         assert.that(value, absent())
     }
@@ -96,12 +96,12 @@ internal class DatabaseTest {
         `when`(results.next()).thenReturn(true, true, false)
         `when`(results.getString(eq("value"))).thenReturn("3")
 
-        database.selectOne("foo")
+        database.selectOne(0, "foo")
     }
 
     @Test
     fun shouldUpsertOne() {
-        database.upsertOne("foo", "3")
+        database.upsertOne(0, "foo", "3")
 
         // TODO: How to verify setting params are order free?
         val inOrder = inOrder(statement)
@@ -114,7 +114,7 @@ internal class DatabaseTest {
 
     @Test
     fun shouldDeleteOne() {
-        database.deleteOne("foo")
+        database.deleteOne(0, "foo")
 
         // TODO: How to verify setting params are order free?
         val inOrder = inOrder(statement)
