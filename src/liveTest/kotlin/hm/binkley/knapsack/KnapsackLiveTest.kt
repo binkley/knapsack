@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
-internal class KnapsackApplicationTest {
+internal class KnapsackLiveTest {
     @Rule
     @JvmField
     val tmpdir = TemporaryFolder()

@@ -8,7 +8,7 @@ import org.junit.Test
 import java.util.AbstractMap.SimpleEntry
 import kotlin.test.fail
 
-internal class DatabaseSetApplicationTest {
+internal class DatabaseSetLiveTest {
     @Rule
     @JvmField
     val reset = KNAPSACK.reset()

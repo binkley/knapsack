@@ -7,7 +7,7 @@ import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 
-internal class DatabaseEntryApplicationTest {
+internal class DatabaseEntryLiveTest {
     @Rule
     @JvmField
     val reset = KNAPSACK.reset()
