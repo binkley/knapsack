@@ -153,13 +153,6 @@ jacocoTestCoverageVerification {
     executionData(test, liveTest)
 }
 
-task dependencyDownload(type: Exec) {
-    group = 'Help'
-    description = 'Downloads the dependencies.'
-    configurations.liveTestRuntime.files
-    commandLine 'true'
-}
-
 check {
     dependsOn jacocoTestCoverageVerification
 }
