@@ -22,12 +22,12 @@ internal class DatabaseSetTest {
     @Mock private lateinit var connection: Connection
     @Spy
     @InjectMocks private lateinit var database: Database
-    @Mock private lateinit var selectAllResults: ResultSet
+    @Mock private lateinit var selectKeysResults: ResultSet
     private lateinit var set: DatabaseSet
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectAllResults).`when`(database).selectAll(0)
+        doReturn(selectKeysResults).`when`(database).selectKeys(0)
 
         set = newDatabaseSet()
     }
@@ -41,7 +41,7 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldStartEmptyIterated() {
-        `when`(selectAllResults.next()).thenReturn(false)
+        `when`(selectKeysResults.next()).thenReturn(false)
 
         assert.that(set.iterator().hasNext(), equalTo(false))
     }
@@ -60,8 +60,8 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldFindEntry() {
-        `when`(selectAllResults.next()).thenReturn(true, false)
-        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
+        `when`(selectKeysResults.next()).thenReturn(true, false)
+        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.contains(newDatabaseEntry("foo")), equalTo(true))
     }
@@ -70,9 +70,9 @@ internal class DatabaseSetTest {
     fun shouldRemoveEntry() {
         doNothing().`when`(database).deleteOne(0, "foo")
         doReturn("3").`when`(database).selectOne(0, "foo")
-        `when`(selectAllResults.next()).thenReturn(true, false)
-        `when`(selectAllResults.row).thenReturn(1)
-        `when`(selectAllResults.getString(eq("key"))).thenReturn("foo")
+        `when`(selectKeysResults.next()).thenReturn(true, false)
+        `when`(selectKeysResults.row).thenReturn(1)
+        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.remove(newDatabaseEntry("foo")), equalTo(true))
 

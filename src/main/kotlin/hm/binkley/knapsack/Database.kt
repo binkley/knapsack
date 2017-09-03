@@ -11,8 +11,8 @@ class Database(private val connection: Connection) : AutoCloseable {
     private val countAll: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("count-all").oneLine())
     }
-    private val selectAll: PreparedStatement by lazy {
-        connection.prepareStatement(SQLReader("select-all").oneLine())
+    private val selectKeys: PreparedStatement by lazy {
+        connection.prepareStatement(SQLReader("select-keys").oneLine())
     }
     private val selectOne: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("select-one").oneLine())
@@ -34,9 +34,9 @@ class Database(private val connection: Connection) : AutoCloseable {
         }
     }
 
-    fun selectAll(layer: Int): ResultSet {
-        selectAll.setInt(1, layer)
-        return selectAll.executeQuery()
+    fun selectKeys(layer: Int): ResultSet {
+        selectKeys.setInt(1, layer)
+        return selectKeys.executeQuery()
     }
 
     fun selectOne(layer: Int, key: String): String? {
