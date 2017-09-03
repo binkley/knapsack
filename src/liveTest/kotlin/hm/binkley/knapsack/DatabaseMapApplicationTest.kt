@@ -13,7 +13,7 @@ internal class DatabaseMapApplicationTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val map = DatabaseMap(KNAPSACK.database)
+        val map = DatabaseMap(0, KNAPSACK.database)
 
         assert.that(map.isEmpty(), equalTo(true))
         assert.that(map.keys.isEmpty(), equalTo(true))
@@ -39,9 +39,9 @@ internal class DatabaseMapApplicationTest {
         assert.that(map.getOrDefault("foo", "3"), equalTo("3"))
 
         map["foo"] = "3"
-        assert.that(map, equalTo(DatabaseMap(KNAPSACK.database)))
+        assert.that(map, equalTo(DatabaseMap(map.layer, KNAPSACK.database)))
         assert.that(map.hashCode(),
-                equalTo(DatabaseMap(KNAPSACK.database).hashCode()))
+                equalTo(DatabaseMap(map.layer, KNAPSACK.database).hashCode()))
     }
 
     companion object {
