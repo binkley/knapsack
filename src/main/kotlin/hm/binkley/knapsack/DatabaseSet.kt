@@ -1,5 +1,6 @@
 package hm.binkley.knapsack
 
+import au.com.console.kassava.kotlinEquals
 import java.util.Objects
 
 class DatabaseSet(val layer: Int, private val database: Database)
@@ -15,4 +16,16 @@ class DatabaseSet(val layer: Int, private val database: Database)
 
     override val size: Int
         get() = database.countAll(layer)
+
+    override fun equals(other: Any?): Boolean {
+        if (!kotlinEquals(other, properties))
+            return false;
+        return super.equals(other)
+    }
+
+    override fun hashCode() = 31 * layer + super.hashCode()
+
+    companion object {
+        private val properties = arrayOf(DatabaseSet::layer)
+    }
 }

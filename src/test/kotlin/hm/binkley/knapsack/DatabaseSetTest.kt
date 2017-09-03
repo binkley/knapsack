@@ -23,18 +23,21 @@ internal class DatabaseSetTest {
     @Spy
     @InjectMocks private lateinit var database: Database
     @Mock private lateinit var selectKeysResults: ResultSet
+    @Mock private lateinit var otherSelectKeysResults: ResultSet
     private lateinit var set: DatabaseSet
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectKeysResults).`when`(database).selectKeys(0)
-
-        set = newDatabaseSet()
+        val layer = 0
+        doReturn(selectKeysResults).`when`(database).selectKeys(layer)
+        doReturn(otherSelectKeysResults).`when`(database).selectKeys(
+                layer + 1)
+        set = newDatabaseSet(layer)
     }
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countAll(0)
+        doReturn(0).`when`(database).countAll(set.layer)
 
         assert.that(set.size, equalTo(0))
     }
@@ -48,14 +51,32 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countAll(0)
+        doReturn(0, 0).`when`(database).countAll(set.layer)
 
-        assert.that(set, equalTo(newDatabaseSet()))
+        assert.that(set == newDatabaseSet(set.layer), equalTo(true))
+    }
+
+    @Test
+    fun shouldNotEqualsWhenEmpty() {
+        assert.that(set == newDatabaseSet(set.layer + 1), equalTo(false))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
-        assert.that(set.hashCode(), equalTo(newDatabaseSet().hashCode()))
+        `when`(selectKeysResults.next()).thenReturn(false, false)
+
+        assert.that(set.hashCode() == newDatabaseSet(set.layer).hashCode(),
+                equalTo(true))
+    }
+
+    @Test
+    fun shouldNotHashCodeWhenEmpty() {
+        `when`(selectKeysResults.next()).thenReturn(false)
+        `when`(otherSelectKeysResults.next()).thenReturn(false)
+
+        assert.that(
+                set.hashCode() == newDatabaseSet(set.layer + 1).hashCode(),
+                equalTo(false))
     }
 
     @Test
@@ -68,21 +89,21 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldRemoveEntry() {
-        doNothing().`when`(database).deleteOne(0, "foo")
-        doReturn("3").`when`(database).selectOne(0, "foo")
+        doNothing().`when`(database).deleteOne(set.layer, "foo")
+        doReturn("3").`when`(database).selectOne(set.layer, "foo")
         `when`(selectKeysResults.next()).thenReturn(true, false)
         `when`(selectKeysResults.row).thenReturn(1)
         `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.remove(newDatabaseEntry("foo")), equalTo(true))
 
-        verify(database).deleteOne(0, "foo")
+        verify(database).deleteOne(set.layer, "foo")
     }
 
     @Test
     fun shouldMutate() {
-        doNothing().`when`(database).deleteOne(0, "foo")
-        doReturn(null, "3").`when`(database).selectOne(0, "foo")
+        doNothing().`when`(database).deleteOne(set.layer, "foo")
+        doReturn(null, "3").`when`(database).selectOne(set.layer, "foo")
 
         val changed = set.add(newDatabaseEntry("foo"))
 
@@ -92,6 +113,6 @@ internal class DatabaseSetTest {
     private fun newDatabaseEntry(key: String)
             = DatabaseEntry(set.layer, key, database)
 
-    private fun newDatabaseSet()
-            = DatabaseSet(0, database)
+    private fun newDatabaseSet(layer: Int)
+            = DatabaseSet(layer, database)
 }
