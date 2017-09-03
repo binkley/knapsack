@@ -29,6 +29,11 @@ internal class KnapsackApplicationTest {
     }
 
     @Test
+    fun shouldClose() {
+        knapsack.use {}
+    }
+
+    @Test
     fun shouldInitRepo() {
         knapsack.init()
 
