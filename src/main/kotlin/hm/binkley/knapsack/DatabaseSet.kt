@@ -11,7 +11,7 @@ class DatabaseSet(val layer: Int, private val database: Database)
         return !Objects.equals(previousValue, newValue)
     }
 
-    override fun iterator() = DatabaseEntryIterator(database)
+    override fun iterator() = DatabaseEntryIterator(layer, database)
 
     override val size: Int
         get() = database.countAll(layer)

@@ -20,9 +20,9 @@ internal class DatabaseEntryIteratorTest {
 
     @Before
     fun setUpDatabase() {
-        doReturn(selectKeysResults).`when`(database).selectKeys(0)
-
-        iter = DatabaseEntryIterator(database)
+        val layer = 0
+        doReturn(selectKeysResults).`when`(database).selectKeys(layer)
+        iter = DatabaseEntryIterator(layer, database)
     }
 
     @Test
