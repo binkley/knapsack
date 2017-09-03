@@ -35,8 +35,6 @@ internal class KnapsackApplicationTest {
 
     @Test
     fun shouldInitRepo() {
-        knapsack.init()
-
         assert.that(knapsackDir.resolve(".git").isDirectory, equalTo(true))
     }
 }

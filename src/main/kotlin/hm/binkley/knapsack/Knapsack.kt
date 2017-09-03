@@ -7,7 +7,7 @@ import java.sql.DriverManager.getConnection
 class Knapsack(private val knapsackDir: Path) : AutoCloseable {
     private val database = getConnection("jdbc:hsqldb:file:$knapsackDir")
 
-    fun init() {
+    init {
         Git.init().
                 setDirectory(knapsackDir.toFile()).
                 call()
