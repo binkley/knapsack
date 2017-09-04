@@ -42,6 +42,9 @@ internal class DatabaseMapLiveTest {
         assert.that(map, equalTo(DatabaseMap(map.layer, KNAPSACK.database)))
         assert.that(map.hashCode(),
                 equalTo(DatabaseMap(map.layer, KNAPSACK.database).hashCode()))
+
+        map["bar"] = "4"
+        assert.that(map.keys, equalTo(setOf("foo", "bar")))
     }
 
     companion object {
