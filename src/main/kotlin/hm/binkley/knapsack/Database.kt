@@ -1,12 +1,16 @@
 package hm.binkley.knapsack
 
 import java.sql.Connection
+import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class Database(private val connection: Connection) : AutoCloseable {
+class Database(private val connection: Connection) : AutoCloseable, Cloneable {
     override fun close() = connection.close()
+
+    override public fun clone()
+            = Database(DriverManager.getConnection(connection.metaData.url))
 
     private val countAll: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("count-all").oneLine())
