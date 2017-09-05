@@ -1,6 +1,6 @@
 package hm.binkley.knapsack
 
-class DatabaseEntryIterator(val layer: Int, private val database: Database)
+class DatabaseEntryIterator(private val database: Database, val layer: Int)
     : MutableIterator<Entry>, AutoCloseable {
     private val results = database.selectKeys(layer)
     private var lastRemoveIndex = 0
@@ -26,7 +26,7 @@ class DatabaseEntryIterator(val layer: Int, private val database: Database)
     }
 
     private fun newDatabaseEntry()
-            = DatabaseEntry(layer, results.getString("key"), database)
+            = DatabaseEntry(database, layer, results.getString("key"))
 
     override fun close() = results.close()
 }

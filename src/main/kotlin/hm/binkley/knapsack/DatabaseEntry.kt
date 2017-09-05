@@ -5,9 +5,9 @@ import java.util.Objects
 import kotlin.collections.MutableMap.MutableEntry
 
 class DatabaseEntry(
+        private val database: Database,
         val layer: Int,
-        override val key: String,
-        private val database: Database)
+        override val key: String)
     : MutableEntry<String, String?> {
     override val value: String?
         get() = database.selectOne(layer, key)

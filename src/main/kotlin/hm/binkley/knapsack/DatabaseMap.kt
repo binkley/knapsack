@@ -2,12 +2,12 @@ package hm.binkley.knapsack
 
 import au.com.console.kassava.kotlinEquals
 
-class DatabaseMap(val layer: Int, private val database: Database)
+class DatabaseMap(private val database: Database, val layer: Int)
     : AbstractMutableMap<String, String?>() {
-    override val entries: MutableSet<Entry> = DatabaseSet(layer, database)
+    override val entries: MutableSet<Entry> = DatabaseSet(database, layer)
 
     override fun put(key: String, value: String?)
-            = DatabaseEntry(layer, key, database).setValue(value)
+            = DatabaseEntry(database, layer, key).setValue(value)
 
     override fun equals(other: Any?): Boolean {
         if (!kotlinEquals(other, properties))

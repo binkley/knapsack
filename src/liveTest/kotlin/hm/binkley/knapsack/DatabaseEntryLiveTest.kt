@@ -15,7 +15,7 @@ internal class DatabaseEntryLiveTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val entry = DatabaseEntry(0, "foo", KNAPSACK.database)
+        val entry = DatabaseEntry(KNAPSACK.database, 0, "foo")
 
         assert.that(entry.value, absent())
         assert.that(entry.setValue("3"), absent())
@@ -28,10 +28,10 @@ internal class DatabaseEntryLiveTest {
         val layer = 0
         val key = "foo"
         KNAPSACK.database.clone().use { database ->
-            DatabaseEntry(layer, key, database).setValue("2")
+            DatabaseEntry(database, layer, key).setValue("2")
         }
 
-        val entry = DatabaseEntry(layer, key, KNAPSACK.database)
+        val entry = DatabaseEntry(KNAPSACK.database, layer, key)
 
         assertThat(entry.value, equalTo("2"))
     }

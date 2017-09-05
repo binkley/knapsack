@@ -111,8 +111,8 @@ internal class DatabaseSetTest {
     }
 
     private fun newDatabaseEntry(key: String)
-            = DatabaseEntry(set.layer, key, database)
+            = DatabaseEntry(database, set.layer, key)
 
     private fun newDatabaseSet(layer: Int)
-            = DatabaseSet(layer, database)
+            = DatabaseSet(database, layer)
 }

@@ -29,7 +29,7 @@ internal class DatabaseMapTest {
         doReturn(selectKeysResults).`when`(database).selectKeys(layer)
         doReturn(otherSelectKeysResults).`when`(database).selectKeys(
                 layer + 1)
-        map = DatabaseMap(layer, database)
+        map = DatabaseMap(database, layer)
     }
 
     @Test
@@ -77,5 +77,5 @@ internal class DatabaseMapTest {
     }
 
     private fun newDatabaseMap(layer: Int)
-            = DatabaseMap(layer, database)
+            = DatabaseMap(database, layer)
 }

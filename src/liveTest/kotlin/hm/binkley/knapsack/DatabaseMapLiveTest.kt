@@ -13,7 +13,7 @@ internal class DatabaseMapLiveTest {
 
     @Test
     fun shouldWorkEndToEnd() {
-        val map = DatabaseMap(0, KNAPSACK.database)
+        val map = DatabaseMap(KNAPSACK.database, 0)
 
         assert.that(map.isEmpty(), equalTo(true))
         assert.that(map.keys.isEmpty(), equalTo(true))
@@ -39,9 +39,9 @@ internal class DatabaseMapLiveTest {
         assert.that(map.getOrDefault("foo", "3"), equalTo("3"))
 
         map["foo"] = "3"
-        assert.that(map, equalTo(DatabaseMap(map.layer, KNAPSACK.database)))
+        assert.that(map, equalTo(DatabaseMap(KNAPSACK.database, map.layer)))
         assert.that(map.hashCode(),
-                equalTo(DatabaseMap(map.layer, KNAPSACK.database).hashCode()))
+                equalTo(DatabaseMap(KNAPSACK.database, map.layer).hashCode()))
 
         map["bar"] = "4"
         assert.that(map.keys, equalTo(setOf("foo", "bar")))

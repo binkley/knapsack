@@ -141,5 +141,5 @@ internal class DatabaseEntryTest {
     }
 
     private fun newDatabaseEntry(layer: Int, key: String)
-            = DatabaseEntry(layer, key, database)
+            = DatabaseEntry(database, layer, key)
 }
