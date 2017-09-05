@@ -4,10 +4,10 @@ import au.com.console.kassava.kotlinEquals
 
 class DatabaseMap(private val database: Database, val layer: Int)
     : AbstractMutableMap<String, String?>() {
-    override val entries: MutableSet<Entry> = DatabaseSet(database, layer)
+    override val entries: MutableSet<Entry> = database.set(layer)
 
     override fun put(key: String, value: String?)
-            = DatabaseEntry(database, layer, key).setValue(value)
+            = database.entry(layer, key).setValue(value)
 
     override fun equals(other: Any?): Boolean {
         if (!kotlinEquals(other, properties))

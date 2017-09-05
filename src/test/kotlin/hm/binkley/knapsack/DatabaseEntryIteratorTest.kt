@@ -22,7 +22,7 @@ internal class DatabaseEntryIteratorTest {
     fun setUpDatabase() {
         val layer = 0
         doReturn(selectKeysResults).`when`(database).selectKeys(layer)
-        iter = DatabaseEntryIterator(database, layer)
+        iter = database.entryIterator(layer)
     }
 
     @Test

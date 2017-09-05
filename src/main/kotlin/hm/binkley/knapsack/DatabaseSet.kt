@@ -7,12 +7,12 @@ class DatabaseSet(private val database: Database, val layer: Int)
     : AbstractMutableSet<Entry>() {
     override fun add(element: Entry): Boolean {
         val newValue = element.value
-        val previousValue = DatabaseEntry(database, layer, element.key).
+        val previousValue = database.entry(layer, element.key).
                 setValue(newValue)
         return !Objects.equals(previousValue, newValue)
     }
 
-    override fun iterator() = DatabaseEntryIterator(database, layer)
+    override fun iterator() = database.entryIterator(layer)
 
     override val size: Int
         get() = database.countAll(layer)
