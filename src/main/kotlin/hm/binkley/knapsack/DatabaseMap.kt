@@ -11,7 +11,7 @@ class DatabaseMap(private val database: Database, val layer: Int)
 
     override fun equals(other: Any?): Boolean {
         if (!kotlinEquals(other, properties))
-            return false;
+            return false
         return super.equals(other)
     }
 
