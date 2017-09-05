@@ -29,7 +29,7 @@ internal class DatabaseMapTest {
         doReturn(selectKeysResults).`when`(database).selectKeys(layer)
         doReturn(otherSelectKeysResults).`when`(database).selectKeys(
                 layer + 1)
-        map = DatabaseMap(database, layer)
+        map = database.map(layer)
     }
 
     @Test
@@ -50,19 +50,19 @@ internal class DatabaseMapTest {
     fun shouldEqualsWhenEmpty() {
         doReturn(0, 0).`when`(database).countAll(map.layer)
 
-        assert.that(map == newDatabaseMap(map.layer), equalTo(true))
+        assert.that(map == database.map(map.layer), equalTo(true))
     }
 
     @Test
     fun shouldNotEqualsWhenEmpty() {
-        assert.that(map == newDatabaseMap(map.layer + 1), equalTo(false))
+        assert.that(map == database.map(map.layer + 1), equalTo(false))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
         `when`(selectKeysResults.next()).thenReturn(false, false)
 
-        assert.that(map.hashCode() == newDatabaseMap(map.layer).hashCode(),
+        assert.that(map.hashCode() == database.map(map.layer).hashCode(),
                 equalTo(true))
     }
 
@@ -72,10 +72,7 @@ internal class DatabaseMapTest {
         `when`(otherSelectKeysResults.next()).thenReturn(false)
 
         assert.that(
-                map.hashCode() == newDatabaseMap(map.layer + 1).hashCode(),
+                map.hashCode() == database.map(map.layer + 1).hashCode(),
                 equalTo(false))
     }
-
-    private fun newDatabaseMap(layer: Int)
-            = DatabaseMap(database, layer)
 }

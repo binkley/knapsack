@@ -35,32 +35,32 @@ internal class DatabaseEntryTest {
 
     @Before
     fun setUpDatabase() {
-        entry = newDatabaseEntry(0, "foo")
+        entry = database.entry(0, "foo")
 
         doReturn("3").`when`(database).selectOne(entry.layer, entry.key)
     }
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(newDatabaseEntry(entry.layer, entry.key)))
+        assert.that(entry, equalTo(database.entry(entry.layer, entry.key)))
     }
 
     @Suppress("ReplaceCallWithComparison")
     @Test
     fun shouldNotEquals() {
-        assert.that(entry == newDatabaseEntry(entry.layer + 1, entry.key),
+        assert.that(entry == database.entry(entry.layer + 1, entry.key),
                 equalTo(false))
     }
 
     @Test
     fun shouldHashCode() {
-        assert.that(entry.hashCode() == newDatabaseEntry(entry.layer,
+        assert.that(entry.hashCode() == database.entry(entry.layer,
                 entry.key).hashCode(), equalTo(true))
     }
 
     @Test
     fun shouldNotHashCode() {
-        assert.that(entry.hashCode() == newDatabaseEntry(entry.layer + 1,
+        assert.that(entry.hashCode() == database.entry(entry.layer + 1,
                 entry.key).hashCode(), equalTo(false))
     }
 
@@ -139,7 +139,4 @@ internal class DatabaseEntryTest {
 
         verify(connection).rollback()
     }
-
-    private fun newDatabaseEntry(layer: Int, key: String)
-            = DatabaseEntry(database, layer, key)
 }

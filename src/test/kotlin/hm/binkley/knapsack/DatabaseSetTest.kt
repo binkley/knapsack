@@ -32,7 +32,7 @@ internal class DatabaseSetTest {
         doReturn(selectKeysResults).`when`(database).selectKeys(layer)
         doReturn(otherSelectKeysResults).`when`(database).selectKeys(
                 layer + 1)
-        set = newDatabaseSet(layer)
+        set = database.set(layer)
     }
 
     @Test
@@ -53,19 +53,19 @@ internal class DatabaseSetTest {
     fun shouldEqualsWhenEmpty() {
         doReturn(0, 0).`when`(database).countAll(set.layer)
 
-        assert.that(set == newDatabaseSet(set.layer), equalTo(true))
+        assert.that(set == database.set(set.layer), equalTo(true))
     }
 
     @Test
     fun shouldNotEqualsWhenEmpty() {
-        assert.that(set == newDatabaseSet(set.layer + 1), equalTo(false))
+        assert.that(set == database.set(set.layer + 1), equalTo(false))
     }
 
     @Test
     fun shouldHashCodeWhenEmpty() {
         `when`(selectKeysResults.next()).thenReturn(false, false)
 
-        assert.that(set.hashCode() == newDatabaseSet(set.layer).hashCode(),
+        assert.that(set.hashCode() == database.set(set.layer).hashCode(),
                 equalTo(true))
     }
 
@@ -75,7 +75,7 @@ internal class DatabaseSetTest {
         `when`(otherSelectKeysResults.next()).thenReturn(false)
 
         assert.that(
-                set.hashCode() == newDatabaseSet(set.layer + 1).hashCode(),
+                set.hashCode() == database.set(set.layer + 1).hashCode(),
                 equalTo(false))
     }
 
@@ -84,7 +84,8 @@ internal class DatabaseSetTest {
         `when`(selectKeysResults.next()).thenReturn(true, false)
         `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
-        assert.that(set.contains(newDatabaseEntry("foo")), equalTo(true))
+        assert.that(set.contains(database.entry(set.layer, "foo")),
+                equalTo(true))
     }
 
     @Test
@@ -95,7 +96,7 @@ internal class DatabaseSetTest {
         `when`(selectKeysResults.row).thenReturn(1)
         `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
-        assert.that(set.remove(newDatabaseEntry("foo")), equalTo(true))
+        assert.that(set.remove(database.entry(set.layer, "foo")), equalTo(true))
 
         verify(database).deleteOne(set.layer, "foo")
     }
@@ -105,14 +106,8 @@ internal class DatabaseSetTest {
         doNothing().`when`(database).deleteOne(set.layer, "foo")
         doReturn(null, "3").`when`(database).selectOne(set.layer, "foo")
 
-        val changed = set.add(newDatabaseEntry("foo"))
+        val changed = set.add(database.entry(set.layer, "foo"))
 
         assert.that(changed, equalTo(true))
     }
-
-    private fun newDatabaseEntry(key: String)
-            = DatabaseEntry(database, set.layer, key)
-
-    private fun newDatabaseSet(layer: Int)
-            = DatabaseSet(database, layer)
 }
