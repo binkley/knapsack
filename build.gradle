@@ -37,6 +37,12 @@ repositories {
 }
 
 sourceSets {
+    mockTest {
+        kotlin {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+    }
     liveTest {
         kotlin {
             compileClasspath += main.output + test.output
@@ -46,6 +52,8 @@ sourceSets {
 }
 
 configurations {
+    mockTestCompile.extendsFrom testCompile
+    mockTestRuntime.extendsFrom testRuntime
     liveTestCompile.extendsFrom testCompile
     liveTestRuntime.extendsFrom testRuntime
     ktlint
@@ -59,7 +67,7 @@ dependencies {
     runtime "org.hsqldb:hsqldb:$hsqldb_version"
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
     testCompile "com.natpryce:hamkrest:$hamkrest_version"
-    testCompile "org.mockito:mockito-core:$mockito_version"
+    mockTestCompile "org.mockito:mockito-core:$mockito_version"
 }
 
 clean {
@@ -80,6 +88,15 @@ tasks.withType(Test) {
     }
 }
 
+task mockTest(type: Test) {
+    group = 'Verification'
+    description = 'Runs the mock tests.'
+    dependsOn test
+
+    testClassesDirs = sourceSets.mockTest.output.classesDirs
+    classpath = sourceSets.mockTest.runtimeClasspath
+}
+
 task liveTest(type: Test) {
     group = 'Verification'
     description = 'Runs the live tests.'
@@ -94,9 +111,9 @@ jacoco {
 }
 
 jacocoTestReport {
-    dependsOn liveTest
+    dependsOn mockTest, liveTest
 
-    executionData(test, liveTest)
+    executionData(test, mockTest, liveTest)
 }
 
 jacocoTestCoverageVerification {
@@ -166,7 +183,7 @@ jacocoTestCoverageVerification {
             }
         }
     }
-    executionData(test, liveTest)
+    executionData(test, mockTest, liveTest)
 }
 
 check {
