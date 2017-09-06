@@ -68,4 +68,12 @@ class DatabaseMapListTest {
 
         assert.that(mapList.layer, equalTo(1))
     }
+
+    @Test
+    fun shouldIterateLayers() {
+        mapList.next()
+
+        assert.that(mapList.layers.map { it.layer }.toList(),
+                equalTo(listOf(0, 1)))
+    }
 }
