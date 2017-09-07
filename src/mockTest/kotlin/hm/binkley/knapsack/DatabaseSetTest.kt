@@ -37,7 +37,7 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countAll(set.layer)
+        doReturn(0).`when`(database).countMap(set.layer)
 
         assert.that(set.size, equalTo(0))
     }
@@ -51,7 +51,7 @@ internal class DatabaseSetTest {
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countAll(set.layer)
+        doReturn(0, 0).`when`(database).countMap(set.layer)
 
         assert.that(set == database.set(set.layer), equalTo(true))
     }

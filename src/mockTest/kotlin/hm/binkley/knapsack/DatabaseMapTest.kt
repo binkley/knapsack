@@ -34,7 +34,7 @@ internal class DatabaseMapTest {
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countAll(map.layer)
+        doReturn(0).`when`(database).countMap(map.layer)
 
         assert.that(map.size, equalTo(0))
     }
@@ -48,7 +48,7 @@ internal class DatabaseMapTest {
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countAll(map.layer)
+        doReturn(0, 0).`when`(database).countMap(map.layer)
 
         assert.that(map == database.map(map.layer), equalTo(true))
     }

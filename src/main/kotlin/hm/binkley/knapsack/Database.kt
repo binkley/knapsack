@@ -28,7 +28,7 @@ class Database(private val connection: Connection) : AutoCloseable, Cloneable {
         connection.prepareStatement(SQLReader("delete-one").oneLine())
     }
 
-    fun countAll(layer: Int): Int {
+    fun countMap(layer: Int): Int {
         countMap.setInt(1, layer)
         countMap.executeQuery().use { results ->
             if (!results.next()) throw IllegalStateException()

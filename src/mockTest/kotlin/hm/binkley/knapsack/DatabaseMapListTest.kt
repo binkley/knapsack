@@ -30,7 +30,7 @@ class DatabaseMapListTest {
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countAll(0)
+        doReturn(0).`when`(database).countMap(0)
 
         assert.that(mapList.size, equalTo(0))
     }
@@ -44,7 +44,7 @@ class DatabaseMapListTest {
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countAll(0)
+        doReturn(0, 0).`when`(database).countMap(0)
 
         assert.that(mapList == database.mapList(), equalTo(true))
     }

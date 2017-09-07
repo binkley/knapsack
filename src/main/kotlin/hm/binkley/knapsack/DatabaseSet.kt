@@ -15,7 +15,7 @@ class DatabaseSet(private val database: Database, val layer: Int)
     override fun iterator() = database.entryIterator(layer)
 
     override val size: Int
-        get() = database.countAll(layer)
+        get() = database.countMap(layer)
 
     override fun equals(other: Any?): Boolean {
         if (!kotlinEquals(other, properties))

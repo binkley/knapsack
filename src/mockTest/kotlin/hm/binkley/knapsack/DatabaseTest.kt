@@ -40,7 +40,7 @@ internal class DatabaseTest {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
-        assert.that(database.countAll(0), equalTo(3))
+        assert.that(database.countMap(0), equalTo(3))
 
         val inOrder = inOrder(statement, results)
         inOrder.verify(statement).setInt(1, 0)
@@ -53,7 +53,7 @@ internal class DatabaseTest {
     fun shouldThrowWhenCountAllHasNone() {
         `when`(results.next()).thenReturn(false)
 
-        database.countAll(0)
+        database.countMap(0)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -61,7 +61,7 @@ internal class DatabaseTest {
         `when`(results.next()).thenReturn(true, true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
-        database.countAll(0)
+        database.countMap(0)
     }
 
     @Test
