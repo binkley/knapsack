@@ -12,11 +12,11 @@ class Database(private val connection: Connection) : AutoCloseable, Cloneable {
     override public fun clone()
             = Database(DriverManager.getConnection(connection.metaData.url))
 
-    private val countAll: PreparedStatement by lazy {
-        connection.prepareStatement(SQLReader("count-all").oneLine())
+    private val countMap: PreparedStatement by lazy {
+        connection.prepareStatement(SQLReader("count-map").oneLine())
     }
-    private val selectKeys: PreparedStatement by lazy {
-        connection.prepareStatement(SQLReader("select-keys").oneLine())
+    private val selectMapKeys: PreparedStatement by lazy {
+        connection.prepareStatement(SQLReader("select-map-keys").oneLine())
     }
     private val selectOne: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("select-one").oneLine())
@@ -29,8 +29,8 @@ class Database(private val connection: Connection) : AutoCloseable, Cloneable {
     }
 
     fun countAll(layer: Int): Int {
-        countAll.setInt(1, layer)
-        countAll.executeQuery().use { results ->
+        countMap.setInt(1, layer)
+        countMap.executeQuery().use { results ->
             if (!results.next()) throw IllegalStateException()
             val count = results.getInt("size")
             if (results.next()) throw IllegalStateException()
@@ -38,9 +38,9 @@ class Database(private val connection: Connection) : AutoCloseable, Cloneable {
         }
     }
 
-    fun selectKeys(layer: Int): ResultSet {
-        selectKeys.setInt(1, layer)
-        return selectKeys.executeQuery()
+    fun selectMapKeys(layer: Int): ResultSet {
+        selectMapKeys.setInt(1, layer)
+        return selectMapKeys.executeQuery()
     }
 
     fun selectOne(layer: Int, key: String): String? {

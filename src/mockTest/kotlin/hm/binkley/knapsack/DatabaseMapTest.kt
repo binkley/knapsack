@@ -26,8 +26,9 @@ internal class DatabaseMapTest {
     @Before
     fun setUp() {
         val layer = 0
-        doReturn(selectKeysResults).`when`(database).selectKeys(layer)
-        doReturn(otherSelectKeysResults).`when`(database).selectKeys(layer + 1)
+        doReturn(selectKeysResults).`when`(database).selectMapKeys(layer)
+        doReturn(otherSelectKeysResults).`when`(database).selectMapKeys(
+                layer + 1)
         map = database.map(layer)
     }
 

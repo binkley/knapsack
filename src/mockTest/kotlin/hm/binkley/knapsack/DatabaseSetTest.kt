@@ -29,8 +29,8 @@ internal class DatabaseSetTest {
     @Before
     fun setUpDatabase() {
         val layer = 0
-        doReturn(selectKeysResults).`when`(database).selectKeys(layer)
-        doReturn(otherSelectKeysResults).`when`(database).selectKeys(
+        doReturn(selectKeysResults).`when`(database).selectMapKeys(layer)
+        doReturn(otherSelectKeysResults).`when`(database).selectMapKeys(
                 layer + 1)
         set = database.set(layer)
     }

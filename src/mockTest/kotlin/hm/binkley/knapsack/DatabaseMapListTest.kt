@@ -24,7 +24,7 @@ class DatabaseMapListTest {
 
     @Before
     fun setUp() {
-        doReturn(selectKeysResults).`when`(database).selectKeys(0)
+        doReturn(selectKeysResults).`when`(database).selectMapKeys(0)
         mapList = database.mapList()
     }
 
