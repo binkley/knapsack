@@ -39,6 +39,6 @@ internal class DatabaseEntryLiveTest {
     companion object {
         @ClassRule
         @JvmField
-        val KNAPSACK = DatabaseTestRule()
+        val KNAPSACK = DatabaseLiveTestRule()
     }
 }

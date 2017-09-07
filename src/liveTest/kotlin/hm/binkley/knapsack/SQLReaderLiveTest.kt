@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
-internal class SQLReaderTest {
+internal class SQLReaderLiveTest {
     @Test
     fun shouldSkipComments() {
         val reader = SQLReader("test-comments")

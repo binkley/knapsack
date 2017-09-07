@@ -18,7 +18,7 @@ import java.sql.Connection
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
-internal class DatabaseSetTest {
+internal class DatabaseSetMockTest {
     @Mock private lateinit var connection: Connection
     @Spy
     @InjectMocks private lateinit var database: Database

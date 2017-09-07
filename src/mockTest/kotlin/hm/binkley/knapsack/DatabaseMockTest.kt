@@ -23,7 +23,7 @@ import java.sql.SQLException
 import kotlin.test.fail
 
 @RunWith(MockitoJUnitRunner::class)
-internal class DatabaseTest {
+internal class DatabaseMockTest {
     @Mock private lateinit var connection: Connection
     @Mock private lateinit var statement: PreparedStatement
     @Mock private lateinit var results: ResultSet
@@ -36,7 +36,7 @@ internal class DatabaseTest {
     }
 
     @Test
-    fun shouldCountAll() {
+    fun shouldCountMap() {
         `when`(results.next()).thenReturn(true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 
@@ -50,14 +50,14 @@ internal class DatabaseTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun shouldThrowWhenCountAllHasNone() {
+    fun shouldThrowWhenCountMapHasNone() {
         `when`(results.next()).thenReturn(false)
 
         database.countMap(0)
     }
 
     @Test(expected = IllegalStateException::class)
-    fun shouldThrowWhenCountAllHasMultiple() {
+    fun shouldThrowWhenCountMapHasMultiple() {
         `when`(results.next()).thenReturn(true, true, false)
         `when`(results.getInt(eq("size"))).thenReturn(3)
 

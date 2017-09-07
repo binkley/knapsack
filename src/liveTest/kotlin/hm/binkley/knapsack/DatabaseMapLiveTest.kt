@@ -50,6 +50,6 @@ internal class DatabaseMapLiveTest {
     companion object {
         @ClassRule
         @JvmField
-        val KNAPSACK = DatabaseTestRule()
+        val KNAPSACK = DatabaseLiveTestRule()
     }
 }

@@ -23,7 +23,7 @@ import java.sql.Connection
 import java.sql.SQLException
 
 @RunWith(MockitoJUnitRunner::class)
-internal class DatabaseEntryTest {
+internal class DatabaseEntryMockTest {
     @Rule
     @JvmField
     val thrown = ExpectedException.none()!!

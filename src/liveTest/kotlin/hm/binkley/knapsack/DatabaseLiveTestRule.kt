@@ -4,7 +4,7 @@ import org.junit.rules.ExternalResource
 import java.nio.file.Files.createTempDirectory
 import java.sql.DriverManager.getConnection
 
-class DatabaseTestRule : ExternalResource() {
+class DatabaseLiveTestRule : ExternalResource() {
     private lateinit var _database: Database
 
     val database

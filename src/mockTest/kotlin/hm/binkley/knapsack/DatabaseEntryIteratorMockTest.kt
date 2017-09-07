@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
-internal class DatabaseEntryIteratorTest {
+internal class DatabaseEntryIteratorMockTest {
     @Mock private lateinit var database: Database
     @Mock private lateinit var selectKeysResults: ResultSet
     private lateinit var iter: DatabaseEntryIterator
