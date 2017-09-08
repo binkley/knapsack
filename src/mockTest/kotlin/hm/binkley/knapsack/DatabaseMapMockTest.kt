@@ -2,34 +2,31 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
 import org.mockito.Mockito.doReturn
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 import java.sql.ResultSet
 
 @RunWith(MockitoJUnitRunner::class)
 internal class DatabaseMapMockTest {
-    @Mock private lateinit var connection: Connection
-    @Spy
-    @InjectMocks private lateinit var database: Database
-    @Mock private lateinit var selectKeysResults: ResultSet
-    @Mock private lateinit var otherSelectKeysResults: ResultSet
-    private lateinit var map: DatabaseMap
+    private val connection: Connection = mock()
+    private val database = spy(Database(connection))
+    private val selectKeysResults: ResultSet = mock()
+    private val otherSelectKeysResults: ResultSet = mock()
+    private val map = database.map(0)
 
     @Before
     fun setUp() {
-        val layer = 0
-        doReturn(selectKeysResults).whenever(database).selectMapKeys(layer)
+        doReturn(selectKeysResults).whenever(database).selectMapKeys(
+                map.layer)
         doReturn(otherSelectKeysResults).whenever(database).selectMapKeys(
-                layer + 1)
-        map = database.map(layer)
+                map.layer + 1)
     }
 
     @Test
