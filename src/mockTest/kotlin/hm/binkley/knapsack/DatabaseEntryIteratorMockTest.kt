@@ -1,28 +1,23 @@
 package hm.binkley.knapsack
 
+import com.nhaarman.mockito_kotlin.atLeastOnce
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.eq
-import org.mockito.Mock
-import org.mockito.Mockito.atLeastOnce
-import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.ResultSet
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @RunWith(MockitoJUnitRunner::class)
 internal class DatabaseEntryIteratorMockTest {
-    @Mock private lateinit var database: Database
-    @Mock private lateinit var selectKeysResults: ResultSet
-    private lateinit var iter: DatabaseEntryIterator
-
-    @Before
-    fun setUpDatabase() {
-        val layer = 0
-        doReturn(selectKeysResults).whenever(database).selectMapKeys(layer)
-        iter = database.entryIterator(layer)
+    private val selectKeysResults: ResultSet = mock()
+    private val database: Database = mock {
+        on { selectMapKeys(0) } doReturn selectKeysResults
     }
 
     @Test
@@ -30,6 +25,23 @@ internal class DatabaseEntryIteratorMockTest {
         iter.use {}
 
         verify(selectKeysResults, atLeastOnce()).close()
+    }
+
+    private val iter = database.entryIterator(0)
+
+    @Test
+    fun shouldHasNext() {
+        whenever(selectKeysResults.next()).thenReturn(true, false)
+
+        assertTrue(iter.hasNext())
+        assertFalse(iter.hasNext())
+    }
+
+    @Test
+    fun shouldNext() {
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+
+        iter.next()
     }
 
     @Test(expected = NoSuchElementException::class)
