@@ -3,25 +3,21 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doNothing
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.spy
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.doThrow
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
-import java.sql.SQLException
 
 @RunWith(MockitoJUnitRunner::class)
 internal class DatabaseEntryMockTest {
@@ -29,15 +25,12 @@ internal class DatabaseEntryMockTest {
     @JvmField
     val thrown = ExpectedException.none()!!
 
-    @Mock private lateinit var connection: Connection
-    @Spy
-    @InjectMocks private lateinit var database: Database
-    private lateinit var entry: DatabaseEntry
+    private val connection: Connection = mock()
+    private val database: Database = spy(Database(connection))
+    private val entry = database.entry(0, "foo")
 
     @Before
-    fun setUpDatabase() {
-        entry = database.entry(0, "foo")
-
+    fun setUp() {
         doReturn("3").whenever(database).selectOne(entry.layer, entry.key)
     }
 
@@ -82,37 +75,37 @@ internal class DatabaseEntryMockTest {
     @Test
     fun shouldSetValueFirstTime() {
         doNothing().whenever(database).upsertOne(entry.layer, entry.key, "3")
-        doReturn(null, "3").whenever(database).selectOne(entry.layer,
-                entry.key)
+        doReturn(null, "3").
+                whenever(database).selectOne(entry.layer, entry.key)
 
         val previous = entry.setValue("3")
 
         assert.that(previous, absent())
         assert.that(entry.value, equalTo("3"))
 
-        verify(database, never()).deleteOne(anyInt(), anyString())
+        verify(database, never()).deleteOne(any(), any())
         verify(database).upsertOne(entry.layer, entry.key, "3")
     }
 
     @Test
     fun shouldSetValueSecondTime() {
         doNothing().whenever(database).upsertOne(entry.layer, entry.key, "3")
-        doReturn("2", "3").whenever(database).selectOne(entry.layer,
-                entry.key)
+        doReturn("2", "3").
+                whenever(database).selectOne(entry.layer, entry.key)
 
         val previous = entry.setValue("3")
 
         assert.that(previous, equalTo("2"))
         assert.that(entry.value, equalTo("3"))
 
-        verify(database, never()).deleteOne(anyInt(), anyString())
+        verify(database, never()).deleteOne(any(), any())
         verify(database).upsertOne(entry.layer, entry.key, "3")
     }
 
     @Test
     fun shouldSetNull() {
-        doReturn("3", null).whenever(database).selectOne(entry.layer,
-                entry.key)
+        doReturn("3", null).
+                whenever(database).selectOne(entry.layer, entry.key)
         doNothing().whenever(database).deleteOne(entry.layer, entry.key)
 
         val previous = entry.setValue(null)
@@ -121,27 +114,15 @@ internal class DatabaseEntryMockTest {
         assert.that(entry.value, absent())
 
         verify(database).deleteOne(entry.layer, entry.key)
-        verify(database, never()).upsertOne(anyInt(), anyString(),
-                anyString())
+        verify(database, never()).upsertOne(any(), any(), any())
     }
 
     @Test
-    fun shouldCommit() {
+    fun shouldTransact() {
         doNothing().whenever(database).deleteOne(entry.layer, entry.key)
 
         entry.setValue(null)
 
-        verify(connection).commit()
-    }
-
-    @Test
-    fun shouldRollback() {
-        thrown.expect(SQLException::class.java)
-        doThrow(SQLException::class.java).whenever(database).deleteOne(
-                entry.layer, entry.key)
-
-        entry.setValue(null)
-
-        verify(connection).rollback()
+        verify(database).transaction(any<() -> String?>())
     }
 }

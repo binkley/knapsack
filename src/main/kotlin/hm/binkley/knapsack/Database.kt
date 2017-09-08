@@ -6,7 +6,8 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class Database(private val connection: Connection) : AutoCloseable, Cloneable {
+class Database(
+        private val connection: Connection) : AutoCloseable, Cloneable {
     override fun close() = connection.close()
 
     override public fun clone()
