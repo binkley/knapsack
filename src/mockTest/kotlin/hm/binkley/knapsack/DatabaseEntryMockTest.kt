@@ -3,6 +3,7 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +38,7 @@ internal class DatabaseEntryMockTest {
     fun setUpDatabase() {
         entry = database.entry(0, "foo")
 
-        doReturn("3").`when`(database).selectOne(entry.layer, entry.key)
+        doReturn("3").whenever(database).selectOne(entry.layer, entry.key)
     }
 
     @Test
@@ -73,15 +74,16 @@ internal class DatabaseEntryMockTest {
 
     @Test
     fun shouldGetNull() {
-        doReturn(null).`when`(database).selectOne(entry.layer, entry.key)
+        doReturn(null).whenever(database).selectOne(entry.layer, entry.key)
 
         assert.that(entry.value, absent())
     }
 
     @Test
     fun shouldSetValueFirstTime() {
-        doNothing().`when`(database).upsertOne(entry.layer, entry.key, "3")
-        doReturn(null, "3").`when`(database).selectOne(entry.layer, entry.key)
+        doNothing().whenever(database).upsertOne(entry.layer, entry.key, "3")
+        doReturn(null, "3").whenever(database).selectOne(entry.layer,
+                entry.key)
 
         val previous = entry.setValue("3")
 
@@ -94,8 +96,9 @@ internal class DatabaseEntryMockTest {
 
     @Test
     fun shouldSetValueSecondTime() {
-        doNothing().`when`(database).upsertOne(entry.layer, entry.key, "3")
-        doReturn("2", "3").`when`(database).selectOne(entry.layer, entry.key)
+        doNothing().whenever(database).upsertOne(entry.layer, entry.key, "3")
+        doReturn("2", "3").whenever(database).selectOne(entry.layer,
+                entry.key)
 
         val previous = entry.setValue("3")
 
@@ -108,8 +111,9 @@ internal class DatabaseEntryMockTest {
 
     @Test
     fun shouldSetNull() {
-        doReturn("3", null).`when`(database).selectOne(entry.layer, entry.key)
-        doNothing().`when`(database).deleteOne(entry.layer, entry.key)
+        doReturn("3", null).whenever(database).selectOne(entry.layer,
+                entry.key)
+        doNothing().whenever(database).deleteOne(entry.layer, entry.key)
 
         val previous = entry.setValue(null)
 
@@ -117,12 +121,13 @@ internal class DatabaseEntryMockTest {
         assert.that(entry.value, absent())
 
         verify(database).deleteOne(entry.layer, entry.key)
-        verify(database, never()).upsertOne(anyInt(), anyString(), anyString())
+        verify(database, never()).upsertOne(anyInt(), anyString(),
+                anyString())
     }
 
     @Test
     fun shouldCommit() {
-        doNothing().`when`(database).deleteOne(entry.layer, entry.key)
+        doNothing().whenever(database).deleteOne(entry.layer, entry.key)
 
         entry.setValue(null)
 
@@ -132,7 +137,7 @@ internal class DatabaseEntryMockTest {
     @Test
     fun shouldRollback() {
         thrown.expect(SQLException::class.java)
-        doThrow(SQLException::class.java).`when`(database).deleteOne(
+        doThrow(SQLException::class.java).whenever(database).deleteOne(
                 entry.layer, entry.key)
 
         entry.setValue(null)

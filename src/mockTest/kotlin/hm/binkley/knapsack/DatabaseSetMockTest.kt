@@ -2,13 +2,13 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
@@ -29,29 +29,29 @@ internal class DatabaseSetMockTest {
     @Before
     fun setUpDatabase() {
         val layer = 0
-        doReturn(selectKeysResults).`when`(database).selectMapKeys(layer)
-        doReturn(otherSelectKeysResults).`when`(database).selectMapKeys(
+        doReturn(selectKeysResults).whenever(database).selectMapKeys(layer)
+        doReturn(otherSelectKeysResults).whenever(database).selectMapKeys(
                 layer + 1)
         set = database.set(layer)
     }
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countMap(set.layer)
+        doReturn(0).whenever(database).countMap(set.layer)
 
         assert.that(set.size, equalTo(0))
     }
 
     @Test
     fun shouldStartEmptyIterated() {
-        `when`(selectKeysResults.next()).thenReturn(false)
+        whenever(selectKeysResults.next()).thenReturn(false)
 
         assert.that(set.iterator().hasNext(), equalTo(false))
     }
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countMap(set.layer)
+        doReturn(0, 0).whenever(database).countMap(set.layer)
 
         assert.that(set == database.set(set.layer), equalTo(true))
     }
@@ -63,7 +63,7 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldHashCodeWhenEmpty() {
-        `when`(selectKeysResults.next()).thenReturn(false, false)
+        whenever(selectKeysResults.next()).thenReturn(false, false)
 
         assert.that(set.hashCode() == database.set(set.layer).hashCode(),
                 equalTo(true))
@@ -71,8 +71,8 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldNotHashCodeWhenEmpty() {
-        `when`(selectKeysResults.next()).thenReturn(false)
-        `when`(otherSelectKeysResults.next()).thenReturn(false)
+        whenever(selectKeysResults.next()).thenReturn(false)
+        whenever(otherSelectKeysResults.next()).thenReturn(false)
 
         assert.that(
                 set.hashCode() == database.set(set.layer + 1).hashCode(),
@@ -81,8 +81,8 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldFindEntry() {
-        `when`(selectKeysResults.next()).thenReturn(true, false)
-        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+        whenever(selectKeysResults.next()).thenReturn(true, false)
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.contains(database.entry(set.layer, "foo")),
                 equalTo(true))
@@ -90,21 +90,22 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldRemoveEntry() {
-        doNothing().`when`(database).deleteOne(set.layer, "foo")
-        doReturn("3").`when`(database).selectOne(set.layer, "foo")
-        `when`(selectKeysResults.next()).thenReturn(true, false)
-        `when`(selectKeysResults.row).thenReturn(1)
-        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+        doNothing().whenever(database).deleteOne(set.layer, "foo")
+        doReturn("3").whenever(database).selectOne(set.layer, "foo")
+        whenever(selectKeysResults.next()).thenReturn(true, false)
+        whenever(selectKeysResults.row).thenReturn(1)
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
-        assert.that(set.remove(database.entry(set.layer, "foo")), equalTo(true))
+        assert.that(set.remove(database.entry(set.layer, "foo")),
+                equalTo(true))
 
         verify(database).deleteOne(set.layer, "foo")
     }
 
     @Test
     fun shouldMutate() {
-        doNothing().`when`(database).deleteOne(set.layer, "foo")
-        doReturn(null, "3").`when`(database).selectOne(set.layer, "foo")
+        doNothing().whenever(database).deleteOne(set.layer, "foo")
+        doReturn(null, "3").whenever(database).selectOne(set.layer, "foo")
 
         val changed = set.add(database.entry(set.layer, "foo"))
 

@@ -1,11 +1,11 @@
 package hm.binkley.knapsack
 
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
@@ -21,7 +21,7 @@ internal class DatabaseEntryIteratorMockTest {
     @Before
     fun setUpDatabase() {
         val layer = 0
-        doReturn(selectKeysResults).`when`(database).selectMapKeys(layer)
+        doReturn(selectKeysResults).whenever(database).selectMapKeys(layer)
         iter = database.entryIterator(layer)
     }
 
@@ -34,30 +34,30 @@ internal class DatabaseEntryIteratorMockTest {
 
     @Test(expected = NoSuchElementException::class)
     fun shouldThrowIfNextBeforeStart() {
-        `when`(selectKeysResults.isBeforeFirst).thenReturn(true)
+        whenever(selectKeysResults.isBeforeFirst).thenReturn(true)
 
         iter.next()
     }
 
     @Test(expected = NoSuchElementException::class)
     fun shouldThrowIfNextAfterEnd() {
-        `when`(selectKeysResults.isAfterLast).thenReturn(true)
+        whenever(selectKeysResults.isAfterLast).thenReturn(true)
 
         iter.next()
     }
 
     @Test
     fun shouldRemove() {
-        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
-        `when`(selectKeysResults.row).thenReturn(1)
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+        whenever(selectKeysResults.row).thenReturn(1)
 
         iter.remove()
     }
 
     @Test
     fun shouldRemoveTwiceIfNextBetween() {
-        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
-        `when`(selectKeysResults.row).thenReturn(1, 2)
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+        whenever(selectKeysResults.row).thenReturn(1, 2)
 
         iter.remove()
         iter.next()
@@ -66,22 +66,22 @@ internal class DatabaseEntryIteratorMockTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowIfRemoveBeforeStart() {
-        `when`(selectKeysResults.isBeforeFirst).thenReturn(true)
+        whenever(selectKeysResults.isBeforeFirst).thenReturn(true)
 
         iter.remove()
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowIfRemoveAfterEnd() {
-        `when`(selectKeysResults.isAfterLast).thenReturn(true)
+        whenever(selectKeysResults.isAfterLast).thenReturn(true)
 
         iter.remove()
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowIfRemoveTwiceOnSameRow() {
-        `when`(selectKeysResults.getString(eq("key"))).thenReturn("foo")
-        `when`(selectKeysResults.row).thenReturn(1, 1)
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+        whenever(selectKeysResults.row).thenReturn(1, 1)
 
         iter.remove()
         iter.remove()

@@ -3,6 +3,7 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -10,7 +11,6 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.inOrder
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -31,14 +31,15 @@ internal class DatabaseMockTest {
 
     @Before
     fun setUp() {
-        `when`(connection.prepareStatement(anyString())).thenReturn(statement)
-        `when`(statement.executeQuery()).thenReturn(results)
+        whenever(connection.prepareStatement(anyString())).thenReturn(
+                statement)
+        whenever(statement.executeQuery()).thenReturn(results)
     }
 
     @Test
     fun shouldCountMap() {
-        `when`(results.next()).thenReturn(true, false)
-        `when`(results.getInt(eq("size"))).thenReturn(3)
+        whenever(results.next()).thenReturn(true, false)
+        whenever(results.getInt(eq("size"))).thenReturn(3)
 
         assert.that(database.countMap(0), equalTo(3))
 
@@ -51,23 +52,23 @@ internal class DatabaseMockTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowWhenCountMapHasNone() {
-        `when`(results.next()).thenReturn(false)
+        whenever(results.next()).thenReturn(false)
 
         database.countMap(0)
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowWhenCountMapHasMultiple() {
-        `when`(results.next()).thenReturn(true, true, false)
-        `when`(results.getInt(eq("size"))).thenReturn(3)
+        whenever(results.next()).thenReturn(true, true, false)
+        whenever(results.getInt(eq("size"))).thenReturn(3)
 
         database.countMap(0)
     }
 
     @Test
     fun shouldSelectOne() {
-        `when`(results.next()).thenReturn(true, false)
-        `when`(results.getString(eq("value"))).thenReturn("3")
+        whenever(results.next()).thenReturn(true, false)
+        whenever(results.getString(eq("value"))).thenReturn("3")
 
         val value = database.selectOne(0, "foo")
 
@@ -84,7 +85,7 @@ internal class DatabaseMockTest {
 
     @Test
     fun shouldReturnNullWhenSelectOneHasNone() {
-        `when`(results.next()).thenReturn(false)
+        whenever(results.next()).thenReturn(false)
 
         val value = database.selectOne(0, "foo")
 
@@ -93,8 +94,8 @@ internal class DatabaseMockTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowWhenSelectOneHasMultiple() {
-        `when`(results.next()).thenReturn(true, true, false)
-        `when`(results.getString(eq("value"))).thenReturn("3")
+        whenever(results.next()).thenReturn(true, true, false)
+        whenever(results.getString(eq("value"))).thenReturn("3")
 
         database.selectOne(0, "foo")
     }

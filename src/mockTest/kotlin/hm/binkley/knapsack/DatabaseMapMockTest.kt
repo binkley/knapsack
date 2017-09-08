@@ -2,12 +2,12 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doReturn
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
@@ -26,29 +26,29 @@ internal class DatabaseMapMockTest {
     @Before
     fun setUp() {
         val layer = 0
-        doReturn(selectKeysResults).`when`(database).selectMapKeys(layer)
-        doReturn(otherSelectKeysResults).`when`(database).selectMapKeys(
+        doReturn(selectKeysResults).whenever(database).selectMapKeys(layer)
+        doReturn(otherSelectKeysResults).whenever(database).selectMapKeys(
                 layer + 1)
         map = database.map(layer)
     }
 
     @Test
     fun shouldStartEmptySized() {
-        doReturn(0).`when`(database).countMap(map.layer)
+        doReturn(0).whenever(database).countMap(map.layer)
 
         assert.that(map.size, equalTo(0))
     }
 
     @Test
     fun shouldStartEmptyIterated() {
-        `when`(selectKeysResults.next()).thenReturn(false)
+        whenever(selectKeysResults.next()).thenReturn(false)
 
         assert.that(map.iterator().hasNext(), equalTo(false))
     }
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).`when`(database).countMap(map.layer)
+        doReturn(0, 0).whenever(database).countMap(map.layer)
 
         assert.that(map == database.map(map.layer), equalTo(true))
     }
@@ -60,7 +60,7 @@ internal class DatabaseMapMockTest {
 
     @Test
     fun shouldHashCodeWhenEmpty() {
-        `when`(selectKeysResults.next()).thenReturn(false, false)
+        whenever(selectKeysResults.next()).thenReturn(false, false)
 
         assert.that(map.hashCode() == database.map(map.layer).hashCode(),
                 equalTo(true))
@@ -68,8 +68,8 @@ internal class DatabaseMapMockTest {
 
     @Test
     fun shouldNotHashCodeWhenEmpty() {
-        `when`(selectKeysResults.next()).thenReturn(false)
-        `when`(otherSelectKeysResults.next()).thenReturn(false)
+        whenever(selectKeysResults.next()).thenReturn(false)
+        whenever(otherSelectKeysResults.next()).thenReturn(false)
 
         assert.that(
                 map.hashCode() == database.map(map.layer + 1).hashCode(),
