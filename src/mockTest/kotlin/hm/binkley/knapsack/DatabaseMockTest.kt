@@ -3,18 +3,17 @@ package hm.binkley.knapsack
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.inOrder
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchers.eq
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.inOrder
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -24,17 +23,14 @@ import kotlin.test.fail
 
 @RunWith(MockitoJUnitRunner::class)
 internal class DatabaseMockTest {
-    @Mock private lateinit var connection: Connection
-    @Mock private lateinit var statement: PreparedStatement
-    @Mock private lateinit var results: ResultSet
-    @InjectMocks private lateinit var database: Database
-
-    @Before
-    fun setUp() {
-        whenever(connection.prepareStatement(anyString())).thenReturn(
-                statement)
-        whenever(statement.executeQuery()).thenReturn(results)
+    private val results: ResultSet = mock()
+    private val statement: PreparedStatement = mock {
+        on { executeQuery() } doReturn results
     }
+    private val connection: Connection = mock {
+        on { prepareStatement(any()) } doReturn statement
+    }
+    private val database = Database(connection)
 
     @Test
     fun shouldCountMap() {
