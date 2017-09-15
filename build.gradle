@@ -47,12 +47,13 @@ sourceSets {
     liveTest {
         kotlin {
             compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output + configurations.default
         }
     }
 }
 
 configurations {
+    testRuntime.exclude module: 'hsqldb'
     mockTestCompile.extendsFrom testCompile
     mockTestRuntime.extendsFrom testRuntime
     liveTestCompile.extendsFrom testCompile
