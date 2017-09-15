@@ -31,11 +31,10 @@ class Database(
 
     fun countMap(layer: Int): Int {
         countMap.setInt(1, layer)
-        countMap.executeQuery().use { results ->
-            if (!results.next()) throw IllegalStateException()
-            val count = results.getInt("size")
-            if (results.next()) throw IllegalStateException()
-            return count
+        return countMap.executeQuery().use { results ->
+            oneOnly(results) {
+                it.getInt("size")
+            }
         }
     }
 
@@ -47,11 +46,10 @@ class Database(
     fun selectOne(layer: Int, key: String): String? {
         selectOne.setInt(1, layer)
         selectOne.setString(2, key)
-        selectOne.executeQuery().use { results ->
-            if (!results.next()) return null
-            val value = results.getString("value")
-            if (results.next()) throw IllegalStateException()
-            return value
+        return selectOne.executeQuery().use { results ->
+            oneOnly(results, { -> null }) {
+                it.getString("value")
+            }
         }
     }
 
@@ -92,6 +90,23 @@ class Database(
             throw e
         } finally {
             connection.autoCommit = true
+        }
+    }
+
+    companion object {
+        private fun <T> oneOnly(
+                results: ResultSet,
+                defaultValue: () -> T = { ->
+                    throw IllegalStateException(
+                            "No row results, expected exactly 1")
+                },
+                getter: (ResultSet) -> T): T {
+            if (!results.next())
+                return defaultValue()
+            val value = getter(results)
+            if (results.next()) throw IllegalStateException(
+                    "Multiple result rows, expected exactly 1")
+            return value
         }
     }
 }
