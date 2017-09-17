@@ -2,9 +2,16 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
+import java.io.FileNotFoundException
 
 internal class SQLReaderLiveTest {
+    @Rule
+    @JvmField
+    internal val thrown = ExpectedException.none()
+
     @Test
     fun shouldSkipComments() {
         val reader = SQLReader("test-comments")
@@ -33,13 +40,25 @@ internal class SQLReaderLiveTest {
         assert.that(reader.lines(), equalTo(listOf("LINE ONE", "LINE TWO")))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun shouldComplainAtUnterminated() {
+        thrown.expect(IllegalArgumentException::class.java)
+
         SQLReader("test-unterminated").lines()
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun shouldComplainAtMultiline() {
+        thrown.expect(IllegalArgumentException::class.java)
+
         SQLReader("test-single-line").oneLine()
+    }
+
+    @Test
+    fun shouldBeNicerAboutMissingResources() {
+        thrown.expect(FileNotFoundException::class.java)
+        thrown.expectMessage("no-such-file")
+
+        SQLReader("no-such-file").lines()
     }
 }

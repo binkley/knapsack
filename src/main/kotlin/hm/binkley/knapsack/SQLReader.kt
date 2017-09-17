@@ -1,10 +1,11 @@
 package hm.binkley.knapsack
 
+import java.io.FileNotFoundException
 import java.util.ArrayList
 import java.util.regex.Pattern
 
 class SQLReader(private val purpose: String) {
-    fun lines() = catenateSql(rawLines())
+    fun lines() = catenateSql(rawLines)
 
     fun oneLine() = lines().single()
 
@@ -35,11 +36,15 @@ class SQLReader(private val purpose: String) {
         return lines
     }
 
-    private fun rawLines()
-            = javaClass.
-            getResource("/hm/binkley/knapsack/knapsack-$purpose.sql").
-            readText().
-            lines()
+    private val rawLines: List<String>
+        get() {
+            val source = "/hm/binkley/knapsack/knapsack-$purpose.sql"
+            val resource = javaClass.getResource(source)
+                    ?: throw FileNotFoundException(source)
+            return resource.
+                    readText().
+                    lines()
+        }
 
     companion object {
         private val TERMINATING_SEMICOLON = Pattern.compile("\\s*;\\s*$")
