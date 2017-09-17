@@ -126,6 +126,7 @@ jacocoTestCoverageVerification {
         rule {
             element = 'CLASS'
             excludes = ['hm.binkley.knapsack.Database',
+                        'hm.binkley.knapsack.Database.*.*',
                         'hm.binkley.knapsack.DatabaseEntry',
                         'hm.binkley.knapsack.*.Companion.properties.*',
                         'hm.binkley.knapsack.DatabaseMap',

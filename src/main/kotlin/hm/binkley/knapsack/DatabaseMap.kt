@@ -15,6 +15,22 @@ class DatabaseMap(private val database: Database, val layer: Int)
     override fun put(key: String, value: String?)
             = database.entry(layer, key).setValue(value)
 
+    override fun remove(key: String): String? {
+        val oldValue = get(key)
+        if (null != oldValue)
+            database.deleteOne(layer, key)
+        return oldValue
+    }
+
+    override fun remove(key: String, value: String?): Boolean {
+        val oldValue = get(key)
+        if (oldValue == value && null != oldValue) {
+            database.deleteOne(layer, key)
+            return true
+        }
+        return false
+    }
+
     override fun equals(other: Any?): Boolean {
         if (!kotlinEquals(other, properties))
             return false
