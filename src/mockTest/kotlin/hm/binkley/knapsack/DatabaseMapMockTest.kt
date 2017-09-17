@@ -72,4 +72,9 @@ internal class DatabaseMapMockTest {
                 map.hashCode() == database.map(map.layer + 1).hashCode(),
                 equalTo(false))
     }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun shouldThrowOnNegativeLayer() {
+        database.map(-1)
+    }
 }

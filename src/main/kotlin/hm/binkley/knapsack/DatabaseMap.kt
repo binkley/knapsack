@@ -4,6 +4,10 @@ import au.com.console.kassava.kotlinEquals
 
 class DatabaseMap(private val database: Database, val layer: Int)
     : AbstractMutableMap<String, String?>() {
+    init {
+        if (0 > layer) throw IndexOutOfBoundsException("Layer: $layer")
+    }
+
     override val entries: MutableSet<Entry> = database.set(layer)
 
     override fun put(key: String, value: String?)
