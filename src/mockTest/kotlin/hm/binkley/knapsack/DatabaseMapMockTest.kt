@@ -19,10 +19,12 @@ internal class DatabaseMapMockTest {
     private val database = spy(Database(connection))
     private val selectKeysResults: ResultSet = mock()
     private val otherSelectKeysResults: ResultSet = mock()
-    private val map = database.map(0)
+    private lateinit var map: DatabaseMap
 
     @Before
     fun setUp() {
+        doReturn(2).whenever(database).countList()
+        map = database.map(0)
         doReturn(selectKeysResults).whenever(database).selectMapKeys(
                 map.layer)
         doReturn(otherSelectKeysResults).whenever(database).selectMapKeys(
@@ -76,5 +78,10 @@ internal class DatabaseMapMockTest {
     @Test(expected = IndexOutOfBoundsException::class)
     fun shouldThrowOnNegativeLayer() {
         database.map(-1)
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun shouldThrowOnExcessiveLayer() {
+        database.map(3)
     }
 }

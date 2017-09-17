@@ -6,13 +6,16 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class Database(
-        private val connection: Connection) : AutoCloseable, Cloneable {
+class Database(private val connection: Connection)
+    : AutoCloseable, Cloneable {
     override fun close() = connection.close()
 
     override public fun clone()
             = Database(DriverManager.getConnection(connection.metaData.url))
 
+    private val countList: PreparedStatement by lazy {
+        connection.prepareStatement(SQLReader("count-list").oneLine())
+    }
     private val countMap: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("count-map").oneLine())
     }
@@ -27,6 +30,12 @@ class Database(
     }
     private val deleteOne: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("delete-one").oneLine())
+    }
+
+    fun countList() = countList.executeQuery().use { results ->
+        oneOnly(results) {
+            it.getInt("size")
+        }
     }
 
     fun countMap(layer: Int): Int {
