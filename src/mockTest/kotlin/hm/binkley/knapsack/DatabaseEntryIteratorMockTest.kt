@@ -7,14 +7,11 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import java.sql.ResultSet
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@RunWith(MockitoJUnitRunner::class)
 internal class DatabaseEntryIteratorMockTest {
     private val selectKeysResults: ResultSet = mock()
     private val database: Database = mock {

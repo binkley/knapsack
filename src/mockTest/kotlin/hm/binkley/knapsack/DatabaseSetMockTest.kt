@@ -11,12 +11,9 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 import java.sql.ResultSet
 
-@RunWith(MockitoJUnitRunner::class)
 internal class DatabaseSetMockTest {
     private val connection: Connection = mock()
     private val database = spy(Database(connection))

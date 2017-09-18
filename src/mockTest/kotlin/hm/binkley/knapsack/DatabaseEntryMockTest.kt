@@ -15,11 +15,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 
-@RunWith(MockitoJUnitRunner::class)
 internal class DatabaseEntryMockTest {
     @Rule
     @JvmField
