@@ -8,7 +8,6 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import java.sql.ResultSet
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -18,19 +17,14 @@ internal class DatabaseEntryIteratorMockTest {
         on { selectMapKeys(0) } doReturn selectKeysResults
     }
 
-    private val iter = database.entryIterator(0)
-
-    @Test
-    fun shouldHaveLayer_forJaCoCo() {
-        assertEquals(iter.layer, 0)
-    }
-
     @Test
     fun shouldClose() {
         iter.use {}
 
         verify(selectKeysResults, atLeastOnce()).close()
     }
+
+    private val iter = database.entryIterator(0)
 
     @Test
     fun shouldHasNext() {
