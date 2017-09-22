@@ -10,7 +10,7 @@ class DatabaseEntryIterator(private val database: Database, val layer: Int)
     override fun next(): Entry {
         if (results.isBeforeFirst || results.isAfterLast)
             throw NoSuchElementException()
-        return database.entry(layer, results.getString("key"))
+        return entry()
     }
 
     override fun remove() {
@@ -22,9 +22,10 @@ class DatabaseEntryIterator(private val database: Database, val layer: Int)
             throw IllegalStateException()
         lastRemoveIndex = row
 
-        database.entry(layer, results.getString("key")).
-                setValue(null)
+        entry().setValue(null)
     }
 
     override fun close() = results.close()
+
+    private fun entry() = database.entry(layer, results.getString("key"))
 }
