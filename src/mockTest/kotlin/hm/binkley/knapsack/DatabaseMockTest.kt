@@ -13,24 +13,41 @@ import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import kotlin.test.fail
 
-@RunWith(MockitoJUnitRunner::class)
 internal class DatabaseMockTest {
     private val results: ResultSet = mock()
     private val statement: PreparedStatement = mock {
         on { executeQuery() } doReturn results
     }
     private val connection: Connection = mock {
+        on { createStatement() } doReturn statement
         on { prepareStatement(any()) } doReturn statement
     }
     private val database = Database(connection)
+
+    @Test
+    fun shouldCountList() {
+        whenever(results.next()).thenReturn(true, false)
+        whenever(results.getInt(eq("size"))).thenReturn(1)
+
+        assert.that(database.countList(), equalTo(1))
+
+        verify(results).close()
+    }
+
+    @Test
+    fun shouldCloseWhenCountListThrows() = try {
+        whenever(results.next()).thenThrow(SQLException::class.java)
+        database.countList()
+        fail()
+    } catch (e: SQLException) {
+        verify(results).close()
+    }
 
     @Test
     fun shouldCountMap() {
@@ -46,6 +63,15 @@ internal class DatabaseMockTest {
         verify(statement, never()).close()
     }
 
+    @Test
+    fun shouldCloseWhenCountMapThrows() = try {
+        whenever(results.next()).thenThrow(SQLException::class.java)
+        database.countMap(0)
+        fail()
+    } catch (e: SQLException) {
+        verify(results).close()
+    }
+
     @Test(expected = IllegalStateException::class)
     fun shouldThrowWhenCountMapHasNone() {
         whenever(results.next()).thenReturn(false)
@@ -59,6 +85,26 @@ internal class DatabaseMockTest {
         whenever(results.getInt(eq("size"))).thenReturn(3)
 
         database.countMap(0)
+    }
+
+    @Test
+    fun shouldSelectLayerKeys() {
+        whenever(results.next()).thenReturn(true, false)
+        whenever(results.getString(eq("key"))).thenReturn("foo")
+
+        assert.that(database.selectLayerKeys(0).asSequence().toList(),
+                equalTo(listOf("foo")))
+
+        verify(results).close()
+    }
+
+    @Test
+    fun shouldCloseWhenSelectLayerKeysThrows() = try {
+        whenever(results.next()).thenThrow(SQLException::class.java)
+        database.selectLayerKeys(0)
+        fail()
+    } catch (e: SQLException) {
+        verify(results).close()
     }
 
     @Test
@@ -136,13 +182,30 @@ internal class DatabaseMockTest {
     @Test
     fun shouldRollback() = try {
         database.transaction { throw SQLException() }
-        fail("Did not throw")
+        fail()
     } catch (e: SQLException) {
         val inOrder = inOrder(connection)
         inOrder.verify(connection, times(1)).autoCommit = false
         inOrder.verify(connection, times(1)).rollback()
         inOrder.verify(connection, times(1)).autoCommit = true
         verify(connection, never()).commit()
+    }
+
+    @Test
+    fun shouldReset() {
+        database.reset()
+
+        verify(statement).close()
+    }
+
+    @Test
+    fun shouldCloseWhenResetThrows() = try {
+        whenever(statement.executeUpdate(any())).
+                thenThrow(SQLException::class.java)
+        database.reset()
+        fail()
+    } catch (e: SQLException) {
+        verify(statement).close()
     }
 
     @Test
