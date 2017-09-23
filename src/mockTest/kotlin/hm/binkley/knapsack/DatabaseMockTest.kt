@@ -12,6 +12,7 @@ import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import org.junit.Ignore
 import org.junit.Test
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -29,6 +30,24 @@ internal class DatabaseMockTest {
         on { prepareStatement(any()) } doReturn statement
     }
     private val database = Database(connection)
+
+    @Test
+    fun shouldLoadSchema() {
+        database.loadSchema()
+
+        verify(statement).close()
+    }
+
+    @Ignore("TODO: FIX MOCK")
+    @Test
+    fun shouldCloseWhenLoadSchemaThrows() = try {
+        whenever(statement.executeUpdate(any())).
+                thenThrow(SQLException::class.java)
+        database.loadSchema()
+        fail()
+    } catch (e: SQLException) {
+        verify(statement).close()
+    }
 
     @Test
     fun shouldCountList() {

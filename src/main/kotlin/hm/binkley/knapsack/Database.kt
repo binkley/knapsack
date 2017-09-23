@@ -1,17 +1,13 @@
 package hm.binkley.knapsack
 
 import java.sql.Connection
-import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 
 class Database(private val connection: Connection)
-    : AutoCloseable, Cloneable {
+    : AutoCloseable {
     override fun close() = connection.close()
-
-    override public fun clone()
-            = Database(DriverManager.getConnection(connection.metaData.url))
 
     private val countList: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("count-list").oneLine())
@@ -88,8 +84,8 @@ class Database(private val connection: Connection)
     }
 
     fun reset() {
-        connection.createStatement().use {
-            it.executeUpdate(SQLReader("delete-all").oneLine())
+        connection.createStatement().use { statement ->
+            statement.executeUpdate(SQLReader("delete-all").oneLine())
         }
     }
 
