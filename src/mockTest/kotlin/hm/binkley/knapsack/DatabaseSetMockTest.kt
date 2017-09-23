@@ -4,28 +4,17 @@ import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
 import com.nhaarman.mockito_kotlin.doNothing
 import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import org.junit.Before
 import org.junit.Test
 import java.sql.Connection
-import java.sql.ResultSet
 
 internal class DatabaseSetMockTest {
     private val connection: Connection = mock()
     private val database = spy(Database(connection))
-    private val selectKeysResults: ResultSet = mock()
-    private val otherSelectKeysResults: ResultSet = mock()
     private val set = database.set(0)
-
-    @Before
-    fun setUpDatabase() {
-        doReturn(selectKeysResults).whenever(database).selectMapKeys(0)
-        doReturn(otherSelectKeysResults).whenever(database).selectMapKeys(1)
-    }
 
     @Test
     fun shouldStartEmptySized() {
@@ -36,14 +25,15 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldStartEmptyIterated() {
-        whenever(selectKeysResults.next()).thenReturn(false)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
 
         assert.that(set.iterator().hasNext(), equalTo(false))
     }
 
     @Test
     fun shouldEqualsWhenEmpty() {
-        doReturn(0, 0).whenever(database).countMap(set.layer)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
+        doReturn(0).whenever(database).countMap(set.layer)
 
         assert.that(set == database.set(set.layer), equalTo(true))
     }
@@ -55,7 +45,7 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldHashCodeWhenEmpty() {
-        whenever(selectKeysResults.next()).thenReturn(false, false)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
 
         assert.that(set.hashCode() == database.set(set.layer).hashCode(),
                 equalTo(true))
@@ -63,8 +53,8 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldNotHashCodeWhenEmpty() {
-        whenever(selectKeysResults.next()).thenReturn(false)
-        whenever(otherSelectKeysResults.next()).thenReturn(false)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(1)
 
         assert.that(
                 set.hashCode() == database.set(set.layer + 1).hashCode(),
@@ -73,8 +63,8 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldFindEntry() {
-        whenever(selectKeysResults.next()).thenReturn(true, false)
-        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
+        doReturn(iteratorOf("foo")).whenever(database).
+                selectLayerKeys(0)
 
         assert.that(set.contains(database.entry(set.layer, "foo")),
                 equalTo(true))
@@ -82,11 +72,10 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldRemoveEntry() {
+        doReturn(mutableIteratorOf("foo")).whenever(database).
+                selectLayerKeys(0)
         doNothing().whenever(database).deleteOne(set.layer, "foo")
         doReturn("3").whenever(database).selectOne(set.layer, "foo")
-        whenever(selectKeysResults.next()).thenReturn(true, false)
-        whenever(selectKeysResults.row).thenReturn(1)
-        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
         assert.that(set.remove(database.entry(set.layer, "foo")),
                 equalTo(true))
@@ -102,5 +91,12 @@ internal class DatabaseSetMockTest {
         val changed = set.add(database.entry(set.layer, "foo"))
 
         assert.that(changed, equalTo(true))
+    }
+
+    companion object {
+        private fun iteratorOf() = listOf<String>().iterator()
+        private fun iteratorOf(item: String) = listOf(item).iterator()
+        private fun mutableIteratorOf(item: String)
+                = mutableListOf(item).iterator()
     }
 }

@@ -19,8 +19,8 @@ class Database(private val connection: Connection)
     private val countMap: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("count-map").oneLine())
     }
-    private val selectMapKeys: PreparedStatement by lazy {
-        connection.prepareStatement(SQLReader("select-map-keys").oneLine())
+    private val selectLayerKeys: PreparedStatement by lazy {
+        connection.prepareStatement(SQLReader("select-layer-keys").oneLine())
     }
     private val selectOne: PreparedStatement by lazy {
         connection.prepareStatement(SQLReader("select-one").oneLine())
@@ -47,9 +47,14 @@ class Database(private val connection: Connection)
         }
     }
 
-    fun selectMapKeys(layer: Int): ResultSet {
-        selectMapKeys.setInt(1, layer)
-        return selectMapKeys.executeQuery()
+    fun selectLayerKeys(layer: Int): MutableIterator<String> {
+        val keys = ArrayList<String>()
+        selectLayerKeys.setInt(1, layer)
+        selectLayerKeys.executeQuery().use { results ->
+            while (results.next())
+                keys.add(results.getString("key"))
+        }
+        return keys.iterator()
     }
 
     fun selectOne(layer: Int, key: String): String? {

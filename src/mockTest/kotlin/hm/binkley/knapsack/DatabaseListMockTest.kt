@@ -2,18 +2,16 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
-import org.mockito.Mockito.doReturn
 import java.sql.Connection
-import java.sql.ResultSet
 
 internal class DatabaseListMockTest {
     private val connection: Connection = mock()
-    private val database = spy(Database(connection))
-    private val selectKeysResults: ResultSet = mock()
+    private val database: Database = spy(Database(connection))
     private val list = database.list()
 
     @Test
@@ -64,9 +62,9 @@ internal class DatabaseListMockTest {
 
     @Test
     fun shouldContains() {
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
         doReturn(1).whenever(database).countList()
-        doReturn(0, 0).whenever(database).countMap(0)
-        doReturn(selectKeysResults).whenever(database).selectMapKeys(0)
+        doReturn(1).whenever(database).countMap(0)
 
         assert.that(list.contains(database.map(0)), equalTo(true))
     }
@@ -75,7 +73,7 @@ internal class DatabaseListMockTest {
     fun shouldIndexOf() {
         doReturn(1).whenever(database).countList()
         doReturn(0, 0).whenever(database).countMap(0)
-        doReturn(selectKeysResults).whenever(database).selectMapKeys(0)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
 
         assert.that(list.indexOf(database.map(0)), equalTo(0))
     }
@@ -84,8 +82,12 @@ internal class DatabaseListMockTest {
     fun shouldLastIndexOf() {
         doReturn(1).whenever(database).countList()
         doReturn(0, 0).whenever(database).countMap(0)
-        doReturn(selectKeysResults).whenever(database).selectMapKeys(0)
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
 
         assert.that(list.lastIndexOf(database.map(0)), equalTo(0))
+    }
+
+    companion object {
+        private fun iteratorOf() = listOf<String>().iterator()
     }
 }
