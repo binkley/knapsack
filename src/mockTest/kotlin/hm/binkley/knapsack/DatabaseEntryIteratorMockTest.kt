@@ -8,6 +8,7 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import java.sql.ResultSet
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -16,6 +17,7 @@ internal class DatabaseEntryIteratorMockTest {
     private val database: Database = mock {
         on { selectMapKeys(0) } doReturn selectKeysResults
     }
+    private val iter = database.entryIterator(0)
 
     @Test
     fun shouldClose() {
@@ -23,8 +25,6 @@ internal class DatabaseEntryIteratorMockTest {
 
         verify(selectKeysResults, atLeastOnce()).close()
     }
-
-    private val iter = database.entryIterator(0)
 
     @Test
     fun shouldHasNext() {
@@ -36,62 +36,65 @@ internal class DatabaseEntryIteratorMockTest {
 
     @Test
     fun shouldNext() {
+        whenever(selectKeysResults.next()).thenReturn(true, false)
         whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
-        iter.next()
+        iter.hasNext()
+        assertEquals(iter.next().key, "foo")
     }
 
     @Test(expected = NoSuchElementException::class)
     fun shouldThrowIfNextBeforeStart() {
-        whenever(selectKeysResults.isBeforeFirst).thenReturn(true)
-
         iter.next()
     }
 
     @Test(expected = NoSuchElementException::class)
     fun shouldThrowIfNextAfterEnd() {
-        whenever(selectKeysResults.isAfterLast).thenReturn(true)
+        whenever(selectKeysResults.next()).thenReturn(true, false)
+        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
 
+        iter.hasNext()
+        iter.hasNext()
         iter.next()
     }
 
     @Test
     fun shouldRemove() {
+        whenever(selectKeysResults.next()).thenReturn(true, false)
         whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
-        whenever(selectKeysResults.row).thenReturn(1)
 
+        iter.hasNext()
+        iter.next()
         iter.remove()
     }
 
     @Test
     fun shouldRemoveTwiceIfNextBetween() {
-        whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
-        whenever(selectKeysResults.row).thenReturn(1, 2)
+        whenever(selectKeysResults.next()).thenReturn(true, true, false)
+        whenever(selectKeysResults.getString(eq("key"))).
+                thenReturn("foo", "bar")
 
+        iter.hasNext()
+        iter.next()
         iter.remove()
+        iter.hasNext()
         iter.next()
         iter.remove()
     }
 
     @Test(expected = IllegalStateException::class)
-    fun shouldThrowIfRemoveBeforeStart() {
-        whenever(selectKeysResults.isBeforeFirst).thenReturn(true)
-
-        iter.remove()
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun shouldThrowIfRemoveAfterEnd() {
-        whenever(selectKeysResults.isAfterLast).thenReturn(true)
-
+    fun shouldThrowIfRemoveWithoutNext() {
+        iter.hasNext()
         iter.remove()
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowIfRemoveTwiceOnSameRow() {
+        whenever(selectKeysResults.next()).thenReturn(true, false)
         whenever(selectKeysResults.getString(eq("key"))).thenReturn("foo")
-        whenever(selectKeysResults.row).thenReturn(1, 1)
 
+        iter.hasNext()
+        iter.next()
         iter.remove()
         iter.remove()
     }

@@ -3,24 +3,27 @@ package hm.binkley.knapsack
 class DatabaseEntryIterator(private val database: Database, val layer: Int)
     : MutableIterator<Entry>, AutoCloseable {
     private val results = database.selectMapKeys(layer)
-    private var lastRemoveIndex = 0
+    private var hasNext = false
+    private var next = false
 
-    override fun hasNext() = results.next()
+    override fun hasNext(): Boolean {
+        hasNext = results.next()
+        next = false
+        return hasNext
+    }
 
     override fun next(): Entry {
-        if (results.isBeforeFirst || results.isAfterLast)
+        if (!hasNext)
             throw NoSuchElementException()
+        hasNext = false
+        next = true
         return entry()
     }
 
     override fun remove() {
-        if (results.isBeforeFirst || results.isAfterLast)
+        if (!next)
             throw IllegalStateException()
-
-        val row = results.row
-        if (row == lastRemoveIndex)
-            throw IllegalStateException()
-        lastRemoveIndex = row
+        next = false
 
         entry().setValue(null)
     }
