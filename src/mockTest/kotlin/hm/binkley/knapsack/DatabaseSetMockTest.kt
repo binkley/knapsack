@@ -92,11 +92,4 @@ internal class DatabaseSetMockTest {
 
         assert.that(changed, equalTo(true))
     }
-
-    companion object {
-        private fun iteratorOf() = listOf<String>().iterator()
-        private fun iteratorOf(item: String) = listOf(item).iterator()
-        private fun mutableIteratorOf(item: String)
-                = mutableListOf(item).iterator()
-    }
 }

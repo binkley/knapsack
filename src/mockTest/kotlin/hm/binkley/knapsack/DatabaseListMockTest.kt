@@ -86,8 +86,4 @@ internal class DatabaseListMockTest {
 
         assert.that(list.lastIndexOf(database.map(0)), equalTo(0))
     }
-
-    companion object {
-        private fun iteratorOf() = listOf<String>().iterator()
-    }
 }

@@ -164,11 +164,4 @@ internal class DatabaseMapMockTest {
         doReturn(iteratorOf("foo")).whenever(database).selectLayerKeys(0)
         doReturn("3").whenever(database).selectOne(map.layer, "foo")
     }
-
-    companion object {
-        private fun iteratorOf() = listOf<String>().iterator()
-        private fun iteratorOf(item: String) = listOf(item).iterator()
-        private fun mutableIteratorOf(item: String)
-                = mutableListOf(item).iterator()
-    }
 }
