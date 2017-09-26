@@ -160,20 +160,6 @@ internal class DatabaseMapMockTest {
         verify(database, never()).deleteOne(map.layer, "foo")
     }
 
-    @Test
-    fun shouldGetAsWhenPresent() {
-        fooIsThree()
-
-        assert.that(map.getAs("foo", String::toInt), equalTo(3))
-    }
-
-    @Test
-    fun shouldGetAsWhenAbsent() {
-        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
-
-        assert.that(map.getAs("foo", String::toInt), absent())
-    }
-
     private fun fooIsThree() {
         doReturn(iteratorOf("foo")).whenever(database).selectLayerKeys(0)
         doReturn("3").whenever(database).selectOne(map.layer, "foo")

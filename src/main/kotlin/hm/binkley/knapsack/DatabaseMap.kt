@@ -5,7 +5,6 @@ import au.com.console.kassava.kotlinEquals
 class DatabaseMap(private val database: Database, val layer: Int)
     : AbstractMutableMap<String, String?>() {
     init {
-        // TODO: Checks, or let program just fail?
         if (0 > layer) throw IndexOutOfBoundsException("Layer: $layer")
         if (database.countList() < layer)
             throw IndexOutOfBoundsException("Layer: $layer")
@@ -39,12 +38,6 @@ class DatabaseMap(private val database: Database, val layer: Int)
     }
 
     override fun hashCode() = 31 * layer + super.hashCode()
-
-    fun <T> getAs(key: String, convert: (String) -> T): T? {
-        val value = get(key)
-        return if (null == value) null
-        else convert(value)
-    }
 
     companion object {
         private val properties = arrayOf(DatabaseMap::layer)
