@@ -62,9 +62,8 @@ internal class DatabaseListMockTest {
 
     @Test
     fun shouldContains() {
-        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
         doReturn(1).whenever(database).countList()
-        doReturn(1).whenever(database).countMap(0)
+        layerOf(0)
 
         assert.that(list.contains(database.map(0)), equalTo(true))
     }
@@ -72,8 +71,7 @@ internal class DatabaseListMockTest {
     @Test
     fun shouldIndexOf() {
         doReturn(1).whenever(database).countList()
-        doReturn(0, 0).whenever(database).countMap(0)
-        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
+        layerOf(0)
 
         assert.that(list.indexOf(database.map(0)), equalTo(0))
     }
@@ -81,8 +79,7 @@ internal class DatabaseListMockTest {
     @Test
     fun shouldLastIndexOf() {
         doReturn(1).whenever(database).countList()
-        doReturn(0, 0).whenever(database).countMap(0)
-        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
+        layerOf(0)
 
         assert.that(list.lastIndexOf(database.map(0)), equalTo(0))
     }
