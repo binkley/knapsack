@@ -94,6 +94,19 @@ internal class DatabaseListMockTest {
         assert.that(list["foo"], equalTo(listOf("3", null, "4")))
     }
 
+    @Test
+    fun shouldApplyRule() {
+        doReturn(3).whenever(database).countList()
+        layerOf(0, "foo" to "3")
+        layerOf(1)
+        layerOf(2, "foo" to "4")
+        val rule: Rule<Int> = { key, list ->
+            list[key].filterNotNull().map(String::toInt).sum()
+        }
+
+        assert.that(list.get("foo", rule), equalTo(7))
+    }
+
     private fun layerOf(layer: Int, vararg pairs: Pair<String, String>) {
         doReturn(pairs.size).whenever(database).countMap(layer)
         doReturn(pairs.map { it.first }.iterator()).whenever(database).
