@@ -6,4 +6,6 @@ class DatabaseList(private val database: Database)
         get() = database.countList()
 
     override fun get(index: Int) = database.map(index)
+
+    operator fun get(key: String) = map { it[key] }
 }

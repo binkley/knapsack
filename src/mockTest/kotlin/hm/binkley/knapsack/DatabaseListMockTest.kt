@@ -86,4 +86,23 @@ internal class DatabaseListMockTest {
 
         assert.that(list.lastIndexOf(database.map(0)), equalTo(0))
     }
+
+    @Test
+    fun shouldGetByKey() {
+        doReturn(3).whenever(database).countList()
+        layerOf(0, "foo" to "3")
+        layerOf(1)
+        layerOf(2, "foo" to "4")
+
+        assert.that(list["foo"], equalTo(listOf("3", null, "4")))
+    }
+
+    private fun layerOf(layer: Int, vararg pairs: Pair<String, String>) {
+        doReturn(pairs.size).whenever(database).countMap(layer)
+        doReturn(pairs.map { it.first }.iterator()).whenever(database).
+                selectLayerKeys(layer)
+        pairs.forEach { (key, value) ->
+            doReturn(value).whenever(database).selectOne(layer, key)
+        }
+    }
 }
