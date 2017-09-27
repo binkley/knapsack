@@ -17,7 +17,7 @@ internal class RuckMockTest {
     private val ruck = Ruck(database)
 
     @Test
-    fun shouldGet() {
+    fun shouldGetAndCache() {
         doReturn(3).whenever(database).countList()
         layerOf(0, "foo" to "3")
         layerOf(1)
