@@ -100,8 +100,8 @@ internal class DatabaseListMockTest {
         layerOf(0, "foo" to "3")
         layerOf(1)
         layerOf(2, "foo" to "4")
-        val rule: Rule<Int> = { key, list ->
-            list[key].filterNotNull().map(String::toInt).sum()
+        val rule: Rule<Int> = { key, layers ->
+            layers[key].filterNotNull().map(String::toInt).sum()
         }
 
         assert.that(list.get("foo", rule), equalTo(7))
