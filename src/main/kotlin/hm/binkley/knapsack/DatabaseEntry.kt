@@ -15,10 +15,11 @@ class DatabaseEntry(
     override fun setValue(newValue: String?): String? {
         return database.transaction {
             val previous = value
-            if (null == newValue) {
-                database.deleteOne(layer, key)
-            } else {
-                database.upsertOne(layer, key, newValue)
+            when (newValue) {
+                previous -> {
+                }
+                null -> database.deleteOne(layer, key)
+                else -> database.upsertOne(layer, key, newValue)
             }
             previous
         }
