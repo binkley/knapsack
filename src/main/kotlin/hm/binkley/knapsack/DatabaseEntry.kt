@@ -1,6 +1,5 @@
 package hm.binkley.knapsack
 
-import au.com.console.kassava.kotlinEquals
 import java.util.Objects
 import kotlin.collections.MutableMap.MutableEntry
 
@@ -25,12 +24,14 @@ class DatabaseEntry(
         }
     }
 
-    override fun equals(other: Any?) = kotlinEquals(other, properties)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DatabaseEntry
+
+        return layer == other.layer && key == other.key
+    }
 
     override fun hashCode() = Objects.hash(layer, key)
-
-    companion object {
-        private val properties
-                = arrayOf(DatabaseEntry::layer, DatabaseEntry::key)
-    }
 }
