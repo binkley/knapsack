@@ -47,12 +47,18 @@ internal class DatabaseEntryMockTest {
     }
 
     @Test
-    fun shouldEqualsXenoxively() {
+    fun shouldNotEqualsXenoxively() {
         assert.that(entry as Any == this, equalTo(false))
     }
 
     @Test
-    fun shouldNotEquals() {
+    fun shouldNotEqualsByKey() {
+        assert.that(entry == database.entry(entry.layer, entry.key + "x"),
+                equalTo(false))
+    }
+
+    @Test
+    fun shouldNotEqualsByLayer() {
         assert.that(entry == database.entry(entry.layer + 1, entry.key),
                 equalTo(false))
     }
@@ -64,7 +70,13 @@ internal class DatabaseEntryMockTest {
     }
 
     @Test
-    fun shouldNotHashCode() {
+    fun shouldNotHashCodeByKey() {
+        assert.that(entry.hashCode() == database.entry(entry.layer,
+                entry.key + "x").hashCode(), equalTo(false))
+    }
+
+    @Test
+    fun shouldNotHashCodeByLayer() {
         assert.that(entry.hashCode() == database.entry(entry.layer + 1,
                 entry.key).hashCode(), equalTo(false))
     }
