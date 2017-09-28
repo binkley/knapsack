@@ -1,6 +1,6 @@
 package hm.binkley.knapsack
 
-import au.com.console.kassava.kotlinEquals
+import java.util.Objects
 
 class DatabaseMap(private val database: Database, val layer: Int)
     : AbstractMutableMap<String, String?>() {
@@ -31,12 +31,14 @@ class DatabaseMap(private val database: Database, val layer: Int)
         return false
     }
 
-    override fun equals(other: Any?)
-            = kotlinEquals(other, properties) && super.equals(other)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-    override fun hashCode() = 31 * layer + super.hashCode()
+        other as DatabaseMap
 
-    companion object {
-        private val properties = arrayOf(DatabaseMap::layer)
+        return layer == other.layer && super.equals(other)
     }
+
+    override fun hashCode() = Objects.hash(layer)
 }
