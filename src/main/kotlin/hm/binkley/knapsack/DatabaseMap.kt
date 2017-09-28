@@ -31,11 +31,8 @@ class DatabaseMap(private val database: Database, val layer: Int)
         return false
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (!kotlinEquals(other, properties))
-            return false
-        return super.equals(other)
-    }
+    override fun equals(other: Any?)
+            = kotlinEquals(other, properties) && super.equals(other)
 
     override fun hashCode() = 31 * layer + super.hashCode()
 
