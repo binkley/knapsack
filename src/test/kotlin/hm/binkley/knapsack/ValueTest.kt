@@ -2,6 +2,8 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import hm.binkley.knapsack.Value.RuleValue
+import hm.binkley.knapsack.Value.StringValue
 import org.junit.Test
 
 internal class ValueTest {
@@ -12,84 +14,80 @@ internal class ValueTest {
 
     @Test
     fun shouldEqualsForStringValue() {
-        assert.that(Value.StringValue("foo"),
-                equalTo(Value.StringValue("foo")))
+        assert.that(StringValue("foo"), equalTo(StringValue("foo")))
     }
 
     @Test
     fun shouldNotEqualsForStringValue() {
-        assert.that(Value.StringValue("foo"),
-                !equalTo(Value.StringValue("bar")))
+        assert.that(StringValue("foo"), !equalTo(StringValue("bar")))
     }
 
     @Test
     fun shouldHashCodeForStringValue() {
-        assert.that(Value.StringValue("foo").hashCode(),
-                equalTo(Value.StringValue("foo").hashCode()))
+        assert.that(StringValue("foo").hashCode(),
+                equalTo(StringValue("foo").hashCode()))
     }
 
     @Test
     fun shouldNotHashCodeForStringValue() {
-        assert.that(Value.StringValue("foo").hashCode(),
-                !equalTo(Value.StringValue("bar").hashCode()))
+        assert.that(StringValue("foo").hashCode(),
+                !equalTo(StringValue("bar").hashCode()))
     }
 
     @Test
     fun shouldGetValueForStringValue() {
-        assert.that(Value.StringValue("foo").value, equalTo("foo"))
+        assert.that(StringValue("foo").value, equalTo("foo"))
     }
 
     @Test
     fun shouldSpreadForStringValue() {
-        val (value) = Value.StringValue("foo")
+        val (value) = StringValue("foo")
         assert.that(value, equalTo("foo"))
     }
 
     @Test
     fun shouldCopyStringValue() {
-        assert.that(Value.StringValue("foo").copy("bar").value,
+        assert.that(StringValue("foo").copy("bar").value,
                 equalTo("bar"))
     }
 
     @Test
     fun shouldEqualsForRuleValue() {
-        assert.that(Value.RuleValue(ruleA),
-                equalTo(Value.RuleValue(ruleA)))
+        assert.that(RuleValue(ruleA), equalTo(RuleValue(ruleA)))
     }
 
     @Test
     fun shouldNotEqualsForRuleValue() {
-        assert.that(Value.RuleValue(ruleA),
-                !equalTo(Value.RuleValue(ruleB)))
+        assert.that(RuleValue(ruleA), !equalTo(RuleValue(ruleB)))
     }
 
     @Test
     fun shouldHashCodeForRuleValue() {
-        assert.that(Value.RuleValue(ruleA).hashCode(),
-                equalTo(Value.RuleValue(ruleA).hashCode()))
+        assert.that(RuleValue(ruleA).hashCode(),
+                equalTo(RuleValue(ruleA).hashCode()))
     }
 
     @Test
     fun shouldNotHashCodeForRuleValue() {
-        assert.that(Value.RuleValue(ruleA).hashCode(),
-                !equalTo(Value.RuleValue(ruleB).hashCode()))
+        assert.that(RuleValue(ruleA).hashCode(),
+                !equalTo(RuleValue(ruleB).hashCode()))
     }
 
     @Test
     fun shouldGetValueForRuleValue() {
-        assert.that(Value.RuleValue(ruleA).rule, equalTo(ruleA))
+        assert.that(RuleValue(ruleA).rule, equalTo(ruleA))
     }
 
     @Test
     fun shouldSpreadForRuleValue() {
-        val (value) = Value.RuleValue(ruleA)
+        val (value) = RuleValue(ruleA)
+
         assert.that(value, equalTo(ruleA))
     }
 
     @Test
     fun shouldCopyRuleValue() {
-        assert.that(Value.RuleValue(ruleA).copy(ruleB).rule,
-                equalTo(ruleB))
+        assert.that(RuleValue(ruleA).copy(ruleB).rule, equalTo(ruleB))
     }
 
     companion object {
