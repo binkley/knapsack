@@ -1,6 +1,5 @@
 package hm.binkley.knapsack
 
-import au.com.console.kassava.kotlinEquals
 import java.util.Objects
 
 class DatabaseSet(private val database: Database, val layer: Int)
@@ -12,17 +11,19 @@ class DatabaseSet(private val database: Database, val layer: Int)
         return !Objects.equals(previousValue, newValue)
     }
 
-    override fun iterator() = database.entryIterator(layer)
-
     override val size: Int
         get() = database.countMap(layer)
 
-    override fun equals(other: Any?) =
-            kotlinEquals(other, properties) && super.equals(other)
+    override fun iterator() = database.entryIterator(layer)
 
-    override fun hashCode() = 31 * layer + super.hashCode()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-    companion object {
-        private val properties = arrayOf(DatabaseSet::layer)
+        other as DatabaseSet
+
+        return layer == other.layer && super.equals(other)
     }
+
+    override fun hashCode() = Objects.hash(layer)
 }

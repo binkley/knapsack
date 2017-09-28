@@ -44,6 +44,21 @@ internal class DatabaseSetMockTest {
     }
 
     @Test
+    fun shouldEqualsReflexively() {
+        assert.that(set == set, equalTo(true))
+    }
+
+    @Test
+    fun shouldNotEqualsTrivially() {
+        assert.that(set as DatabaseSet? == null, equalTo(false))
+    }
+
+    @Test
+    fun shouldNotEqualsXenively() {
+        assert.that(set as Any == this, equalTo(false))
+    }
+
+    @Test
     fun shouldHashCodeWhenEmpty() {
         doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
 
