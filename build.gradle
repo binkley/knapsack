@@ -131,7 +131,7 @@ jacocoTestCoverageVerification {
                         'hm.binkley.knapsack.Ruck',
                         'hm.binkley.knapsack.Value.IntValue.*']
             limit {
-                minimum = 0.95
+                minimum = 0.96
             }
         }
         rule {
