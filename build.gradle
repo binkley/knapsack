@@ -3,7 +3,6 @@ buildscript {
         hamkrest_version = '1.4.2.0'
         hsqldb_version = '2.4.0'
         jgit_version = '4.8.0.201706111038-r'
-        kassava_version = '1.0.0'
         kotlin_version = '1.2-M2'
         mockito_version = '2.10.0'
         mockito_kotlin_version = '1.5.0'
@@ -64,7 +63,6 @@ configurations {
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
-    compile "au.com.console:kassava:$kassava_version"
     compile "org.eclipse.jgit:org.eclipse.jgit:$jgit_version"
     runtime "org.hsqldb:hsqldb:$hsqldb_version"
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
@@ -127,7 +125,6 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
             excludes = ['hm.binkley.knapsack.Database.*.*',
                         'hm.binkley.knapsack.DatabaseEntry',
-                        'hm.binkley.knapsack.*.Companion.properties.*',
                         'hm.binkley.knapsack.DatabaseList',
                         'hm.binkley.knapsack.DatabaseMap',
                         'hm.binkley.knapsack.DatabaseSet',
@@ -177,13 +174,6 @@ jacocoTestCoverageVerification {
             includes = ['hm.binkley.knapsack.Ruck']
             limit {
                 minimum = 0.88
-            }
-        }
-        rule {
-            element = 'CLASS'
-            includes = ['hm.binkley.knapsack.*.Companion.properties.*']
-            limit {
-                minimum = 0.63
             }
         }
     }
