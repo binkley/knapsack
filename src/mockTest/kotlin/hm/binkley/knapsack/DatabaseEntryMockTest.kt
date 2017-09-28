@@ -36,7 +36,21 @@ internal class DatabaseEntryMockTest {
         assert.that(entry, equalTo(database.entry(entry.layer, entry.key)))
     }
 
-    @Suppress("ReplaceCallWithComparison")
+    @Test
+    fun shouldEqualsReflexively() {
+        assert.that(entry == entry, equalTo(true))
+    }
+
+    @Test
+    fun shouldEqualsTrivially() {
+        assert.that(entry as DatabaseEntry? == null, equalTo(false))
+    }
+
+    @Test
+    fun shouldEqualsXenoxively() {
+        assert.that(entry as Any == this, equalTo(false))
+    }
+
     @Test
     fun shouldNotEquals() {
         assert.that(entry == database.entry(entry.layer + 1, entry.key),

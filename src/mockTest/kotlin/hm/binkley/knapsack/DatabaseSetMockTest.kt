@@ -54,7 +54,7 @@ internal class DatabaseSetMockTest {
     }
 
     @Test
-    fun shouldNotEqualsXenively() {
+    fun shouldNotEqualsXenoxively() {
         assert.that(set as Any == this, equalTo(false))
     }
 
