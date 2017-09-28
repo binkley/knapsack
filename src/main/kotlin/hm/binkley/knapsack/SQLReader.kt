@@ -25,7 +25,7 @@ class SQLReader(private val purpose: String) {
 
         private fun source(purpose: String): URL {
             val source = "/hm/binkley/knapsack/knapsack-$purpose.sql"
-            return javaClass.getResource(source)
+            return SQLReader::class.java.getResource(source)
                     ?: throw FileNotFoundException(source)
         }
 
