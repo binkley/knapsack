@@ -15,8 +15,7 @@ class DatabaseEntry(
         return database.transaction {
             val previous = value
             when (newValue) {
-                previous -> {
-                }
+                previous -> Unit
                 null -> database.deleteOne(layer, key)
                 else -> database.upsertOne(layer, key, newValue)
             }
