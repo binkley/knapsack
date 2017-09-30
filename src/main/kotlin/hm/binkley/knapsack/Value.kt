@@ -13,10 +13,8 @@ sealed class Value<V> {
         override var value: String?
             get() = database.selectOne(layer, key)
             set(newValue) = database.transaction {
-                val previous = value
                 when (newValue) {
-                    previous -> {
-                    }
+                    value -> Unit
                     null -> database.deleteOne(layer, key)
                     else -> database.upsertOne(layer, key, newValue)
                 }
