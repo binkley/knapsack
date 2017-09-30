@@ -8,11 +8,6 @@ import org.junit.Test
 
 internal class ValueTest {
     @Test
-    fun shouldMakeNoValue() {
-        Value.NoValue
-    }
-
-    @Test
     fun shouldEqualsForStringValue() {
         assert.that(StringValue("foo"), equalTo(StringValue("foo")))
     }
