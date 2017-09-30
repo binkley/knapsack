@@ -124,10 +124,12 @@ jacocoTestCoverageVerification {
         rule {
             element = 'CLASS'
             excludes = ['hm.binkley.knapsack.Database.*.*',
+                        'hm.binkley.knapsack.Value.DatabaseValue',
+                        'hm.binkley.knapsack.Value.RuleValue',
                         'hm.binkley.knapsack.DatabaseEntry',
-                        'hm.binkley.knapsack.DatabaseList',
-                        'hm.binkley.knapsack.DatabaseMap',
                         'hm.binkley.knapsack.DatabaseSet',
+                        'hm.binkley.knapsack.DatabaseMap',
+                        'hm.binkley.knapsack.DatabaseList',
                         'hm.binkley.knapsack.Ruck',
                         'hm.binkley.knapsack.Value.IntValue.*']
             limit {
@@ -143,9 +145,16 @@ jacocoTestCoverageVerification {
         }
         rule {
             element = 'CLASS'
-            includes = ['hm.binkley.knapsack.Value.IntValue.*']
+            includes = ['hm.binkley.knapsack.Value.DatabaseValue']
             limit {
-                minimum = 0.90
+                minimum = 0.93
+            }
+        }
+        rule {
+            element = 'CLASS'
+            includes = ['hm.binkley.knapsack.Value.RuleValue']
+            limit {
+                minimum = 0.89
             }
         }
         rule {
