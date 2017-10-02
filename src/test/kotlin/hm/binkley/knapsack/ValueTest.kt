@@ -2,11 +2,12 @@ package hm.binkley.knapsack
 
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
+import hm.binkley.knapsack.Value.NoValue
 import hm.binkley.knapsack.Value.RuleValue
 import org.junit.Before
 import org.junit.Test
 
-internal class ValueMockTest {
+internal class ValueTest {
     private lateinit var value: RuleValue<Int>
 
     @Before
@@ -47,22 +48,38 @@ internal class ValueMockTest {
     }
 
     @Test
-    fun shouldGetValue() {
-        assert.that(value.value, equalTo(ruleA))
+    fun shouldGetRule() {
+        assert.that(value.rule, equalTo(ruleA))
     }
 
     @Test
-    fun shouldSetValue() {
-        value.value = ruleB
-
-        assert.that(value.value, equalTo(ruleB))
+    fun shouldDereferenceNoValueToNoValue() {
+        NoValue.dereference(NoValue)
     }
 
     @Test
-    fun shouldSetValueWithoutEffect() {
-        value.value = ruleA
+    fun shouldDereferenceNoValueToRuleValue() {
+        NoValue.dereference(RuleValue(ruleB))
+    }
 
-        assert.that(value.value, equalTo(ruleA))
+    @Test
+    fun shouldDereferenceRuleValueToNoValue() {
+        value.dereference(NoValue)
+    }
+
+    @Test
+    fun shouldDereferenceRuleValueToRuleValue() {
+        value.dereference(RuleValue(ruleB))
+    }
+
+    @Test
+    fun shouldReferenceNoValue() {
+        NoValue.reference()
+    }
+
+    @Test
+    fun shouldReferenceRuleValue() {
+        value.reference()
     }
 
     companion object {

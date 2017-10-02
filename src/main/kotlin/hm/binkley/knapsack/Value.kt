@@ -2,23 +2,26 @@ package hm.binkley.knapsack
 
 import java.util.Objects
 
-sealed class Value<V> {
-    abstract var value: V
+sealed class Value {
+    open fun dereference(newValue: Value) = Unit
+    open fun reference() = Unit
+
+    object NoValue : Value()
 
     class DatabaseValue(
             private val database: Database,
             val layer: Int,
-            val key: String)
-        : Value<String?>() {
-        override var value: String?
-            get() = database.selectOne(layer, key)
-            set(newValue) = database.transaction {
-                when (newValue) {
-                    value -> Unit
-                    null -> database.deleteOne(layer, key)
-                    else -> database.upsertOne(layer, key, newValue)
-                }
-            }
+            val key: String,
+            val value: String)
+        : Value() {
+        override fun dereference(newValue: Value) {
+            if (newValue !is DatabaseValue)
+                database.deleteOne(layer, key)
+        }
+
+        override fun reference() {
+            database.upsertOne(layer, key, value)
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -27,21 +30,22 @@ sealed class Value<V> {
             other as DatabaseValue
 
             return layer == other.layer && key == other.key
+                    && value == other.value
         }
 
-        override fun hashCode() = Objects.hash(layer, key)
+        override fun hashCode() = Objects.hash(layer, key, value)
     }
 
-    class RuleValue<T>(override var value: Rule<T>) : Value<Rule<T>>() {
+    class RuleValue<out T>(val rule: Rule<T>) : Value() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
             other as RuleValue<*>
 
-            return value == other.value
+            return rule == other.rule
         }
 
-        override fun hashCode() = Objects.hash(value)
+        override fun hashCode() = Objects.hash(rule)
     }
 }

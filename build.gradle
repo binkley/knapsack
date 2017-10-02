@@ -147,14 +147,14 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
             includes = ['hm.binkley.knapsack.Value.DatabaseValue']
             limit {
-                minimum = 0.93
+                minimum = 0.94
             }
         }
         rule {
             element = 'CLASS'
             includes = ['hm.binkley.knapsack.Value.RuleValue']
             limit {
-                minimum = 0.89
+                minimum = 0.88
             }
         }
         rule {

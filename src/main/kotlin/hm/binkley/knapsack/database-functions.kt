@@ -2,8 +2,8 @@ package hm.binkley.knapsack
 
 import hm.binkley.knapsack.Value.DatabaseValue
 
-fun Database.value(layer: Int, key: String)
-        = DatabaseValue(this, layer, key)
+fun Database.value(layer: Int, key: String, value: String)
+        = DatabaseValue(this, layer, key, value)
 
 fun Database.entry(layer: Int, key: String) = DatabaseEntry(this, layer, key)
 
