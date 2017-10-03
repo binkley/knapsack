@@ -81,7 +81,7 @@ internal class DatabaseSetMockTest {
         doReturn(iteratorOf("foo")).whenever(database).
                 selectLayerKeys(0)
 
-        assert.that(set.contains(database.databaseEntry(set.layer, "foo")),
+        assert.that(set.contains(database.entry(set.layer, "foo")),
                 equalTo(true))
     }
 
@@ -92,7 +92,7 @@ internal class DatabaseSetMockTest {
         doNothing().whenever(database).deleteOne(set.layer, "foo")
         doReturn("3").whenever(database).selectOne(set.layer, "foo")
 
-        assert.that(set.remove(database.databaseEntry(set.layer, "foo")),
+        assert.that(set.remove(database.entry(set.layer, "foo")),
                 equalTo(true))
 
         verify(database).deleteOne(set.layer, "foo")
@@ -103,7 +103,7 @@ internal class DatabaseSetMockTest {
         doNothing().whenever(database).deleteOne(set.layer, "foo")
         doReturn(null, "3").whenever(database).selectOne(set.layer, "foo")
 
-        val changed = set.add(database.databaseEntry(set.layer, "foo"))
+        val changed = set.add(database.entry(set.layer, "foo"))
 
         assert.that(changed, equalTo(true))
     }

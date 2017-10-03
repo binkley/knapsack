@@ -6,6 +6,9 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.whenever
+import hm.binkley.knapsack.Value.DatabaseValue
+import hm.binkley.knapsack.Value.NoValue
+import hm.binkley.knapsack.Value.RuleValue
 import org.junit.Test
 import java.sql.Connection
 
@@ -91,7 +94,13 @@ internal class DatabaseListMockTest {
         layerOf(1)
         layerOf(2, "foo" to "4")
 
-        assert.that(list["foo"], equalTo(listOf("3", null, "4")))
+        assert.that(list["foo"].map {
+            when (it) {
+                NoValue -> null
+                is DatabaseValue -> it.value
+                is RuleValue<*> -> it.rule
+            }
+        }, equalTo(listOf<Any?>("3", null, "4")))
     }
 
     @Test
@@ -101,7 +110,11 @@ internal class DatabaseListMockTest {
         layerOf(1)
         layerOf(2, "foo" to "4")
         val rule: Rule<Int> = { key, layers ->
-            layers[key].filterNotNull().map(String::toInt).sum()
+            layers[key].
+                    filter { it is DatabaseValue }.
+                    map { (it as DatabaseValue).value }.
+                    map { it.toInt() }.
+                    sum()
         }
 
         assert.that(list.get("foo", rule), equalTo(7))

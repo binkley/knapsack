@@ -9,6 +9,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import hm.binkley.knapsack.Value.DatabaseValue
 import org.junit.Test
 
 internal class DatabaseMapMockTest {
@@ -108,14 +109,15 @@ internal class DatabaseMapMockTest {
     fun shouldGet() {
         fooIsThree()
 
-        assert.that(map["foo"], equalTo("3"))
+        assert.that((map["foo"] as DatabaseValue).value, equalTo("3"))
     }
 
     @Test
     fun shouldGetOrDefault() {
         doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
 
-        assert.that(map.getOrDefault("bar", "4"), equalTo("4"))
+        assert.that((map.getOrDefault("bar", "4") as DatabaseValue).value,
+                equalTo("4"))
     }
 
     @Test
@@ -123,9 +125,7 @@ internal class DatabaseMapMockTest {
         fooIsThree()
         doNothing().whenever(database).deleteOne(map.layer, "foo")
 
-        val oldValue = map.remove("foo")
-
-        assert.that(oldValue, equalTo("3"))
+        assert.that((map.remove("foo") as DatabaseValue).value, equalTo("3"))
         verify(database).deleteOne(map.layer, "foo")
     }
 
@@ -163,5 +163,6 @@ internal class DatabaseMapMockTest {
     private fun fooIsThree() {
         doReturn(iteratorOf("foo")).whenever(database).selectLayerKeys(0)
         doReturn("3").whenever(database).selectOne(map.layer, "foo")
+        map.put("foo", database.value(map.layer, "foo", "3"))
     }
 }

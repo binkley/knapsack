@@ -8,6 +8,7 @@ import com.nhaarman.mockito_kotlin.spy
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import hm.binkley.knapsack.Value.DatabaseValue
 import org.junit.Test
 import java.sql.Connection
 
@@ -24,7 +25,11 @@ internal class RuckMockTest {
         layerOf(2, "foo" to "4")
 
         ruck["foo"] = { key, layers ->
-            layers[key].filterNotNull().map { it.toInt() }.sum()
+            layers[key].
+                    filter { it is DatabaseValue }.
+                    map { (it as DatabaseValue).value }.
+                    map { it.toInt() }.
+                    sum()
         }
 
         assert.that(ruck["foo"], equalTo(7))
