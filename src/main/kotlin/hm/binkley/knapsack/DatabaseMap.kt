@@ -13,7 +13,7 @@ class DatabaseMap(private val database: Database, val layer: Int)
     override val entries: MutableSet<Entry> = database.set(layer)
 
     override fun put(key: String, value: String?)
-            = database.entry(layer, key).setValue(value)
+            = database.databaseEntry(layer, key).setValue(value)
 
     override fun remove(key: String): String? {
         val oldValue = get(key)

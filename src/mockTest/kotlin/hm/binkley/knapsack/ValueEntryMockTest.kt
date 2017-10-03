@@ -17,7 +17,7 @@ import java.sql.Connection
 class ValueEntryMockTest {
     private val connection: Connection = mock()
     private val database: Database = spy(Database(connection))
-    private val entry = database.valueEntry(0, "foo")
+    private val entry = database.entry(0, "foo")
 
     @Test
     fun shouldGetLayer() {
@@ -139,7 +139,7 @@ class ValueEntryMockTest {
 
     @Test
     fun shouldEquals() {
-        assert.that(entry, equalTo(database.valueEntry(entry.layer, entry.key)))
+        assert.that(entry, equalTo(database.entry(entry.layer, entry.key)))
     }
 
     @Test
@@ -159,31 +159,31 @@ class ValueEntryMockTest {
 
     @Test
     fun shouldNotEqualsByKey() {
-        assert.that(entry == database.valueEntry(entry.layer, entry.key + "x"),
+        assert.that(entry == database.entry(entry.layer, entry.key + "x"),
                 equalTo(false))
     }
 
     @Test
     fun shouldNotEqualsByLayer() {
-        assert.that(entry == database.valueEntry(entry.layer + 1, entry.key),
+        assert.that(entry == database.entry(entry.layer + 1, entry.key),
                 equalTo(false))
     }
 
     @Test
     fun shouldHashCode() {
-        assert.that(entry.hashCode() == database.valueEntry(entry.layer,
+        assert.that(entry.hashCode() == database.entry(entry.layer,
                 entry.key).hashCode(), equalTo(true))
     }
 
     @Test
     fun shouldNotHashCodeByKey() {
-        assert.that(entry.hashCode() == database.valueEntry(entry.layer,
+        assert.that(entry.hashCode() == database.entry(entry.layer,
                 entry.key + "x").hashCode(), equalTo(false))
     }
 
     @Test
     fun shouldNotHashCodeByLayer() {
-        assert.that(entry.hashCode() == database.valueEntry(entry.layer + 1,
+        assert.that(entry.hashCode() == database.entry(entry.layer + 1,
                 entry.key).hashCode(), equalTo(false))
     }
 }

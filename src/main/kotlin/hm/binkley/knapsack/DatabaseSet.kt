@@ -6,7 +6,7 @@ class DatabaseSet(private val database: Database, val layer: Int)
     : AbstractMutableSet<Entry>() {
     override fun add(element: Entry): Boolean {
         val newValue = element.value
-        val previousValue = database.entry(layer, element.key).
+        val previousValue = database.databaseEntry(layer, element.key).
                 setValue(newValue)
         return !Objects.equals(previousValue, newValue)
     }
