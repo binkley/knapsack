@@ -5,6 +5,9 @@ import hm.binkley.knapsack.Value.DatabaseValue
 fun Database.value(layer: Int, key: String, value: String)
         = DatabaseValue(this, layer, key, value)
 
+fun Database.valueEntry(layer: Int, key: String)
+        = ValueEntry(this, layer, key)
+
 fun Database.entry(layer: Int, key: String) = DatabaseEntry(this, layer, key)
 
 fun Database.entryIterator(layer: Int) = DatabaseEntryIterator(this, layer)
