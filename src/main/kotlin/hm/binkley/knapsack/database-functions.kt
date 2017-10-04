@@ -17,9 +17,6 @@ fun Database.entry(layer: Int, key: String, value: Value)
 fun Database.entry(layer: Int, key: String)
         = entry(layer, key, value(layer, key))
 
-fun Database.databaseEntry(layer: Int, key: String) = DatabaseEntry(this,
-        layer, key)
-
 fun Database.entryIterator(layer: Int) = DatabaseEntryIterator(this, layer)
 
 fun Database.set(layer: Int) = DatabaseSet(this, layer)
