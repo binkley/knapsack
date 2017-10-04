@@ -31,6 +31,11 @@ class DatabaseMap(private val database: Database, val layer: Int)
 
     override fun get(key: String) = super.get(key) ?: NoValue
 
+    override fun getOrDefault(key: String, defaultValue: Value): Value {
+        val value = super.getOrDefault(key, defaultValue)
+        return if (NoValue == value) defaultValue else value
+    }
+
     fun getOrDefault(key: String, value: String)
             = getOrDefault(key, database.value(layer, key, value))
 
@@ -48,7 +53,7 @@ class DatabaseMap(private val database: Database, val layer: Int)
     operator fun <T> set(key: String, rule: Rule<T>)
             = put(key, RuleValue(rule))
 
-    override fun remove(key: String): Value? {
+    override fun remove(key: String): Value {
         val oldValue = get(key)
         oldValue.dereference(NoValue)
         return oldValue

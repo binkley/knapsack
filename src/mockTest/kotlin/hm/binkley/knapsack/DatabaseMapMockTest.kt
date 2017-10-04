@@ -1,6 +1,5 @@
 package hm.binkley.knapsack
 
-import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
 import com.nhaarman.mockito_kotlin.doNothing
@@ -10,6 +9,7 @@ import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import hm.binkley.knapsack.Value.DatabaseValue
+import hm.binkley.knapsack.Value.NoValue
 import org.junit.Test
 
 internal class DatabaseMapMockTest {
@@ -135,7 +135,7 @@ internal class DatabaseMapMockTest {
 
         val oldValue = map.remove("bar")
 
-        assert.that(oldValue, absent())
+        assert.that(oldValue == NoValue, equalTo(true))
         verify(database, never()).deleteOne(map.layer, "bar")
     }
 

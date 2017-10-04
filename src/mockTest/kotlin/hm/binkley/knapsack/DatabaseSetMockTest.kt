@@ -80,6 +80,7 @@ internal class DatabaseSetMockTest {
     fun shouldFindEntry() {
         doReturn(iteratorOf("foo")).whenever(database).
                 selectLayerKeys(0)
+        doReturn("3").whenever(database).selectOne(set.layer, "foo")
 
         assert.that(set.contains(database.entry(set.layer, "foo")),
                 equalTo(true))

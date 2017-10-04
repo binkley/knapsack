@@ -9,10 +9,9 @@ import kotlin.collections.MutableMap.MutableEntry
 class ValueEntry(
         private val database: Database,
         val layer: Int,
-        override val key: String)
+        override val key: String,
+        private var v: Value)
     : MutableEntry<String, Value> {
-    private var v: Value = NoValue
-
     override val value: Value
         get() = v
 
