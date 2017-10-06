@@ -11,7 +11,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import java.sql.Connection
 
-internal class ValueEntrySetMockTest {
+internal class ValueSetMockTest {
     private val connection: Connection = mock()
     private val database = spy(Database(connection))
     private val set = database.set(0)
@@ -50,7 +50,7 @@ internal class ValueEntrySetMockTest {
 
     @Test
     fun shouldNotEqualsTrivially() {
-        assert.that(set as ValueEntrySet? == null, equalTo(false))
+        assert.that(set as ValueSet? == null, equalTo(false))
     }
 
     @Test

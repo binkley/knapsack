@@ -2,7 +2,7 @@ package hm.binkley.knapsack
 
 import java.util.Objects
 
-class ValueEntrySet(private val database: Database, val layer: Int)
+class ValueSet(private val database: Database, val layer: Int)
     : AbstractMutableSet<Entry>() {
     override fun add(element: Entry): Boolean {
         val newValue = element.value
@@ -20,7 +20,7 @@ class ValueEntrySet(private val database: Database, val layer: Int)
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ValueEntrySet
+        other as ValueSet
 
         return layer == other.layer && super.equals(other)
     }
