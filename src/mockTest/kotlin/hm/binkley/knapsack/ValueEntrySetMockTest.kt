@@ -11,7 +11,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import java.sql.Connection
 
-internal class DatabaseSetMockTest {
+internal class ValueEntrySetMockTest {
     private val connection: Connection = mock()
     private val database = spy(Database(connection))
     private val set = database.set(0)
@@ -50,7 +50,7 @@ internal class DatabaseSetMockTest {
 
     @Test
     fun shouldNotEqualsTrivially() {
-        assert.that(set as DatabaseSet? == null, equalTo(false))
+        assert.that(set as ValueEntrySet? == null, equalTo(false))
     }
 
     @Test
@@ -74,6 +74,30 @@ internal class DatabaseSetMockTest {
         assert.that(
                 set.hashCode() == database.set(set.layer + 1).hashCode(),
                 equalTo(false))
+    }
+
+    @Test
+    fun shouldAddNewEntry() {
+        doReturn(iteratorOf()).whenever(database).selectLayerKeys(0)
+        doReturn(null).whenever(database).selectOne(set.layer, "foo")
+        doNothing().whenever(database).upsertOne(set.layer, "foo", "4")
+
+        val changed = set.add(database.entry(set.layer, "foo",
+                database.value(set.layer, "foo", "4")))
+
+        assert.that(changed, equalTo(true))
+    }
+
+    @Test
+    fun shouldModifyExistingDatabaseEntry() {
+        doReturn(iteratorOf("foo")).whenever(database).selectLayerKeys(0)
+        doReturn("3").whenever(database).selectOne(set.layer, "foo")
+
+        val changed = set.add(database.entry(set.layer, "foo",
+                database.value(set.layer, "foo", "3")))
+
+        assert.that(changed, equalTo(false))
+
     }
 
     @Test
