@@ -21,6 +21,6 @@ fun Database.entryIterator(layer: Int) = DatabaseEntryIterator(this, layer)
 
 fun Database.set(layer: Int) = ValueEntrySet(this, layer)
 
-fun Database.map(layer: Int) = DatabaseMap(this, layer)
+fun Database.map(layer: Int) = ValueMap(this, layer)
 
 fun Database.list() = DatabaseList(this)

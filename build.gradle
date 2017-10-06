@@ -128,7 +128,7 @@ jacocoTestCoverageVerification {
                         'hm.binkley.knapsack.Value.RuleValue',
                         'hm.binkley.knapsack.DatabaseEntry',
                         'hm.binkley.knapsack.ValueEntrySet',
-                        'hm.binkley.knapsack.DatabaseMap',
+                        'hm.binkley.knapsack.ValueMap',
                         'hm.binkley.knapsack.DatabaseList',
                         'hm.binkley.knapsack.Ruck',
                         'hm.binkley.knapsack.Value.IntValue.*']
@@ -159,7 +159,7 @@ jacocoTestCoverageVerification {
         }
         rule {
             element = 'CLASS'
-            includes = ['hm.binkley.knapsack.DatabaseMap']
+            includes = ['hm.binkley.knapsack.ValueMap']
             limit {
                 minimum = 0.65
             }

@@ -12,7 +12,7 @@ import hm.binkley.knapsack.Value.DatabaseValue
 import hm.binkley.knapsack.Value.NoValue
 import org.junit.Test
 
-internal class DatabaseMapMockTest {
+internal class ValueMapMockTest {
     private val database: Database = mock {
         on { countList() } doReturn 2
     }
@@ -64,14 +64,14 @@ internal class DatabaseMapMockTest {
     }
 
     @Test
-    fun shouldContainKey() {
+    fun shouldContainsKey() {
         fooIsThree()
 
         assert.that(map.containsKey("foo"), equalTo(true))
     }
 
     @Test
-    fun shouldNotContainKey() {
+    fun shouldNotContainsKey() {
         fooIsThree()
 
         assert.that(map.containsKey("bar"), equalTo(false))

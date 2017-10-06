@@ -1,7 +1,7 @@
 package hm.binkley.knapsack
 
 class DatabaseList(private val database: Database)
-    : AbstractList<DatabaseMap>() {
+    : AbstractList<ValueMap>() {
     override val size: Int
         get() = database.countList()
 

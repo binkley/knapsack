@@ -5,7 +5,7 @@ import hm.binkley.knapsack.Value.NoValue
 import hm.binkley.knapsack.Value.RuleValue
 import java.util.Objects
 
-class DatabaseMap(private val database: Database, val layer: Int)
+class ValueMap(private val database: Database, val layer: Int)
     : AbstractMutableMap<String, Value>() {
     init {
         if (0 > layer) throw IndexOutOfBoundsException("Layer: $layer")
@@ -77,7 +77,7 @@ class DatabaseMap(private val database: Database, val layer: Int)
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as DatabaseMap
+        other as ValueMap
 
         return layer == other.layer && super.equals(other)
     }
