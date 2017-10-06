@@ -11,6 +11,7 @@ import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
 import com.nhaarman.mockito_kotlin.verifyZeroInteractions
 import com.nhaarman.mockito_kotlin.whenever
 import hm.binkley.knapsack.Value.NoValue
+import hm.binkley.knapsack.Value.RuleValue
 import org.junit.Test
 import java.sql.Connection
 
@@ -38,6 +39,7 @@ class ValueEntryMockTest {
     fun shouldNoValueToNoValue() {
         entry.setValue(null)
 
+        assert.that(entry.value == NoValue, equalTo(true))
         verifyZeroInteractions(database)
     }
 
@@ -47,14 +49,18 @@ class ValueEntryMockTest {
 
         entry.setValue("3")
 
+        assert.that(entry.value == database.value(0, "foo", "3"),
+                equalTo(true))
         verify(database).upsertOne(0, "foo", "3")
         verifyNoMoreInteractions(database)
     }
 
     @Test
     fun shouldNoValueToRuleValue() {
-        entry.setValue({ _, _ -> 3 })
+        val rule: Rule<Int> = { _, _ -> 3 }
+        entry.setValue(rule)
 
+        assert.that(entry.value == RuleValue(rule), equalTo(true))
         verifyZeroInteractions(database)
     }
 
@@ -67,6 +73,7 @@ class ValueEntryMockTest {
 
         entry.setValue(null)
 
+        assert.that(entry.value == NoValue, equalTo(true))
         verify(database).deleteOne(0, "foo")
         verifyNoMoreInteractions(database)
     }
@@ -79,6 +86,8 @@ class ValueEntryMockTest {
 
         entry.setValue("3")
 
+        assert.that(entry.value == database.value(0, "foo", "3"),
+                equalTo(true))
         verifyZeroInteractions(database)
     }
 
@@ -91,6 +100,8 @@ class ValueEntryMockTest {
 
         entry.setValue("4")
 
+        assert.that(entry.value == database.value(0, "foo", "4"),
+                equalTo(true))
         verify(database).upsertOne(0, "foo", "4")
         verifyNoMoreInteractions(database)
     }
@@ -102,8 +113,10 @@ class ValueEntryMockTest {
         reset(database)
         doNothing().whenever(database).deleteOne(0, "foo")
 
-        entry.setValue({ _, _ -> 4 })
+        val rule: Rule<Int> = { _, _ -> 4 }
+        entry.setValue(rule)
 
+        assert.that(entry.value == RuleValue(rule), equalTo(true))
         verify(database).deleteOne(0, "foo")
         verifyNoMoreInteractions(database)
     }
@@ -114,6 +127,7 @@ class ValueEntryMockTest {
 
         entry.setValue(null)
 
+        assert.that(entry.value == NoValue, equalTo(true))
         verifyZeroInteractions(database)
     }
 
@@ -124,6 +138,8 @@ class ValueEntryMockTest {
 
         entry.setValue("3")
 
+        assert.that(entry.value == database.value(0, "foo", "3"),
+                equalTo(true))
         verify(database).upsertOne(0, "foo", "3")
         verifyNoMoreInteractions(database)
     }
@@ -132,8 +148,10 @@ class ValueEntryMockTest {
     fun shouldRuleValueToRuleValue() {
         entry.setValue({ _, _ -> 3 })
 
-        entry.setValue({ _, _ -> 4 })
+        val rule: Rule<Int> = { _, _ -> 4 }
+        entry.setValue(rule)
 
+        assert.that(entry.value == RuleValue(rule), equalTo(true))
         verifyZeroInteractions(database)
     }
 
