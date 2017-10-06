@@ -4,17 +4,17 @@ import java.util.Objects
 
 class ValueSet(private val database: Database, val layer: Int)
     : AbstractMutableSet<Entry>() {
+    override val size: Int
+        get() = database.countMap(layer)
+
+    override fun iterator() = database.entryIterator(layer)
+
     override fun add(element: Entry): Boolean {
         val newValue = element.value
         val previousValue = database.entry(layer, element.key).
                 setValue(newValue)
         return !Objects.equals(previousValue, newValue)
     }
-
-    override val size: Int
-        get() = database.countMap(layer)
-
-    override fun iterator() = database.entryIterator(layer)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
