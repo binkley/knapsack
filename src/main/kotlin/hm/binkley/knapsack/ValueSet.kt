@@ -3,13 +3,13 @@ package hm.binkley.knapsack
 import java.util.Objects
 
 class ValueSet(private val database: Database, val layer: Int)
-    : AbstractMutableSet<Entry>() {
+    : AbstractMutableSet<ValueEntry>() {
     override val size: Int
         get() = database.countMap(layer)
 
     override fun iterator() = database.entryIterator(layer)
 
-    override fun add(element: Entry): Boolean {
+    override fun add(element: ValueEntry): Boolean {
         val newValue = element.value
         val previousValue = database.entry(layer, element.key).
                 setValue(newValue)

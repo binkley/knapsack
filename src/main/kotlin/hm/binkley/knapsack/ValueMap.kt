@@ -13,7 +13,8 @@ class ValueMap(private val database: Database, val layer: Int)
             throw IndexOutOfBoundsException("Layer: $layer")
     }
 
-    override val entries: MutableSet<Entry> = database.set(layer)
+    @Suppress("UNCHECKED_CAST")
+    override val entries = database.set(layer) as MutableSet<Entry>
 
     fun containsValue(value: String)
             = entries.

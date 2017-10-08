@@ -4,14 +4,13 @@ import hm.binkley.knapsack.Value.DatabaseValue
 import hm.binkley.knapsack.Value.NoValue
 import hm.binkley.knapsack.Value.RuleValue
 import java.util.Objects
-import kotlin.collections.MutableMap.MutableEntry
 
 class ValueEntry(
         private val database: Database,
         val layer: Int,
         override val key: String,
         private var v: Value)
-    : MutableEntry<String, Value> {
+    : Entry {
     override val value: Value
         get() = v
 
