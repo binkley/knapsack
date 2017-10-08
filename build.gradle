@@ -161,7 +161,7 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
             includes = ['hm.binkley.knapsack.ValueMap']
             limit {
-                minimum = 0.65
+                minimum = 0.67
             }
         }
         rule {

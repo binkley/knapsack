@@ -10,6 +10,8 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import hm.binkley.knapsack.Value.DatabaseValue
 import hm.binkley.knapsack.Value.NoValue
+import hm.binkley.knapsack.Value.RuleValue
+import org.junit.Ignore
 import org.junit.Test
 
 internal class ValueMapMockTest {
@@ -158,6 +160,28 @@ internal class ValueMapMockTest {
 
         assert.that(removed, equalTo(false))
         verify(database, never()).deleteOne(map.layer, "foo")
+    }
+
+    @Ignore("TODO: Cache non-database values")
+    @Test
+    fun shouldDatabaseValueToRuleValue() {
+        fooIsThree()
+
+        val rule: Rule<Int> = { _, _ -> 3 }
+        map["foo"] = rule
+
+        assert.that((map["foo"] as RuleValue<Int>).rule, equalTo(rule))
+        verify(database).deleteOne(map.layer, "foo")
+    }
+
+    @Test
+    fun shouldDatabaseValueToNoValue() {
+        fooIsThree()
+
+        map["foo"] = null
+
+        assert.that(map.containsKey("foo"), equalTo(false))
+        verify(database).deleteOne(map.layer, "foo")
     }
 
     private fun fooIsThree() {

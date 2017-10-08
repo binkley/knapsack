@@ -43,8 +43,10 @@ class ValueMap(private val database: Database, val layer: Int)
     fun <T> getOrDefault(key: String, rule: Rule<T>)
             = getOrDefault(key, RuleValue(rule))
 
-    override fun put(key: String, value: Value)
-            = database.entry(layer, key).setValue(value)
+    override fun put(key: String, value: Value) = if (value == NoValue)
+        remove(key)
+    else
+        database.entry(layer, key).setValue(value)
 
     operator fun set(key: String, nonce: Nothing?) = put(key, NoValue)
 
