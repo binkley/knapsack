@@ -1,12 +1,12 @@
 buildscript {
     ext {
-        hamkrest_version = '1.4.2.2'
-        hsqldb_version = '2.4.0'
-        jgit_version = '4.9.1.201712030800-r'
-        kotlin_version = '1.2.21'
-        mockito_version = '2.13.0'
-        mockito_kotlin_version = '1.5.0'
-        versions_version = '0.17.0'
+        hamkrest_version = '1.6.0.0'
+        hsqldb_version = '2.4.1'
+        jgit_version = '5.0.2.201807311906-r'
+        kotlin_version = '1.2.61'
+        mockito_version = '2.21.0'
+        mockito_kotlin_version = '1.6.0'
+        versions_version = '0.20.0'
     }
 
     repositories {
@@ -59,7 +59,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'org.jetbrains.kotlin:kotlin-reflect'
     compile "org.eclipse.jgit:org.eclipse.jgit:$jgit_version"
     runtime "org.hsqldb:hsqldb:$hsqldb_version"
